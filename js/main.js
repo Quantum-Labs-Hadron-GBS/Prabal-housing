@@ -166,9 +166,9 @@ function initParallax() {
 
     function updateParallax() {
         const scrollY = window.scrollY;
-        const heroHeight = heroStage.offsetHeight / 2; // Roughly the height of viewport
+        const heroHeight = heroStage.offsetHeight; 
         
-        if (scrollY > heroHeight * 1.5) return; // Stop calculating if past hero
+        if (scrollY > heroHeight) return; // Stop calculating if past hero
 
         // Calculate progress (0 to 1)
         const progress = Math.min(scrollY / heroHeight, 1);
