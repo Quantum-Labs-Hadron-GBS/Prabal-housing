@@ -297,7 +297,6 @@ body.night-mode .upper-atmosphere {
 }
 .night-building { 
     opacity: 0; 
-    transform: scale(0.97) translate(-4px, -4px);
     transform-origin: bottom right;
 }
 
