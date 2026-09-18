@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     generateStars();
     initParallax();
     initMobileMenu();
+    initDynamicNavbar();
 });
 
 // Load hero assets
@@ -204,4 +205,35 @@ function initMobileMenu() {
             document.body.style.overflow = '';
         });
     });
+}
+
+// Dynamic Navbar System
+function initDynamicNavbar() {
+    const navbar = document.querySelector('.navbar');
+    const darkSections = document.querySelectorAll('[data-theme="dark"]');
+    
+    if (!navbar || darkSections.length === 0) return;
+
+    window.addEventListener('scroll', () => {
+        const navRect = navbar.getBoundingClientRect();
+        const navCenterY = navRect.top + navRect.height / 2;
+
+        let isOverDark = false;
+
+        darkSections.forEach(section => {
+            const rect = section.getBoundingClientRect();
+            if (navCenterY >= rect.top && navCenterY <= rect.bottom) {
+                isOverDark = true;
+            }
+        });
+
+        if (isOverDark) {
+            navbar.classList.add('navbar-light');
+        } else {
+            navbar.classList.remove('navbar-light');
+        }
+    }, { passive: true });
+    
+    // Trigger once on load
+    window.dispatchEvent(new Event('scroll'));
 }

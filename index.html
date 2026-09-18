@@ -160,7 +160,7 @@
         </section>
 
         <!-- Lifestyle (Parallax image section) -->
-        <section class="section lifestyle-section">
+        <section class="section lifestyle-section" data-theme="dark">
             <div class="lifestyle-bg" data-media-bg="lifestyle">
                 <div class="lifestyle-overlay"></div>
                 <div class="container lifestyle-content">
@@ -205,7 +205,80 @@
             </div>
         </section>
 
-        <!-- Project Details -->
+        <!-- Curtain Section -->
+        <style>
+            .curtain-section {
+                position: sticky;
+                top: 0;
+                height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1;
+                overflow: hidden;
+                background: linear-gradient(180deg, #070d1f 0%, #152243 100%);
+                color: #ffffff;
+                text-align: center;
+            }
+            .curtain-images {
+                position: absolute;
+                inset: 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0;
+                pointer-events: none;
+            }
+            .curtain-images img {
+                width: 35%;
+                max-height: 70%;
+                object-fit: contain;
+            }
+            .curtain-images img:first-child {
+                object-position: left center;
+            }
+            .curtain-images img:last-child {
+                object-position: right center;
+            }
+            .curtain-text {
+                position: relative;
+                z-index: 2;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            .curtain-text-meta {
+                font-family: var(--font-ui);
+                font-size: 0.8rem;
+                letter-spacing: 0.3em;
+                text-transform: uppercase;
+                opacity: 0.8;
+            }
+            .curtain-text-main {
+                font-family: var(--font-display);
+                font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+                line-height: 1.3;
+                font-weight: 400;
+            }
+        </style>
+        <section class="curtain-section" data-theme="dark">
+            <div class="curtain-images">
+                <img src="https://cdn.prod.website-files.com/69e1cc2c4bb2c432ebac4f2b/69ee715c5a1922a3cf704f04_Mask%20group-1.webp" alt="Architecture Sketch Left">
+                <img src="https://cdn.prod.website-files.com/69e1cc2c4bb2c432ebac4f2b/69ee715cd027b41f18e6543d_Mask%20group.webp" alt="Architecture Sketch Right">
+            </div>
+            <div class="curtain-text">
+                <div class="curtain-text-meta">[ IN YEARS ]</div>
+                <h2 class="curtain-text-main">
+                    Architectural thinking.<br>
+                    Design sensibility.<br>
+                    Premium delivery.
+                </h2>
+            </div>
+        </section>
+
+        <div style="position: relative; z-index: 2; background-color: var(--bg-color); transition: background-color var(--transition-speed) ease;">
+            <!-- Project Details -->
         <section class="section details-section">
             <div class="container">
                 <div class="details-box">
@@ -233,6 +306,7 @@
                 </div>
             </div>
         </section>
+        </div>
     </main>
 
     <footer class="footer">
