@@ -211,22 +211,26 @@ function initMobileMenu() {
 // Dynamic Navbar System
 function initDynamicNavbar() {
     const navbar = document.querySelector('.navbar');
-    const darkSections = document.querySelectorAll('[data-theme="dark"]');
+    const allSections = document.querySelectorAll('section, .post-curtain, .footer');
     
-    if (!navbar || darkSections.length === 0) return;
+    if (!navbar || allSections.length === 0) return;
 
     window.addEventListener('scroll', () => {
         const navRect = navbar.getBoundingClientRect();
         const navCenterY = navRect.top + navRect.height / 2;
 
-        let isOverDark = false;
+        let overlappingElements = [];
 
-        darkSections.forEach(section => {
+        allSections.forEach(section => {
             const rect = section.getBoundingClientRect();
             if (navCenterY >= rect.top && navCenterY <= rect.bottom) {
-                isOverDark = true;
+                overlappingElements.push(section);
             }
         });
+
+        // The last overlapping element in DOM order is visually on top
+        const topElement = overlappingElements[overlappingElements.length - 1];
+        const isOverDark = topElement && topElement.dataset.theme === 'dark';
 
         if (isOverDark) {
             navbar.classList.add('navbar-light');
