@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initParallax();
     initMobileMenu();
     initDynamicNavbar();
+    initKeyboardNavigation();
 });
 
 // Load hero assets
@@ -236,4 +237,37 @@ function initDynamicNavbar() {
     
     // Trigger once on load
     window.dispatchEvent(new Event('scroll'));
+}
+
+// Keyboard Section Navigation
+function initKeyboardNavigation() {
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+            // Prevent if user is typing in a form field
+            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
+            
+            e.preventDefault();
+
+            const sections = Array.from(document.querySelectorAll('section, .footer'));
+            const currentScroll = window.scrollY;
+            
+            // Calculate absolute Y position of each section regardless of relative wrappers
+            const positions = sections.map(sec => Math.round(sec.getBoundingClientRect().top + window.scrollY));
+
+            let targetOffset = null;
+
+            if (e.key === 'ArrowDown') {
+                targetOffset = positions.find(pos => pos > currentScroll + 10);
+            } else if (e.key === 'ArrowUp') {
+                targetOffset = positions.slice().reverse().find(pos => pos < currentScroll - 10);
+            }
+
+            if (targetOffset !== null && targetOffset !== undefined) {
+                window.scrollTo({
+                    top: targetOffset,
+                    behavior: 'smooth'
+                });
+            }
+        }
+    });
 }
