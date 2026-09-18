@@ -6,7 +6,7 @@
 // Centralized Cloudinary Config for Hero
 const CLOUDINARY = {
     dayBuilding: "https://res.cloudinary.com/dyhlpxwwo/image/upload/v1789483116/ChatGPT_Image_Sep_15_2026_08_01_57_PM_u8yeqr.png",
-    nightBuilding: "https://res.cloudinary.com/dyhlpxwwo/image/upload/v1789483116/ChatGPT_Image_Sep_15_2026_08_03_17_PM_gogd1u.png"
+    nightBuilding: "https://res.cloudinary.com/dyhlpxwwo/image/upload/v1789736957/ChatGPT_Image_Sep_18_2026_06_38_31_PM_ewkjq9.png"
 };
 
 // Centralized Placeholder Media Config
