@@ -250,9 +250,26 @@ function initKeyboardNavigation() {
 
             const sections = Array.from(document.querySelectorAll('section, .footer'));
             const currentScroll = window.scrollY;
+            const viewHeight = window.innerHeight;
             
-            // Calculate absolute Y position of each section regardless of relative wrappers
-            const positions = sections.map(sec => Math.round(sec.getBoundingClientRect().top + window.scrollY));
+            let positions = [];
+            
+            sections.forEach(sec => {
+                const rect = sec.getBoundingClientRect();
+                const absTop = Math.round(rect.top + window.scrollY);
+                positions.push(absTop);
+                
+                // Add virtual snap points inside tall sections so content isn't skipped
+                let subPoint = absTop + viewHeight;
+                while (subPoint < absTop + rect.height - (viewHeight / 3)) {
+                    positions.push(subPoint);
+                    subPoint += viewHeight;
+                }
+            });
+
+            // Sort and remove duplicates/too-close points
+            positions.sort((a, b) => a - b);
+            positions = positions.filter((pos, i, arr) => i === 0 || pos - arr[i-1] > 50);
 
             let targetOffset = null;
 
