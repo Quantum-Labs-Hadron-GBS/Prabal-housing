@@ -4,7 +4,7 @@
     --color-bg-day: #fafafa;
     --color-bg-day-rgb: 250, 250, 250;
     --color-text-day: #1a1f24;
-    --color-sky-day: linear-gradient(180deg, #b5d5f2 0%, #e8f0f8 100%);
+    --color-sky-day: linear-gradient(180deg, #cbd1d6 0%, #fafafa 100%);
     --color-surface-day: #ffffff;
     --color-border-day: #e0e0e0;
     
@@ -243,6 +243,12 @@ body.night-mode .stars-container {
     object-position: center center;
     transform: scale(1.15) translateY(-15%); /* Crops and shifts video upwards */
     pointer-events: none;
+    animation: videoLoadFade 1.5s ease-in-out forwards;
+}
+
+@keyframes videoLoadFade {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
 }
 
 .foreground-clouds {
