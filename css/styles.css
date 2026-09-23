@@ -289,7 +289,7 @@ body.night-mode .upper-atmosphere {
 /* Buildings */
 .hero-buildings {
     position: absolute;
-    bottom: 0;
+    bottom: 18px;
     right: 5%;
     height: 95vh;
     width: 50%;
