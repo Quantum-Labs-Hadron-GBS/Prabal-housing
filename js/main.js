@@ -112,21 +112,17 @@ function generateStars() {
     const container = document.getElementById('stars-container');
     if (!container) return;
 
-    const numStars = 150;
     const fragment = document.createDocumentFragment();
 
-    for (let i = 0; i < numStars; i++) {
+    // 1. Base Stars (spread everywhere)
+    const numBaseStars = 150;
+    for (let i = 0; i < numBaseStars; i++) {
         const star = document.createElement('div');
         star.classList.add('star');
         
-        // Random positioning
         const x = Math.random() * 100;
         const y = Math.random() * 100;
-        
-        // Random size (tiny)
         const size = Math.random() * 2 + 1;
-        
-        // Random animation delay
         const delay = Math.random() * 4;
 
         star.style.left = `${x}%`;
@@ -134,6 +130,42 @@ function generateStars() {
         star.style.width = `${size}px`;
         star.style.height = `${size}px`;
         star.style.animationDelay = `${delay}s`;
+
+        fragment.appendChild(star);
+    }
+
+    // 2. Milky Way Cluster (dense, upper left diagonal band)
+    const numMilkyWay = 400;
+    for (let i = 0; i < numMilkyWay; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+        
+        // Diagonal core stretching from top-left
+        const corePos = Math.random() * 45; // 0% to 45%
+        // Spread thickness
+        const spreadX = (Math.random() - 0.5) * 25; 
+        const spreadY = (Math.random() - 0.5) * 25; 
+
+        // Apply position and clamp edges
+        let x = Math.max(0, Math.min(100, corePos + spreadX));
+        let y = Math.max(0, Math.min(100, corePos + spreadY));
+
+        // Milky Way stars are tiny "stardust"
+        const size = Math.random() * 1.2 + 0.3;
+        const delay = Math.random() * 5;
+
+        star.style.left = `${x}%`;
+        star.style.top = `${y}%`;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.opacity = Math.random() * 0.4 + 0.1; // Fainter base opacity
+        star.style.animationDelay = `${delay}s`;
+        
+        // Add a slight blue/purple tint to some stardust for a nebula effect
+        if (Math.random() > 0.6) {
+            star.style.backgroundColor = '#e0e7ff'; 
+            star.style.boxShadow = `0 0 4px rgba(224, 231, 255, 0.4)`;
+        }
 
         fragment.appendChild(star);
     }
