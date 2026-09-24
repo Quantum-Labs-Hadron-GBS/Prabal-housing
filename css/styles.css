@@ -314,7 +314,7 @@ body.night-mode .aurora-bg {
 /* Buildings */
 .hero-buildings {
     position: absolute;
-    bottom: 18px;
+    bottom: 20px;
     right: 5%;
     height: 95vh;
     width: 50%;
