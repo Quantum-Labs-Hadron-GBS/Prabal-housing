@@ -164,6 +164,29 @@ function generateStars() {
         fragment.appendChild(star);
     }
 
+    // 3. Building Cluster (dense, upper right above the building)
+    const numBuildingStars = 200;
+    for (let i = 0; i < numBuildingStars; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+        
+        // Target upper right quadrant (X: 50% to 100%, Y: 0% to 45%)
+        const x = 50 + (Math.random() * 50); 
+        const y = Math.random() * 45; 
+        
+        const size = Math.random() * 1.5 + 0.5;
+        const delay = Math.random() * 4;
+
+        star.style.left = `${x}%`;
+        star.style.top = `${y}%`;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.opacity = Math.random() * 0.5 + 0.1;
+        star.style.animationDelay = `${delay}s`;
+        
+        fragment.appendChild(star);
+    }
+
     container.appendChild(fragment);
 }
 
