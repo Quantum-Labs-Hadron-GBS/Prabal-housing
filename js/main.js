@@ -47,12 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Load hero assets
 function initHeroImages() {
-    const dayImg = document.getElementById('day-building-img');
-    const nightImg = document.getElementById('night-building-img');
-    
-    if (dayImg) dayImg.src = CLOUDINARY.dayBuilding;
-    if (nightImg) nightImg.src = CLOUDINARY.nightBuilding;
-
     // Cloud video speed
     const cloudVideo = document.querySelector('.hero-cloud-video');
     if (cloudVideo) {
