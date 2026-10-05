@@ -3,27 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prabal Housing | Elevated Living</title>
-    <meta name="description" content="Premium modern real estate and luxury residential development.">
+    <!-- SEO & AEO Optimization -->
+    <title>Top Luxury Flats & Real Estate in Pune | PRABALHOUSING</title>
+    <meta name="description" content="Looking for premium flats, land, or luxury residences in Pune? Discover PRABALHOUSING, Pune's premier real estate developer offering bespoke luxury living.">
+    <meta name="keywords" content="flats in pune, real estate in pune, luxury residences in pune, land in pune, premium flats in pune, luxury living pune, top builders in pune, Prabalhousing, 3 BHK flats pune, 4 BHK luxury apartments pune">
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:title" content="Top Luxury Flats & Real Estate in Pune | PRABALHOUSING">
+    <meta property="og:description" content="Looking for premium flats, land, or luxury residences in Pune? Discover PRABALHOUSING, Pune's premier real estate developer.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.prabalhousing.com/">
+    
+    <!-- Structured Data for Answer Engine Optimization (AEO) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "RealEstateAgent",
+      "name": "PRABALHOUSING",
+      "description": "Pune's premier modern real estate and luxury residential development firm.",
+      "url": "https://www.prabalhousing.com",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Pune",
+        "addressRegion": "Maharashtra",
+        "addressCountry": "IN"
+      },
+      "areaServed": "Pune",
+      "priceRange": "$$$$"
+    }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="icon" type="image/png" href="https://res.cloudinary.com/dyhlpxwwo/image/upload/v1790075126/Prabal_Final_Logo_ozw283.png">
+    <!-- Vercel Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body class="day-mode">
     <nav class="navbar">
-        <div class="nav-brand">PRABAL HOUSING</div>
+        <a href="/" class="nav-brand" style="text-decoration: none; color: inherit;">PRABALHOUSING</a>
         <button class="menu-toggle" aria-label="Toggle Menu">
             <span></span><span></span>
         </button>
         <ul class="nav-links">
-            <li><a href="#projects">PROJECTS</a></li>
-            <li><a href="#about">ABOUT</a></li>
-            <li><a href="#amenities">AMENITIES</a></li>
-            <li><a href="#location">LOCATION</a></li>
-            <li><a href="#contact">CONTACT</a></li>
-            <li><button id="btn-toggle-aesthetics" class="btn-outline" style="background: transparent; color: inherit; cursor: pointer; text-transform: uppercase;">EXPLORE NIGHT</button></li>
+            <li><a href="properties.html">PROPERTIES</a></li>
+            <li><a href="about.html">ABOUT</a></li>
+            <li><a href="contact.html">CONTACT</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" style="cursor: default;">MORE</a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Blogs</a></li>
+                    <li><a href="career.html">Career</a></li>
+                </ul>
+            </li>
+            <li>
+                <button id="btn-toggle-aesthetics" class="theme-switch" aria-label="Toggle Theme">
+                    <div class="switch-clouds">
+                        <div class="switch-cloud cloud-1"></div>
+                        <div class="switch-cloud cloud-2"></div>
+                        <div class="switch-cloud cloud-3"></div>
+                    </div>
+                    <div class="switch-stars">
+                        <div class="switch-star s-star-1"></div>
+                        <div class="switch-star s-star-2"></div>
+                        <div class="switch-star s-star-3"></div>
+                        <div class="switch-star s-star-4"></div>
+                    </div>
+                    <div class="switch-orb">
+                        <div class="switch-crater crater-1"></div>
+                        <div class="switch-crater crater-2"></div>
+                        <div class="switch-crater crater-3"></div>
+                    </div>
+                </button>
+            </li>
         </ul>
     </nav>
 
@@ -47,8 +103,8 @@
 
                 <!-- Buildings (Stable anchor) -->
                 <div class="hero-buildings">
-                    <img id="day-building-img" class="day-building" fetchpriority="high" src="https://res.cloudinary.com/dyhlpxwwo/image/upload/v1789483116/ChatGPT_Image_Sep_15_2026_08_01_57_PM_u8yeqr.png" alt="Prabal Housing Day Architecture">
-                    <img id="night-building-img" class="night-building" src="https://res.cloudinary.com/dyhlpxwwo/image/upload/v1789736957/ChatGPT_Image_Sep_18_2026_06_38_31_PM_ewkjq9.png" alt="Prabal Housing Night Architecture">
+                    <img id="day-building-img" class="day-building" fetchpriority="high" src="https://res.cloudinary.com/dyhlpxwwo/image/upload/v1789483116/ChatGPT_Image_Sep_15_2026_08_01_57_PM_u8yeqr.png" alt="PRABALHOUSING Day Architecture">
+                    <img id="night-building-img" class="night-building" src="https://res.cloudinary.com/dyhlpxwwo/image/upload/v1789736957/ChatGPT_Image_Sep_18_2026_06_38_31_PM_ewkjq9.png" alt="PRABALHOUSING Night Architecture">
                 </div>
 
                 <!-- Foreground Clouds (Parallax) -->
@@ -60,7 +116,7 @@
                 <div class="hero-content">
                     <h1 class="hero-title">WHERE ELEVATED<br>LIVING BEGINS</h1>
                     <div class="hero-actions">
-                        <a href="#enquire" class="btn-premium" style="text-decoration: none; display: inline-block;">ENQUIRE</a>
+                        <a href="contact.html" class="btn-premium" style="text-decoration: none; display: inline-block;">ENQUIRE</a>
                     </div>
                 </div>
                 
@@ -79,7 +135,7 @@
             <div class="container">
                 <h2 class="section-title">REDEFINING THE SKYLINE</h2>
                 <div class="intro-content">
-                    <p class="lead-text">Experience a new paradigm of luxury living, where cinematic architecture meets unparalleled comfort. Prabal Housing stands as a testament to visionary design and meticulous craftsmanship.</p>
+                    <p class="lead-text">Experience a new paradigm of luxury living, where cinematic architecture meets unparalleled comfort. PRABALHOUSING stands as a testament to visionary design and meticulous craftsmanship.</p>
                     <p>Designed for those who seek the exceptional, our twin towers offer sweeping views, bespoke amenities, and a living experience that transcends the ordinary.</p>
                 </div>
             </div>
@@ -173,28 +229,7 @@
             </div>
         </section>
 
-        <!-- Location -->
-        <section id="location" class="section location-section">
-            <div class="container">
-                <h2 class="section-title">PRIME CONNECTIVITY</h2>
-                <div class="location-grid">
-                    <div class="location-info">
-                        <p>Strategically situated at the nexus of business and leisure, ensuring you are never far from what matters.</p>
-                        <ul class="connectivity-list">
-                            <li><span>International Airport</span> <span class="time">15 MINS</span></li>
-                            <li><span>Central Business District</span> <span class="time">10 MINS</span></li>
-                            <li><span>Premium Shopping</span> <span class="time">5 MINS</span></li>
-                            <li><span>Top-tier Schools</span> <span class="time">10 MINS</span></li>
-                        </ul>
-                    </div>
-                    <div class="location-map">
-                        <div class="map-placeholder">
-                            <span>[ INTERACTIVE MAP PLACEHOLDER ]</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+
 
         <!-- Gallery -->
         <section class="section gallery-section">
@@ -301,48 +336,75 @@
         </section>
 
         <div style="position: relative; z-index: 2; background-color: var(--bg-color); transition: background-color var(--transition-speed) ease;">
-            <!-- Project Details -->
-        <section class="section details-section">
+        <!-- Partners Section -->
+        <section class="partners-section" id="partners">
+            <div class="partners-sticky">
+                <div class="partners-content">
+                    
+                    <div class="partners-center" id="partners-center">
+                        <h2 class="partners-title" style="font-size: clamp(1.5rem, 3vw, 2.5rem); letter-spacing: 0.1em; text-transform: uppercase;">Developing Partners</h2>
+                    </div>
+
+                    <div class="partner-card" id="pc-0"><div class="partner-type">GODREJ<br>PROPERTIES</div></div>
+                    <div class="partner-card" id="pc-1"><div class="partner-type">MAHINDRA<br>LIFESPACES</div></div>
+                    <div class="partner-card" id="pc-2"><div class="partner-type">LODHA<br>GROUP</div></div>
+                    <div class="partner-card" id="pc-3"><div class="partner-type">KOHINOOR</div></div>
+                    <div class="partner-card" id="pc-4"><div class="partner-type">PARANJAPE</div></div>
+                    <div class="partner-card" id="pc-5"><div class="partner-type">ANP<br>CORP</div></div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Location -->
+        <section id="location" class="section location-section">
             <div class="container">
-                <div class="details-box">
-                    <h2 class="section-title">PROJECT SPECIFICATIONS</h2>
-                    <div class="specs-grid">
-                        <div><strong>DEVELOPER</strong><br>Prabal Housing</div>
-                        <div><strong>TOTAL AREA</strong><br>5.2 Acres</div>
-                        <div><strong>TOWERS</strong><br>2 Iconic Towers</div>
-                        <div><strong>FLOORS</strong><br>G + 45 Storeys</div>
-                        <div><strong>POSSESSION</strong><br>Q4 2028</div>
-                        <div><strong>RERA NO.</strong><br>PR/12345/XXXX</div>
+                <h2 class="section-title">PRIME CONNECTIVITY</h2>
+                <div class="location-grid">
+                    <div class="location-info">
+                        <p>Strategically situated at the nexus of business and leisure, ensuring you are never far from what matters.</p>
+                        <ul class="connectivity-list">
+                            <li><span>International Airport</span> <span class="time">15 MINS</span></li>
+                            <li><span>Central Business District</span> <span class="time">10 MINS</span></li>
+                            <li><span>Premium Shopping</span> <span class="time">5 MINS</span></li>
+                            <li><span>Top-tier Schools</span> <span class="time">10 MINS</span></li>
+                        </ul>
+                    </div>
+                    <div class="location-map">
+                        <div class="map-placeholder">
+                            <span>[ INTERACTIVE MAP PLACEHOLDER ]</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Final CTA -->
-        <section id="contact" class="section cta-section">
+        <section id="contact" class="section cta-section" style="padding-top: 20px;">
             <div class="container text-center">
                 <h2 class="display-title">FIND YOUR PLACE</h2>
                 <p class="mt-4 mb-8">Begin your journey to extraordinary living.</p>
                 <div class="cta-actions">
-                    <button class="btn-premium">SCHEDULE A VISIT</button>
-                    <button class="btn-outline">ENQUIRE NOW</button>
+                    <a href="contact.html" class="btn-premium" style="display: inline-block;">ENQUIRE NOW</a>
                 </div>
             </div>
         </section>
         </div>
     </main>
 
-    <footer class="footer">
-        <div class="container footer-grid">
+
+
+    <footer class="footer" style="position: relative; overflow: hidden;">
+        <div class="container footer-grid" style="position: relative; z-index: 2;">
             <div class="footer-brand">
-                <h3>PRABAL HOUSING</h3>
+                <h3>PRABALHOUSING</h3>
                 <p>Curating exceptional living spaces for the discerning few.</p>
             </div>
             <div class="footer-links">
                 <h4>EXPLORE</h4>
                 <ul>
-                    <li><a href="#projects">Projects</a></li>
-                    <li><a href="#about">About Us</a></li>
+                    <li><a href="properties.html">Properties</a></li>
+                    <li><a href="about.html">About Us</a></li>
                     <li><a href="#amenities">Amenities</a></li>
                     <li><a href="#location">Location</a></li>
                 </ul>
@@ -362,8 +424,11 @@
                 </div>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Prabal Housing. All Rights Reserved.</p>
+        <div class="footer-bottom" style="position: relative; z-index: 2;">
+            <p>&copy; 2026 PRABALHOUSING. All Rights Reserved.</p>
+        </div>
+        <div style="position: absolute; bottom: 0; left: 0; width: 100%; text-align: center; font-size: clamp(3rem, 11.5vw, 20rem); font-family: var(--font-display); font-weight: 700; color: var(--text-color); opacity: 0.04; white-space: nowrap; pointer-events: none; z-index: 1; line-height: 0.85; transform: scaleY(1.6); transform-origin: bottom center;">
+            PRABALHOUSING
         </div>
     </footer>
 

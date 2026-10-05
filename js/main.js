@@ -43,6 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initMobileMenu();
     initDynamicNavbar();
     initKeyboardNavigation();
+    initGlobalParallax();
+    initPartners();
 });
 
 // Load hero assets
@@ -86,17 +88,28 @@ function initDayNightToggle() {
     const btn = document.getElementById('btn-toggle-aesthetics');
     if (!btn) return;
 
-    let isNight = false;
+    let isNight = localStorage.getItem('theme') === 'night';
+
+    // Apply immediately on load
+    if (isNight) {
+        document.body.classList.replace('day-mode', 'night-mode');
+        btn.classList.add('active');
+    } else {
+        document.body.classList.replace('night-mode', 'day-mode');
+        btn.classList.remove('active');
+    }
 
     btn.addEventListener('click', () => {
         isNight = !isNight;
         
         if (isNight) {
             document.body.classList.replace('day-mode', 'night-mode');
-            btn.textContent = 'EXPLORE DAY';
+            btn.classList.add('active');
+            localStorage.setItem('theme', 'night');
         } else {
             document.body.classList.replace('night-mode', 'day-mode');
-            btn.textContent = 'EXPLORE NIGHT';
+            btn.classList.remove('active');
+            localStorage.setItem('theme', 'day');
         }
     });
 }
@@ -193,10 +206,11 @@ function generateStars() {
 // Hero Parallax Effect
 function initParallax() {
     const fgClouds = document.getElementById('fg-clouds');
-    if (!fgClouds) return;
-
+    const scrollIndicator = document.querySelector('.scroll-indicator');
     const heroStage = document.querySelector('.hero-stage');
     
+    if (!fgClouds || !heroStage) return;
+
     // Limits the max distance foreground clouds can travel
     const MAX_CLOUD_TRAVEL = 600; 
 
@@ -230,6 +244,16 @@ function initParallax() {
 
         // Apply transform via translate3d for hardware acceleration
         fgClouds.style.transform = `translate3d(0, ${-cloudOffset}px, 0)`;
+
+        // Fade out and shift scroll indicator
+        if (scrollIndicator) {
+            const fadePoint = 200;
+            const opacity = Math.max(0, 1 - (scrollY / fadePoint));
+            scrollIndicator.style.opacity = opacity;
+            scrollIndicator.style.transform = `translateY(${scrollY * 0.3}px)`;
+            // Disable pointer events when faded out
+            scrollIndicator.style.pointerEvents = opacity === 0 ? 'none' : 'auto';
+        }
     }
 }
 
@@ -261,10 +285,33 @@ function initMobileMenu() {
 function initDynamicNavbar() {
     const navbar = document.querySelector('.navbar');
     const allSections = document.querySelectorAll('section, .post-curtain, .footer');
+    const heroSection = document.querySelector('main > section:first-child, .hero-stage');
     
     if (!navbar || allSections.length === 0) return;
 
+    let lastScrollY = window.scrollY;
+
     window.addEventListener('scroll', () => {
+        const currentScrollY = window.scrollY;
+        const heroHeight = heroSection ? heroSection.offsetHeight : 300;
+
+        // Navbar Hide/Show Logic
+        if (currentScrollY > heroHeight) {
+            // Passed hero section
+            if (currentScrollY > lastScrollY && currentScrollY > heroHeight + 50) {
+                // Scrolling down - hide
+                navbar.style.transform = 'translateY(-100%)';
+            } else if (currentScrollY < lastScrollY) {
+                // Scrolling up - show
+                navbar.style.transform = 'translateY(0)';
+            }
+        } else {
+            // In hero section - always show
+            navbar.style.transform = 'translateY(0)';
+        }
+        lastScrollY = currentScrollY;
+
+        // Theme Toggle Logic
         const navRect = navbar.getBoundingClientRect();
         const navCenterY = navRect.top + navRect.height / 2;
 
@@ -338,6 +385,175 @@ function initKeyboardNavigation() {
                     behavior: 'smooth'
                 });
             }
+        }
+    });
+}
+
+// Global Parallax Effect for standard elements
+function initGlobalParallax() {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    // Elements that should receive the subtle float parallax effect
+    const selectors = ['.amenity-item', '.details-box', '.footer-grid > div', '.residence-card', '.cta-section .container'];
+    const elements = document.querySelectorAll(selectors.join(', '));
+    
+    elements.forEach(el => {
+        if (!el.classList.contains('residence-card')) {
+            el.classList.add('parallax-item');
+        }
+    });
+
+    let ticking = false;
+
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                const windowHeight = window.innerHeight;
+                
+                elements.forEach((el, index) => {
+                    const rect = el.getBoundingClientRect();
+                    
+                    // Proceed only if element is inside the viewport
+                    if (rect.top < windowHeight && rect.bottom > 0) {
+                        // Calculate offset relative to the center of the viewport
+                        const centerOffset = (rect.top + rect.height / 2) - (windowHeight / 2);
+                        // Normalize the position to roughly -1 to 1
+                        const position = centerOffset / (windowHeight / 2);
+                        
+                        // Use a uniform speed to ensure horizontal alignment of grid elements is preserved
+                        const speed = 30; 
+                        
+                        // Calculate parallax offset
+                        const yOffset = position * speed;
+                        
+                        el.style.setProperty('--parallax-y', `${yOffset}px`);
+                    }
+                });
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }, { passive: true });
+}
+
+// Partners Section Scroll Animation
+function initPartners() {
+    const section = document.querySelector('.partners-section');
+    if (!section) return;
+
+    const cards = [
+        document.getElementById('pc-0'),
+        document.getElementById('pc-1'),
+        document.getElementById('pc-2'),
+        document.getElementById('pc-3'),
+        document.getElementById('pc-4'),
+        document.getElementById('pc-5')
+    ];
+    const centerText = document.getElementById('partners-center');
+    
+    // Angles to form an elliptical orbit (now 6 items):
+    const config = [
+        { angle: -Math.PI / 2, stackRot: -4, finalRot: -10 },       // P1 Top Center
+        { angle: -Math.PI * 5 / 6, stackRot: 3, finalRot: 8 },      // P2 Top Left
+        { angle: -Math.PI / 6, stackRot: -7, finalRot: -6 },        // P3 Top Right
+        { angle: Math.PI * 5 / 6, stackRot: 5, finalRot: 12 },      // P4 Bottom Left
+        { angle: Math.PI / 6, stackRot: -2, finalRot: -9 },         // P5 Bottom Right
+        { angle: Math.PI / 2, stackRot: 4, finalRot: 6, offsetY: -15 } // P6 Bottom Center (Shifted UP to prevent cutoff)
+    ];
+
+    let ticking = false;
+
+    // Easing function for smooth peeling
+    const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+    function render() {
+        const rect = section.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        
+        // Scroll distance available for animation
+        const scrollDistance = rect.height - windowHeight;
+        
+        // Normalized progress (0 to 1) based on sticky element hitting top of viewport
+        let rawProgress = -rect.top / scrollDistance;
+        let progress = Math.max(0, Math.min(1, rawProgress));
+        
+        const isMobile = window.innerWidth < 768;
+        // Adjust radii based on screen size for an elliptical path, spread further horizontally
+        const radiusX = isMobile ? window.innerWidth * 0.40 : window.innerWidth * 0.36;
+        const radiusY = isMobile ? windowHeight * 0.38 : windowHeight * 0.35;
+
+        cards.forEach((card, i) => {
+            if (!card) return;
+            
+            // Show cards immediately when section is visible
+            card.style.opacity = 1;
+
+            const c = config[i];
+            
+            // Per-card timing offset for cascading peel
+            // P1 moves first, P5 moves last
+            const delay = i * 0.04;
+            const duration = 0.65;
+            
+            let cardProgress = (progress - 0.1 - delay) / duration;
+            cardProgress = Math.max(0, Math.min(1, cardProgress));
+            const p = ease(cardProgress);
+            
+            // Stacked offset (very tight visual grouping)
+            const stackX = (i - 2) * 5; 
+            const stackY = (i - 2) * 8; 
+            
+            // Radial destination offset
+            const radX = Math.cos(c.angle) * radiusX;
+            const radY = (Math.sin(c.angle) * radiusY) + (c.offsetY || 0);
+            
+            // Current position via interpolation
+            const currentX = stackX + (radX - stackX) * p;
+            const currentY = stackY + (radY - stackY) * p;
+            
+            // Current rotation via interpolation
+            const currentRot = c.stackRot + (c.finalRot - c.stackRot) * p;
+            
+            // Current scale & depth
+            // Cards overlap slightly scaled down initially, then expand to full size
+            const startScale = 0.9 + (i * 0.02);
+            const currentScale = startScale + (1 - startScale) * p;
+            
+            // Apply z-index to create stack hierarchy
+            card.style.zIndex = 10 + i;
+            
+            card.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) rotate(${currentRot}deg) scale(${currentScale})`;
+        });
+
+        if (centerText) {
+            // Reveal center text incrementally as cards spread apart
+            let textOp = (progress - 0.2) / 0.4;
+            textOp = Math.max(0, Math.min(1, textOp));
+            
+            let textScale = 0.95 + (0.05 * textOp);
+            
+            centerText.style.opacity = textOp;
+            centerText.style.transform = `scale(${textScale})`;
+        }
+        
+        ticking = false;
+    }
+
+    // Initial render call
+    render();
+
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(render);
+            ticking = true;
+        }
+    }, { passive: true });
+    
+    window.addEventListener('resize', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(render);
+            ticking = true;
         }
     });
 }

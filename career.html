@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- SEO & AEO Optimization -->
+    <title>Careers | Join the PRABALHOUSING Team</title>
+    <meta name="description" content="Build a rewarding career at PRABALHOUSING. Explore opportunities in luxury real estate, featuring a culture of inclusivity, growth, and work-life harmony.">
+    <meta name="keywords" content="Prabalhousing careers, real estate jobs, luxury property jobs, work at Prabalhousing, career opportunities">
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:title" content="Careers at PRABALHOUSING">
+    <meta property="og:description" content="Build a rewarding career at PRABALHOUSING with a culture of inclusivity and growth.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.prabalhousing.com/career.html">
+    
+    <!-- Structured Data for Answer Engine Optimization (AEO) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Careers at PRABALHOUSING",
+      "description": "Career opportunities and job applications for PRABALHOUSING.",
+      "url": "https://www.prabalhousing.com/career.html"
+    }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/png" href="https://res.cloudinary.com/dyhlpxwwo/image/upload/v1790075126/Prabal_Final_Logo_ozw283.png">
+    <style>
+        .career-layout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 50px;
+            padding-top: 150px; /* Account for navbar */
+        }
+        
+        .career-title-section {
+            flex: 1;
+            min-width: 300px;
+            position: sticky;
+            top: 150px;
+            align-self: flex-start;
+        }
+
+        .career-form-section {
+            flex: 2;
+            min-width: 300px;
+        }
+
+        .contact-form-wrapper {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            padding: 50px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            margin-bottom: 50px;
+        }
+        
+        body.night-mode .contact-form-wrapper {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            opacity: 0.8;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 16px;
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: var(--font-ui);
+            font-size: 1rem;
+            border-radius: 4px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #F17943;
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23F17943%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat, repeat;
+            background-position: right .7em top 50%, 0 0;
+            background-size: .65em auto, 100%;
+        }
+
+        .form-control[type="file"] {
+            padding: 12px;
+            font-size: 0.9rem;
+        }
+
+        .section-divider {
+            margin: 40px 0;
+            border-top: 1px dashed var(--border-color);
+            position: relative;
+        }
+
+        .section-divider span {
+            position: absolute;
+            top: -12px;
+            left: 0;
+            background: var(--surface-color);
+            padding-right: 15px;
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: #F17943;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background-color: var(--text-color);
+            color: var(--bg-color);
+            border: none;
+            font-family: var(--font-ui);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background-color: #F17943;
+            color: #fff;
+        }
+        
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .two-col {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            .career-title-section {
+                position: static;
+            }
+        }
+
+        /* Accordion Gallery CSS */
+        .accordion-layout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .accordion-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .accordion-gallery {
+            flex: 2;
+            display: flex;
+            height: 500px;
+            gap: 15px;
+            min-width: 300px;
+        }
+
+        .accordion-card {
+            position: relative;
+            flex: 0.5;
+            border-radius: 30px;
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+            transition: flex 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .accordion-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+            opacity: 0.8;
+            transition: opacity 0.4s ease;
+        }
+
+        /* Hover Behavior */
+        .accordion-card:hover, 
+        .accordion-gallery:not(:hover) .accordion-card.active {
+            flex: 4;
+        }
+
+        .accordion-gallery:hover .accordion-card.active {
+            flex: 0.5;
+        }
+        
+        .accordion-card:hover::after,
+        .accordion-gallery:not(:hover) .accordion-card.active::after {
+            opacity: 0.4;
+        }
+
+        /* Text Styles */
+        .accordion-card .text-vertical {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) rotate(180deg);
+            writing-mode: vertical-rl;
+            color: white;
+            font-family: var(--font-ui);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 1rem;
+            white-space: nowrap;
+            z-index: 2;
+            transition: opacity 0.4s ease;
+            opacity: 1;
+        }
+
+        .accordion-card .text-horizontal {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            color: white;
+            font-family: var(--font-display);
+            font-size: 2rem;
+            white-space: nowrap;
+            z-index: 2;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* Text Transitions */
+        .accordion-card:hover .text-vertical,
+        .accordion-gallery:not(:hover) .accordion-card.active .text-vertical {
+            opacity: 0;
+        }
+        
+        .accordion-card:hover .text-horizontal,
+        .accordion-gallery:not(:hover) .accordion-card.active .text-horizontal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .accordion-gallery:hover .accordion-card.active .text-horizontal {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .accordion-gallery:hover .accordion-card.active .text-vertical {
+            opacity: 1;
+        }
+    </style>
+    <!-- Vercel Analytics -->
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body class="day-mode">
+    <nav class="navbar">
+        <a href="/" class="nav-brand" style="text-decoration: none; color: inherit;">PRABALHOUSING</a>
+        <button class="menu-toggle" aria-label="Toggle Menu">
+            <span></span><span></span>
+        </button>
+        <ul class="nav-links">
+            <li><a href="properties.html">PROPERTIES</a></li>
+            <li><a href="about.html">ABOUT</a></li>
+            <li><a href="contact.html">CONTACT</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" style="cursor: default;">MORE</a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Blogs</a></li>
+                    <li><a href="career.html">Career</a></li>
+                </ul>
+            </li>
+            <li>
+                <button id="btn-toggle-aesthetics" class="theme-switch" aria-label="Toggle Theme">
+                    <div class="switch-clouds">
+                        <div class="switch-cloud cloud-1"></div>
+                        <div class="switch-cloud cloud-2"></div>
+                        <div class="switch-cloud cloud-3"></div>
+                    </div>
+                    <div class="switch-stars">
+                        <div class="switch-star s-star-1"></div>
+                        <div class="switch-star s-star-2"></div>
+                        <div class="switch-star s-star-3"></div>
+                        <div class="switch-star s-star-4"></div>
+                    </div>
+                    <div class="switch-orb">
+                        <div class="switch-crater crater-1"></div>
+                        <div class="switch-crater crater-2"></div>
+                        <div class="switch-crater crater-3"></div>
+                    </div>
+                </button>
+            </li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="section" style="padding-top: 0;">
+            <div class="container career-layout">
+                
+                <!-- Left Title Section -->
+                <div class="career-title-section">
+                    <h1 class="display-title" style="font-size: clamp(3.5rem, 6vw, 5rem); line-height: 1.1; margin-bottom: 20px;">CAREERS</h1>
+                    <p style="font-size: 1.1rem; opacity: 0.8; max-width: 350px;">Join our team of forward-thinkers and industry leaders. We are looking for talented individuals who are passionate about redefining the real estate landscape.</p>
+                </div>
+
+                <!-- Right Form Section -->
+                <div class="career-form-section">
+                    <div class="contact-form-wrapper">
+                        <h2 style="font-family: var(--font-display); font-size: 2rem; margin-bottom: 40px; text-align: center;">Join with us</h2>
+                        <form action="#" method="POST" enctype="multipart/form-data">
+                            
+                            <!-- Basic Information Divider -->
+                            <div class="section-divider" style="margin: 20px 0 30px 0; border-top: none;">
+                                <span style="position: static; font-size: 1.5rem; color: #F17943; padding: 0;">Basic Information</span>
+                            </div>
+                            
+                            <!-- Personal Details -->
+                            <div class="form-group">
+                                <label for="fullName">Applicant's Full Name *</label>
+                                <input type="text" id="fullName" name="fullName" class="form-control" placeholder="Enter your full name" required>
+                            </div>
+
+                            <div class="two-col">
+                                <div class="form-group">
+                                    <label for="email">Email Address *</label>
+                                    <input type="email" id="email" name="email" class="form-control" placeholder="example@domain.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone">Phone No. *</label>
+                                    <input type="tel" id="phone" name="phone" class="form-control" placeholder="Your mobile number" required>
+                                </div>
+                            </div>
+
+                            <div class="two-col">
+                                <div class="form-group">
+                                    <label for="dob">Date of Birth *</label>
+                                    <input type="date" id="dob" name="dob" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="pan">PAN Card No. *</label>
+                                    <input type="text" id="pan" name="pan" class="form-control" placeholder="ABCDE1234F" style="text-transform: uppercase;" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="source">How Did You Hear About the Position / Opportunity? *</label>
+                                <select id="source" name="source" class="form-control" required>
+                                    <option value="" disabled selected>Select an option</option>
+                                    <option value="instagram">Instagram</option>
+                                    <option value="linkedin">LinkedIn</option>
+                                    <option value="facebook">Facebook</option>
+                                    <option value="website">Company Website</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="referrer">If Referred by Prabal housing employee, kindly mention the name</label>
+                                <input type="text" id="referrer" name="referrer" class="form-control" placeholder="Employee Name (Optional)">
+                            </div>
+
+                            <div class="two-col">
+                                <div class="form-group">
+                                    <label for="technology">Please specify the technology you're applying for *</label>
+                                    <input type="text" id="technology" name="technology" class="form-control" placeholder="e.g., React, Node.js, Python" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="position">Kindly put the position you are applying for *</label>
+                                    <input type="text" id="position" name="position" class="form-control" placeholder="e.g., Frontend Developer" required>
+                                </div>
+                            </div>
+
+                            <!-- Education & Experience Divider -->
+                            <div class="section-divider">
+                                <span>Education & Experience</span>
+                            </div>
+                            <div style="height: 20px;"></div> <!-- Spacer -->
+
+                            <div class="two-col">
+                                <div class="form-group">
+                                    <label for="education">Latest Education (Degree or course) *</label>
+                                    <input type="text" id="education" name="education" class="form-control" placeholder="e.g., B.Tech in Computer Science" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eduYear">Latest Education passing Year (mm/dd/yyyy) *</label>
+                                    <input type="date" id="eduYear" name="eduYear" class="form-control" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="expRange">Kindly choose the range of Total years of experience *</label>
+                                <select id="expRange" name="expRange" class="form-control" required>
+                                    <option value="" disabled selected>Select an option</option>
+                                    <option value="fresher">Fresher (0 years)</option>
+                                    <option value="1-3">1 to 3 Years</option>
+                                    <option value="3-5">3 to 5 Years</option>
+                                    <option value="5-10">5 to 10 Years</option>
+                                    <option value="10+">10+ Years</option>
+                                </select>
+                            </div>
+
+                            <div class="two-col">
+                                <div class="form-group">
+                                    <label for="totalExp">Total Experience (In years) *</label>
+                                    <input type="number" id="totalExp" name="totalExp" class="form-control" min="0" step="0.5" placeholder="e.g., 2" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="relevantExp">Relevant Experience (In years) *</label>
+                                    <input type="number" id="relevantExp" name="relevantExp" class="form-control" min="0" step="0.5" placeholder="e.g., 1.5" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="techWorkedOn">Name the Technology You Have Worked On</label>
+                                <input type="text" id="techWorkedOn" name="techWorkedOn" class="form-control" placeholder="e.g., AWS, Docker, MongoDB">
+                            </div>
+
+                            <div class="form-group" style="margin-top: 30px;">
+                                <label for="resume">Upload Resume/CV *</label>
+                                <input type="file" id="resume" name="resume" class="form-control" accept=".pdf,.doc,.docx" required>
+                                <small style="display: block; margin-top: 5px; opacity: 0.6;">Accepted formats: PDF, DOC, DOCX</small>
+                            </div>
+
+                            <button type="submit" class="submit-btn">Submit Application</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- What Makes Us a Great Place To Work Section -->
+        <section class="section">
+            <div class="container accordion-layout">
+                <div class="accordion-text">
+                    <h2 class="display-title" style="font-size: clamp(3rem, 5vw, 4.5rem); line-height: 0.95; margin-bottom: 20px;">What Makes Us a Great Place To Work</h2>
+                    <p style="font-size: 1.1rem; opacity: 0.8; max-width: 400px; margin-bottom: 30px;">Build a rewarding career on a foundation of growth, balance, and inclusivity without the hassle of traditional corporate rigidity.</p>
+                </div>
+                <div class="accordion-gallery">
+                    <div class="accordion-card active" style="background-image: url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80');">
+                        <div class="text-vertical">Inclusivity</div>
+                        <div class="text-horizontal">Inclusivity</div>
+                    </div>
+                    <div class="accordion-card" style="background-image: url('https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=800&q=80');">
+                        <div class="text-vertical">Equal Opportunity</div>
+                        <div class="text-horizontal">Equal Opportunity</div>
+                    </div>
+                    <div class="accordion-card" style="background-image: url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80');">
+                        <div class="text-vertical">Learning & Development</div>
+                        <div class="text-horizontal">Learning & Development</div>
+                    </div>
+                    <div class="accordion-card" style="background-image: url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80');">
+                        <div class="text-vertical">Work-life Harmony</div>
+                        <div class="text-horizontal">Work-life Harmony</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" style="position: relative; overflow: hidden; margin-top: 0px;">
+        <div class="container footer-grid" style="position: relative; z-index: 2;">
+            <div class="footer-brand">
+                <h3>PRABALHOUSING</h3>
+                <p>Curating exceptional living spaces for the discerning few.</p>
+            </div>
+            <div class="footer-links">
+                <h4>EXPLORE</h4>
+                <ul>
+                    <li><a href="properties.html">Properties</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="career.html">Career</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4>CONTACT</h4>
+                <p>+1 (800) 123-4567</p>
+                <p>enquiry@prabalhousing.com</p>
+                <p>100 Luxury Blvd, Metropolis</p>
+            </div>
+            <div class="footer-social">
+                <h4>SOCIAL</h4>
+                <div class="social-links">
+                    <a href="#">Instagram</a>
+                    <a href="#">LinkedIn</a>
+                    <a href="#">Facebook</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom" style="position: relative; z-index: 2;">
+            <p>&copy; 2026 PRABALHOUSING. All Rights Reserved.</p>
+        </div>
+        <div style="position: absolute; bottom: 0; left: 0; width: 100%; text-align: center; font-size: clamp(3rem, 11.5vw, 20rem); font-family: var(--font-display); font-weight: 700; color: var(--text-color); opacity: 0.04; white-space: nowrap; pointer-events: none; z-index: 1; line-height: 0.85; transform: scaleY(1.6); transform-origin: bottom center;">
+            PRABALHOUSING
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

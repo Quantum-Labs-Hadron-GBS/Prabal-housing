@@ -1,12 +1,12 @@
 /* --- CSS VARIABLES & TOKENS --- */
 :root {
     /* Day Theme Colors */
-    --color-bg-day: #fafafa;
-    --color-bg-day-rgb: 250, 250, 250;
+    --color-bg-day: #eeece4;
+    --color-bg-day-rgb: 238, 236, 228;
     --color-text-day: #1a1f24;
-    --color-sky-day: linear-gradient(180deg, #cbd1d6 0%, #fafafa 100%);
-    --color-surface-day: #ffffff;
-    --color-border-day: #e0e0e0;
+    --color-sky-day: linear-gradient(180deg, #cbd1d6 0%, #eeece4 100%);
+    --color-surface-day: #eeece4;
+    --color-border-day: #d6d4cc;
     
     /* Night Theme Colors */
     --color-bg-night: #080c14;
@@ -141,6 +141,63 @@ a {
 
 .nav-links a:hover::after {
     width: 100%;
+}
+
+/* Dropdown Menu */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: -10px;
+    background-color: var(--surface-color);
+    color: var(--text-color);
+    min-width: 150px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 10px 0;
+    list-style: none;
+}
+
+.dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-menu li {
+    display: block;
+    margin: 0;
+}
+
+.dropdown-menu li a {
+    display: block;
+    padding: 10px 20px;
+    font-size: 0.85rem;
+    font-family: var(--font-ui);
+    text-transform: uppercase;
+}
+
+.dropdown-menu li a::after {
+    display: none;
+}
+
+.dropdown-menu li a:hover {
+    background-color: rgba(0,0,0,0.03);
+}
+
+body.night-mode .dropdown-menu {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+body.night-mode .dropdown-menu li a:hover {
+    background-color: rgba(255,255,255,0.05);
 }
 
 .menu-toggle {
@@ -471,11 +528,19 @@ body.night-mode .night-building {
 .residence-card {
     background-color: var(--surface-color);
     border: 1px solid var(--border-color);
-    transition: transform 0.4s ease;
+    transform: translateY(var(--parallax-y, 0px));
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform;
 }
 
 .residence-card:hover {
-    transform: translateY(-10px);
+    transform: translateY(calc(var(--parallax-y, 0px) - 10px));
+}
+
+.parallax-item {
+    transform: translateY(var(--parallax-y, 0px));
+    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform;
 }
 
 .residence-card img {
@@ -678,26 +743,100 @@ body.night-mode .night-building {
     transition: background-color var(--transition-speed) ease;
 }
 
-/* Project Specs */
-.details-box {
+/* Partners Section (Scroll-driven) */
+.partners-section {
+    position: relative;
+    height: 250vh; /* scroll distance */
+    background-color: var(--bg-color);
+    transition: background-color var(--transition-speed) ease;
+}
+
+.partners-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    perspective: 1200px;
+}
+
+.partners-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.partners-center {
+    position: absolute;
+    text-align: center;
+    z-index: 1; /* behind cards */
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.1s ease, transform 0.1s ease;
+    pointer-events: none;
+}
+
+.partners-eyebrow {
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    display: block;
+    margin-bottom: 20px;
+}
+
+.partners-title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 6vw, 5rem);
+    line-height: 1.1;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.partners-desc {
+    font-family: var(--font-ui);
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    opacity: 0.8;
+}
+
+.partner-card {
+    position: absolute;
+    width: clamp(140px, 12vw, 220px);
+    aspect-ratio: 1 / 1.15;
     background-color: var(--surface-color);
     border: 1px solid var(--border-color);
-    padding: 80px;
-}
-
-.specs-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 40px;
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
+    padding: 20px;
+    z-index: 2;
+    transform-origin: center center;
+    will-change: transform;
+    opacity: 0; /* JS handles reveal */
 }
 
-.specs-grid strong {
-    display: block;
-    font-size: 0.8rem;
-    letter-spacing: 0.15em;
-    margin-bottom: 10px;
-    opacity: 0.6;
+body.night-mode .partner-card {
+    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+}
+
+.partner-type {
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 1.5vw, 1.8rem);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0.05em;
+    opacity: 0.9;
+    text-transform: uppercase;
 }
 
 .cta-actions {
@@ -894,4 +1033,117 @@ body.night-mode .night-building {
     .cloud-far, .cloud-mid {
         animation: none !important;
     }
+}
+
+/* Theme Switcher */
+.theme-switch {
+    background: #60a5fa;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    width: 68px;
+    height: 32px;
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+    transition: background 0.4s ease;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.theme-switch.active {
+    background: #1e293b;
+}
+
+.switch-orb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #fcd34d;
+    box-shadow: inset -2px -2px 4px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.2);
+    transition: transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1), background 0.4s ease;
+    z-index: 3;
+}
+
+.theme-switch.active .switch-orb {
+    transform: translateX(36px);
+    background: #cbd5e1;
+    box-shadow: inset -2px -2px 4px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.switch-crater {
+    position: absolute;
+    background: #94a3b8;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    box-shadow: inset 1px 1px 2px rgba(0,0,0,0.2);
+}
+.crater-1 { width: 6px; height: 6px; top: 6px; left: 6px; }
+.crater-2 { width: 4px; height: 4px; top: 16px; left: 10px; }
+.crater-3 { width: 8px; height: 8px; top: 12px; left: 16px; }
+
+.theme-switch.active .switch-crater {
+    opacity: 1;
+}
+
+.switch-clouds {
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    width: 40px;
+    height: 40px;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    z-index: 1;
+}
+.switch-cloud {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+}
+.cloud-1 { width: 20px; height: 20px; bottom: 0; right: 0; }
+.cloud-2 { width: 16px; height: 16px; bottom: 5px; right: 12px; }
+.cloud-3 { width: 14px; height: 14px; bottom: 0; right: 22px; }
+
+.theme-switch.active .switch-clouds {
+    transform: translateY(20px);
+    opacity: 0;
+}
+
+.switch-stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 40px;
+    height: 100%;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    z-index: 1;
+}
+.switch-star {
+    position: absolute;
+    background: white;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+}
+.switch-star::before, .switch-star::after {
+    content: '';
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+}
+.s-star-1 { top: 8px; left: 12px; }
+.s-star-2 { top: 18px; left: 8px; }
+.s-star-3 { top: 14px; left: 22px; }
+.s-star-4 { top: 24px; left: 18px; }
+
+.theme-switch.active .switch-stars {
+    opacity: 1;
+    transform: translateY(0);
 }
