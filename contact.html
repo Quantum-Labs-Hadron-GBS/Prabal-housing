@@ -173,23 +173,38 @@
                         </div>
                         <div class="form-group">
                             <label for="mobileNumber">Mobile Number</label>
-                            <input type="tel" id="mobileNumber" name="mobileNumber" class="form-control" placeholder="Enter your mobile number" required>
+                            <div style="display: flex; border: 1px solid var(--border-color); border-radius: 4px; overflow: hidden; background: var(--bg-color);">
+                                <span style="background: var(--surface-color); padding: 0.8rem 1.2rem; border-right: 1px solid var(--border-color); color: var(--text-color); font-family: var(--font-ui); display: flex; align-items: center; font-weight: 500;">+91</span>
+                                <input type="tel" id="mobileNumber" name="mobileNumber" class="form-control" style="border: none; border-radius: 0; flex: 1; outline: none; box-shadow: none;" placeholder="10-digit mobile" required>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="emailId">Email ID</label>
-                            <input type="email" id="emailId" name="emailId" class="form-control" placeholder="Enter your email address" required>
+                            <input type="email" id="emailId" name="emailId" class="form-control" placeholder="Enter your email address">
                         </div>
-                        <div class="form-group">
-                            <label for="bhkSelect">Select BHK</label>
-                            <select id="bhkSelect" name="bhkSelect" class="form-control" required>
-                                <option value="" disabled selected>Choose your preference...</option>
-                                <option value="studio">Studio</option>
-                                <option value="1bhk">1 BHK</option>
-                                <option value="2bhk">2 BHK</option>
-                                <option value="3bhk">3 BHK</option>
-                                <option value="4bhk">4 BHK</option>
-                                <option value="5bhk">5+ BHK</option>
-                            </select>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="lookingFor">Looking For</label>
+                                <select id="lookingFor" name="lookingFor" class="form-control">
+                                    <option value="any" selected>Any</option>
+                                    <option value="studio">Studio</option>
+                                    <option value="1bhk">1 BHK</option>
+                                    <option value="2bhk">2 BHK</option>
+                                    <option value="3bhk">3 BHK</option>
+                                    <option value="4bhk">4 BHK</option>
+                                    <option value="5bhk">5+ BHK</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="budget">Budget</label>
+                                <select id="budget" name="budget" class="form-control">
+                                    <option value="not_sure" selected>Not sure</option>
+                                    <option value="under_50l">Under ₹50 Lacs</option>
+                                    <option value="50l_1cr">₹50 Lacs - ₹1 Cr</option>
+                                    <option value="1cr_2cr">₹1 Cr - ₹2 Cr</option>
+                                    <option value="above_2cr">Above ₹2 Cr</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="message">Your Message</label>

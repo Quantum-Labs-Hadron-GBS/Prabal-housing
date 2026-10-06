@@ -213,7 +213,7 @@ body.night-mode .sky-glow {
     width: 100%;
     overflow: hidden;
     opacity: 0;
-    transition: opacity 2.2s ease;
+    transition: opacity 0.8s ease;
 }
 
 .cloud-layer.is-ready {
@@ -266,7 +266,7 @@ body.night-mode .cloud-strip--night { opacity: 1; }
     right: 0;
     top: 54%;
     height: 400vh;
-    animation: bankSettle 2.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: bankSettle 1s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes bankSettle {
@@ -277,7 +277,7 @@ body.night-mode .cloud-strip--night { opacity: 1; }
 .cloud-layer--bank {
     top: 0;
     height: 72vh;
-    transition: opacity 1.6s ease;
+    transition: opacity 0.6s ease;
 }
 
 /* Soft gradient that is visible immediately (before textures are ready) */
@@ -294,7 +294,7 @@ body.night-mode .cloud-strip--night { opacity: 1; }
         rgba(var(--bg-color-rgb), 0.85) 72%,
         rgba(var(--bg-color-rgb), 1) 100%
     );
-    transition: opacity 2s ease;
+    transition: opacity 0.8s ease;
 }
 
 .cloud-bank:has(.is-ready) .cloud-bank-fallback {
