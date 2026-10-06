@@ -146,6 +146,11 @@
         };
 
         if (form) {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('q')) {
+                const searchInput = form.elements['q'];
+                if (searchInput) searchInput.value = urlParams.get('q');
+            }
             form.addEventListener('submit', e => { e.preventDefault(); apply(); });
             form.addEventListener('change', apply);
             let t;

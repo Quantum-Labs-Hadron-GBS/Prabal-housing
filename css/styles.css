@@ -509,7 +509,7 @@ body.night-mode .night-building {
     border-color: var(--accent);
     color: #fff;
     transform: translateY(-2px);
-    box-shadow: 0 14px 34px rgba(241, 121, 67, 0.35);
+    box-shadow: 0 14px 34px rgba(var(--shadow-rgb), 0.25);
 }
 
 
@@ -1163,16 +1163,18 @@ body.night-mode .partner-card {
 }
 
 .usp-card {
-    background: var(--accent-soft);
-    border-left: 4px solid var(--accent);
+    background: transparent;
+    border: 1px solid rgba(128, 128, 128, 0.2);
     padding: 1.5rem;
     border-radius: 4px;
-    box-shadow: 0 4px 15px rgba(var(--shadow-rgb), 0.05);
+    transition: all 0.3s ease;
 }
 
-.usp-card.is-visible:hover {
+.usp-card.is-visible:hover,
+.usp-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 20px rgba(241, 121, 67, 0.15);
     transform: translateY(-3px);
-    transition-duration: 0.3s;
 }
 
 .usp-card h3 {
@@ -2824,7 +2826,7 @@ body.night-mode .nav-link:hover { background: rgba(255, 255, 255, 0.1); }
 }
 
 .nav-cta span { transition: transform 0.3s ease; }
-.nav-cta:hover { background: var(--accent); color: #fff; box-shadow: 0 10px 26px -6px rgba(241, 121, 67, 0.6); }
+.nav-cta:hover { background: var(--accent); color: #fff; box-shadow: 0 4px 10px rgba(var(--shadow-rgb), 0.15); }
 .nav-cta:hover span { transform: translateX(3px); }
 
 .navbar-light .nav-cta { background: #fff; color: #1a1f24; }
