@@ -57,6 +57,7 @@ body.night-mode {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* Proportional scaling: every rem on the site follows the screen's width AND
