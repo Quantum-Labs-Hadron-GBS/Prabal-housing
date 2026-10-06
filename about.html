@@ -42,6 +42,18 @@
             background-color: #192d40 !important;
             border-color: #264259 !important;
         }
+        .about-services-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .about-features-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        @media (max-width: 768px) {
+            .about-services-grid, .about-features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
     <!-- Vercel Analytics -->
     <script>
@@ -103,7 +115,7 @@
         <!-- Services Grid -->
         <section class="section" style="padding-top: 0; padding-bottom: 120px;">
             <div class="container">
-                <div class="cards-grid" style="grid-template-columns: repeat(2, 1fr);">
+                <div class="cards-grid about-services-grid">
                     <!-- Consultancy Services -->
                     <div class="residence-card sky-blue-card" style="padding: 20px; height: 100%;">
                         <div class="card-content">
@@ -158,7 +170,7 @@
         <!-- Feature Cards -->
         <section class="section" style="padding-top: 0; padding-bottom: 120px;">
             <div class="container">
-                <div class="cards-grid" style="grid-template-columns: repeat(3, 1fr); gap: 30px;">
+                <div class="cards-grid about-features-grid">
                     <!-- 1 -->
                     <div class="residence-card sky-blue-card" style="padding: 40px 30px; text-align: center; border: 1px solid rgba(212, 175, 55, 0.5);">
                         <img src="https://picsum.photos/seed/experience/100/100" alt="Experience" style="width: 70px; height: 70px; margin: 0 auto 20px; object-fit: cover; border-radius: 50%;">
