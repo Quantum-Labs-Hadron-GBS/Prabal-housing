@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Team Dashboard | PRABALHOUSING</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="icon" type="image/png"
+        href="https://res.cloudinary.com/dyhlpxwwo/image/upload/f_png,w_64/v1790075126/Prabal_Final_Logo_ozw283.png">
+</head>
+
+<body class="day-mode dash-body">
+
+    <!-- ============ SIGN IN ============ -->
+    <main class="dash-login" id="view-login" hidden>
+        <form class="login-card" id="login-form" novalidate>
+            <img class="login-logo" src="https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_160/v1790075126/Prabal_Final_Logo_ozw283.png"
+                alt="" width="64" height="61">
+            <h1>Team Dashboard</h1>
+            <p class="login-sub">Sign in to manage property listings.</p>
+
+            <div class="demo-note" data-demo-only hidden>
+                <strong>Demo mode.</strong> Supabase isn't connected yet, so changes are saved in this browser only.
+                Any email works. See <code>DASHBOARD_SETUP.md</code> to go live.
+            </div>
+
+            <label class="dash-field">
+                <span>Email</span>
+                <input type="email" name="email" autocomplete="username" required placeholder="you@prabalhousing.com">
+            </label>
+            <label class="dash-field">
+                <span>Password</span>
+                <input type="password" name="password" autocomplete="current-password" required placeholder="••••••••">
+            </label>
+            <p class="dash-error" id="login-error" role="alert" hidden></p>
+            <button type="submit" class="dash-btn dash-btn--primary dash-btn--block" id="login-submit">Sign in</button>
+            <a class="login-back" href="/">&larr; Back to website</a>
+        </form>
+    </main>
+
+    <!-- ============ APP ============ -->
+    <div class="dash-app" id="view-app" hidden>
+        <header class="dash-topbar">
+            <a class="dash-brand" href="/" title="View website">
+                <img src="https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_96/v1790075126/Prabal_Final_Logo_ozw283.png"
+                    alt="" width="32" height="30">
+                <span>PRABALHOUSING</span>
+            </a>
+            <span class="dash-mode" data-demo-only hidden>Demo mode</span>
+            <div class="dash-topbar-right">
+                <span class="dash-user" id="dash-user"></span>
+                <a class="dash-btn dash-btn--ghost" href="/properties" target="_blank" rel="noopener">View site</a>
+                <button class="dash-btn dash-btn--ghost" id="sign-out" type="button">Sign out</button>
+            </div>
+        </header>
+
+        <main class="dash-main">
+            <div class="dash-head">
+                <div>
+                    <h1>Listings</h1>
+                    <p>Everything here appears on the public Properties page the moment you save.</p>
+                </div>
+                <button class="dash-btn dash-btn--primary" id="add-property" type="button">+ Add property</button>
+            </div>
+
+            <div class="dash-stats" id="dash-stats"></div>
+
+            <div class="dash-toolbar">
+                <input type="search" id="dash-search" placeholder="Search by name, location or builder..." aria-label="Search listings">
+                <div class="seg" role="tablist" aria-label="Filter by status" id="status-tabs">
+                    <button type="button" class="seg-btn is-active" data-status="">All</button>
+                    <button type="button" class="seg-btn" data-status="available">Available</button>
+                    <button type="button" class="seg-btn" data-status="new_launch">New launch</button>
+                    <button type="button" class="seg-btn" data-status="closed">Closed</button>
+                </div>
+            </div>
+
+            <div class="dash-list" id="dash-list" aria-live="polite"></div>
+        </main>
+    </div>
+
+    <!-- ============ EDITOR (slide-over) ============ -->
+    <div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
+    <aside class="drawer" id="drawer" aria-labelledby="drawer-title" aria-hidden="true">
+        <form class="drawer-form" id="property-form" novalidate>
+            <header class="drawer-head">
+                <h2 id="drawer-title">Add property</h2>
+                <button type="button" class="drawer-close" id="drawer-close" aria-label="Close">&times;</button>
+            </header>
+
+            <div class="drawer-body">
+                <div class="drawer-fields">
+                    <input type="hidden" name="id">
+
+                    <div class="dash-field">
+                        <span>Photo</span>
+                        <label class="dropzone" id="dropzone">
+                            <input type="file" accept="image/*" id="photo-input" hidden>
+                            <img id="photo-preview" alt="" hidden>
+                            <span class="dropzone-text" id="dropzone-text">
+                                <strong>Click to upload</strong> or drag a photo here<br>
+                                <small>JPG, PNG or WebP — we resize it automatically</small>
+                            </span>
+                        </label>
+                        <button type="button" class="link-btn" id="photo-remove" hidden>Remove photo</button>
+                    </div>
+
+                    <label class="dash-field">
+                        <span>Project name *</span>
+                        <input type="text" name="title" maxlength="120" required placeholder="e.g. Godrej River Crest">
+                    </label>
+
+                    <label class="dash-field">
+                        <span>Developer / builder</span>
+                        <input type="text" name="developer" maxlength="120" list="developer-list" placeholder="e.g. Godrej Properties">
+                        <datalist id="developer-list">
+                            <option value="Godrej Properties">
+                            <option value="Mahindra Lifespaces">
+                            <option value="Lodha Group">
+                            <option value="Kohinoor">
+                            <option value="Paranjape">
+                            <option value="ANP Corp">
+                        </datalist>
+                    </label>
+
+                    <div class="dash-field">
+                        <span>Configuration *</span>
+                        <div class="chips" id="config-chips"></div>
+                        <div class="chip-add">
+                            <input type="text" id="config-custom" maxlength="30" placeholder="Something else? e.g. 2.5 BHK, Duplex">
+                            <button type="button" class="dash-btn dash-btn--ghost" id="config-add">Add</button>
+                        </div>
+                    </div>
+
+                    <div class="dash-field">
+                        <span>Price</span>
+                        <div class="price-row">
+                            <input type="number" name="price" min="0" step="0.01" inputmode="decimal" placeholder="e.g. 1.25">
+                            <select name="unit" aria-label="Price unit">
+                                <option value="cr">Crore</option>
+                                <option value="l">Lakh</option>
+                            </select>
+                        </div>
+                        <div class="checks">
+                            <label><input type="checkbox" name="price_onwards"> Starting price ("onwards")</label>
+                            <label><input type="checkbox" name="price_on_request"> Price on request</label>
+                        </div>
+                    </div>
+
+                    <div class="field-row">
+                        <label class="dash-field">
+                            <span>Location *</span>
+                            <input type="text" name="location" maxlength="120" required placeholder="e.g. Baner">
+                        </label>
+                        <label class="dash-field">
+                            <span>City</span>
+                            <input type="text" name="city" maxlength="60" value="Pune">
+                        </label>
+                    </div>
+
+                    <div class="dash-field">
+                        <span>Status</span>
+                        <div class="seg seg--full" id="status-seg">
+                            <label class="seg-btn"><input type="radio" name="status" value="available" checked> Available</label>
+                            <label class="seg-btn"><input type="radio" name="status" value="new_launch"> New launch</label>
+                            <label class="seg-btn seg-btn--closed"><input type="radio" name="status" value="closed"> Closed</label>
+                        </div>
+                        <small class="field-hint">Closed listings get a "Closed" stamp and hide their price behind "Ask us".</small>
+                    </div>
+
+                    <div class="field-row">
+                        <label class="dash-field">
+                            <span>RERA number</span>
+                            <input type="text" name="rera" maxlength="60" placeholder="Optional">
+                        </label>
+                        <label class="toggle">
+                            <input type="checkbox" name="featured">
+                            <span class="toggle-ui" aria-hidden="true"></span>
+                            <span>Featured<small>Shown first &amp; on homepage</small></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="drawer-preview">
+                    <span class="preview-label">Live preview</span>
+                    <div id="card-preview"></div>
+                </div>
+            </div>
+
+            <footer class="drawer-foot">
+                <p class="dash-error" id="form-error" role="alert" hidden></p>
+                <button type="button" class="dash-btn dash-btn--ghost" id="drawer-cancel">Cancel</button>
+                <button type="submit" class="dash-btn dash-btn--primary" id="save-btn">Save property</button>
+            </footer>
+        </form>
+    </aside>
+
+    <!-- ============ CONFIRM DELETE ============ -->
+    <dialog class="confirm" id="confirm-dialog">
+        <form method="dialog">
+            <h3>Delete this property?</h3>
+            <p id="confirm-text">It will be removed from the website immediately. This can't be undone.</p>
+            <p class="confirm-tip">Tip: marking it <strong>Closed</strong> keeps it on the site with a stamp — good social proof.</p>
+            <div class="confirm-actions">
+                <button value="cancel" class="dash-btn dash-btn--ghost">Keep it</button>
+                <button value="close" class="dash-btn dash-btn--ghost" id="confirm-close-instead">Mark closed instead</button>
+                <button value="delete" class="dash-btn dash-btn--danger">Delete</button>
+            </div>
+        </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+    <script src="js/store.js"></script>
+    <script src="js/listings.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>

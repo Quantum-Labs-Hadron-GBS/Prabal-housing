@@ -228,6 +228,132 @@
         return { w: W, h: H, day, night };
     }
 
+
+    // ---- Aurora renderer (self-contained, also stringified into the worker) ----
+    // Curtains of light: a wavy band with a sharp lower hem, long vertical rays
+    // rising from it, green at the base shading to teal and violet at the top.
+    function renderAurora(s) {
+        const W = s.w, H = s.h;
+        let seed = s.seed >>> 0 || 1;
+        const rand = () => (seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296;
+        const lattice = new Float32Array(512);
+        for (let i = 0; i < 512; i++) lattice[i] = rand() * 2 - 1;
+
+        // Periodic 1D value noise (period = cells), smooth interpolation
+        function noise1(x, cells) {
+            const xi = Math.floor(x), f = x - xi;
+            const a = lattice[((xi % cells) + cells) % cells];
+            const b = lattice[(((xi + 1) % cells) + cells) % cells];
+            const t = f * f * (3 - 2 * f);
+            return a + (b - a) * t;
+        }
+        function fbm1(u, cells, oct) {
+            let sum = 0, amp = 0.5, f = 1, norm = 0;
+            for (let o = 0; o < oct; o++) {
+                sum += amp * noise1(u * f + o * 17.3, cells * f);
+                norm += amp; amp *= 0.5; f *= 2;
+            }
+            return sum / norm;
+        }
+        const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+        const mix = (a, b, t) => a + (b - a) * t;
+
+        // Per-column properties
+        const hem = new Float32Array(W), ray = new Float32Array(W), glow = new Float32Array(W);
+        for (let x = 0; x < W; x++) {
+            const u = x / W;
+            // Sweeping arc + folds; sin terms keep it seamlessly tileable
+            hem[x] = H * (s.base + s.wave * fbm1(u * s.cells, s.cells, 4)
+                + s.arc * Math.sin(2 * Math.PI * (u + s.phase))
+                + s.arc * 0.35 * Math.sin(6 * Math.PI * (u + s.phase * 2)));
+            // Rays: broad, soft variation only (fine detail aliased into hard lines)
+            const r1 = fbm1(u * s.rayCells, s.rayCells, 3) * 0.5 + 0.5;
+            const r2 = fbm1(u * s.rayCells * 2 + 3.1, s.rayCells * 2, 2) * 0.5 + 0.5;
+            ray[x] = Math.pow(r1 * 0.72 + r2 * 0.28, 1.9) * 1.9;
+            glow[x] = smooth(0.15, 0.75, fbm1(u * s.patchCells + 7.7, s.patchCells, 3) * 0.5 + 0.5);
+        }
+
+        // 1. Intensity field. Above and below the hem use the same ray factor,
+        //    so brightness is continuous across it (no hard edge line).
+        const V = new Float32Array(W * H);
+        const T = new Float32Array(W * H);
+        const fold = H * s.fold, rise = H * s.rise, seam = fold * 0.7;
+        for (let y = 0; y < H; y++) {
+            const edgeFade = smooth(0, 0.18, y / H) * (1 - smooth(0.85, 1, y / H));
+            for (let x = 0; x < W; x++) {
+                const d = hem[x] - y; // >0 above the hem
+                const curtain = 0.35 + 0.65 * ray[x];
+                let v = d >= 0
+                    ? Math.exp(-d / rise) * curtain
+                    : Math.exp(-(d * d) / (fold * fold)) * curtain;
+                // Soft glowing seam along the hem
+                v += Math.exp(-(d * d) / (seam * seam)) * 0.45 * ray[x];
+                const i = y * W + x;
+                V[i] = v * glow[x] * edgeFade;
+                T[i] = Math.min(1, Math.max(0, d / (H * 0.55)));
+            }
+        }
+
+        // 2. Separable box blur (wraps horizontally so the texture still tiles).
+        //    Baked in once here, so it costs nothing while animating.
+        function blurH(src, r) {
+            const dst = new Float32Array(src.length), n = 2 * r + 1;
+            for (let y = 0; y < H; y++) {
+                const row = y * W;
+                let acc = 0;
+                for (let k = -r; k <= r; k++) acc += src[row + ((k % W) + W) % W];
+                for (let x = 0; x < W; x++) {
+                    dst[row + x] = acc / n;
+                    acc += src[row + (x + r + 1) % W] - src[row + ((x - r) % W + W) % W];
+                }
+            }
+            return dst;
+        }
+        function blurV(src, r) {
+            const dst = new Float32Array(src.length), n = 2 * r + 1;
+            for (let x = 0; x < W; x++) {
+                let acc = 0;
+                for (let k = -r; k <= r; k++) acc += src[Math.min(H - 1, Math.max(0, k)) * W + x];
+                for (let y = 0; y < H; y++) {
+                    dst[y * W + x] = acc / n;
+                    acc += src[Math.min(H - 1, y + r + 1) * W + x] - src[Math.max(0, y - r) * W + x];
+                }
+            }
+            return dst;
+        }
+        const rx = Math.max(2, Math.round(W / 320)), ry = Math.max(1, Math.round(H / 160));
+        let B = V;
+        for (let pass = 0; pass < 3; pass++) B = blurV(blurH(B, rx), ry); // 3 box passes ≈ gaussian
+
+        // 3. Colour: green at the hem → teal → violet higher up
+        const out = new Uint8ClampedArray(W * H * 4);
+        const c0 = s.colors[0], c1 = s.colors[1], c2 = s.colors[2];
+        for (let i = 0; i < W * H; i++) {
+            const v = B[i];
+            if (v < 0.003) continue;
+            const t = T[i];
+            const k = t < 0.45 ? t / 0.45 : (t - 0.45) / 0.55;
+            const a0 = t < 0.45 ? c0 : c1, a1 = t < 0.45 ? c1 : c2;
+            const ks = k * k * (3 - 2 * k);
+            const o = i * 4;
+            out[o] = mix(a0[0], a1[0], ks);
+            out[o + 1] = mix(a0[1], a1[1], ks);
+            out[o + 2] = mix(a0[2], a1[2], ks);
+            // Slight gamma lift keeps faint edges silky instead of banded
+            out[o + 3] = Math.pow(Math.min(1, v), 0.9) * 255 * s.opacity;
+        }
+        return { w: W, h: H, day: out, night: out.slice(0, 0) };
+    }
+
+    const AURORA = {
+        a: { w: 1024, h: 384, seed: 91, cells: 2, wave: 0.12, base: 0.6, arc: 0.12, phase: 0.1,
+             rayCells: 20, patchCells: 3, fold: 0.07, rise: 0.4, opacity: 1,
+             colors: [[100, 255, 175], [60, 220, 215], [165, 105, 255]] },
+        b: { w: 1024, h: 320, seed: 137, cells: 3, wave: 0.1, base: 0.58, arc: 0.1, phase: 0.55,
+             rayCells: 22, patchCells: 4, fold: 0.06, rise: 0.3, opacity: 0.75,
+             colors: [[120, 255, 205], [90, 175, 255], [220, 115, 235]] }
+    };
+
     // ---- Plumbing -----------------------------------------------------------
 
     function toObjectURL(w, h, pixels) {
@@ -243,10 +369,11 @@
     function makeWorker() {
         try {
             const src = `${renderCloudLayer.toString()}
+                ${renderAurora.toString()}
                 self.onmessage = e => {
-                    const { name, spec } = e.data;
-                    const out = renderCloudLayer(spec);
-                    self.postMessage({ name, ...out }, [out.day.buffer, out.night.buffer]);
+                    const { name, spec, kind } = e.data;
+                    const out = kind === 'aurora' ? renderAurora(spec) : renderCloudLayer(spec);
+                    self.postMessage({ name, kind, ...out }, [out.day.buffer, out.night.buffer]);
                 };`;
             const url = URL.createObjectURL(new Blob([src], { type: 'text/javascript' }));
             return new Worker(url);
@@ -321,6 +448,44 @@
         };
         next();
     }
+
+    // Aurora is rendered lazily — only once night mode is actually used.
+    let auroraStarted = false;
+    function ensureAurora() {
+        if (auroraStarted) return;
+        const els = Array.from(document.querySelectorAll('[data-aurora]'));
+        if (!els.length) return;
+        auroraStarted = true;
+        // Prefer the live WebGL aurora; the pre-rendered texture is the fallback
+        if (window.PrabalAurora && window.PrabalAurora.start()) return;
+        const factor = window.innerWidth < 768 ? 0.75 : 1;
+
+        const apply = (el, res) => toObjectURL(res.w, res.h, res.day).then(url => {
+            el.innerHTML = '';
+            const strip = document.createElement('div');
+            strip.className = 'aurora-strip';
+            strip.style.backgroundImage = `url(${url})`;
+            el.appendChild(strip);
+            requestAnimationFrame(() => el.classList.add('is-ready'));
+        });
+
+        const worker = makeWorker();
+        if (worker) {
+            const byName = {};
+            els.forEach(el => { byName[el.dataset.aurora] = el; });
+            let pending = els.length;
+            worker.onmessage = e => {
+                if (byName[e.data.name]) apply(byName[e.data.name], e.data);
+                if (--pending === 0) worker.terminate();
+            };
+            els.forEach(el => worker.postMessage({ kind: 'aurora', name: el.dataset.aurora, spec: scaleSpec(AURORA[el.dataset.aurora], factor) }));
+        } else {
+            els.forEach(el => apply(el, renderAurora(scaleSpec(AURORA[el.dataset.aurora], factor))));
+        }
+    }
+
+    window.PrabalSky = { ensureAurora };
+    if (document.body && document.body.classList.contains('night-mode')) ensureAurora();
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);

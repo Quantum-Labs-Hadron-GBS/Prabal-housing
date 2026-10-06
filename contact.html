@@ -36,7 +36,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" type="image/png" href="https://res.cloudinary.com/dyhlpxwwo/image/upload/v1790075126/Prabal_Final_Logo_ozw283.png">
+    <link rel="icon" type="image/png" href="https://res.cloudinary.com/dyhlpxwwo/image/upload/f_png,w_64/v1790075126/Prabal_Final_Logo_ozw283.png">
     <style>
         .contact-form-wrapper {
             background-color: var(--surface-color);
@@ -120,43 +120,46 @@
     <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body class="day-mode">
-    <nav class="navbar">
-        <a href="/" class="nav-brand" style="text-decoration: none; color: inherit;">PRABALHOUSING</a>
-        <button class="menu-toggle" aria-label="Toggle Menu">
-            <span></span><span></span>
-        </button>
-        <ul class="nav-links">
-            <li><a href="/properties">PROPERTIES</a></li>
-            <li><a href="/about">ABOUT</a></li>
-            <li><a href="/contact">CONTACT</a></li>
-            <li class="dropdown">
-                <a href="javascript:void(0)" style="cursor: default;">MORE</a>
-                <ul class="dropdown-menu">
-                    <li><a href="#">Blogs</a></li>
-                    <li><a href="/career">Career</a></li>
-                </ul>
-            </li>
-            <li>
-                <button id="btn-toggle-aesthetics" class="theme-switch" aria-label="Toggle Theme">
-                    <div class="switch-clouds">
-                        <div class="switch-cloud cloud-1"></div>
-                        <div class="switch-cloud cloud-2"></div>
-                        <div class="switch-cloud cloud-3"></div>
-                    </div>
-                    <div class="switch-stars">
-                        <div class="switch-star s-star-1"></div>
-                        <div class="switch-star s-star-2"></div>
-                        <div class="switch-star s-star-3"></div>
-                        <div class="switch-star s-star-4"></div>
-                    </div>
-                    <div class="switch-orb">
-                        <div class="switch-crater crater-1"></div>
-                        <div class="switch-crater crater-2"></div>
-                        <div class="switch-crater crater-3"></div>
-                    </div>
-                </button>
+    <nav class="navbar" aria-label="Main">
+        <a href="/" class="nav-brand" aria-label="PRABALHOUSING home">
+            <span class="brand-mark"><img src="https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_80/v1790075126/Prabal_Final_Logo_ozw283.png" alt="" width="40" height="38"></span>
+            <span class="brand-word">PRABALHOUSING</span>
+        </a>
+        <ul class="nav-links" id="nav-links">
+            <li style="--i:0"><a href="/properties" class="nav-link"><span class="nav-num" aria-hidden="true">01</span>Properties</a></li>
+            <li style="--i:1"><a href="/#process" class="nav-link"><span class="nav-num" aria-hidden="true">02</span>How it works</a></li>
+            <li style="--i:2"><a href="/about" class="nav-link"><span class="nav-num" aria-hidden="true">03</span>About</a></li>
+            <li style="--i:3"><a href="/career" class="nav-link"><span class="nav-num" aria-hidden="true">04</span>Careers</a></li>
+            <li style="--i:4"><a href="/contact" class="nav-link" aria-current="page"><span class="nav-num" aria-hidden="true">05</span>Contact</a></li>
+            <li class="nav-mobile-extra" style="--i:5">
+                <a href="/contact" class="nav-mobile-cta" data-track="nav_mobile_cta">Get my free shortlist &rarr;</a>
+                <p class="nav-mobile-note">&#8377;0 brokerage &middot; RERA-verified projects &middot; Pune</p>
             </li>
         </ul>
+        <div class="nav-actions">
+            <button id="btn-toggle-aesthetics" class="theme-switch" aria-label="Toggle day and night mode">
+                <div class="switch-clouds">
+                    <div class="switch-cloud cloud-1"></div>
+                    <div class="switch-cloud cloud-2"></div>
+                    <div class="switch-cloud cloud-3"></div>
+                </div>
+                <div class="switch-stars">
+                    <div class="switch-star s-star-1"></div>
+                    <div class="switch-star s-star-2"></div>
+                    <div class="switch-star s-star-3"></div>
+                    <div class="switch-star s-star-4"></div>
+                </div>
+                <div class="switch-orb">
+                    <div class="switch-crater crater-1"></div>
+                    <div class="switch-crater crater-2"></div>
+                    <div class="switch-crater crater-3"></div>
+                </div>
+            </button>
+            <a href="/contact" class="nav-cta" data-track="nav_cta">Free shortlist <span aria-hidden="true">&rarr;</span></a>
+            <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+                <span></span><span></span>
+            </button>
+        </div>
     </nav>
 
     <main>

@@ -28,7 +28,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" type="image/png" href="https://res.cloudinary.com/dyhlpxwwo/image/upload/v1790075126/Prabal_Final_Logo_ozw283.png">
+    <link rel="icon" type="image/png" href="https://res.cloudinary.com/dyhlpxwwo/image/upload/f_png,w_64/v1790075126/Prabal_Final_Logo_ozw283.png">
     <!-- Vercel Analytics -->
     <script>
       window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
@@ -36,43 +36,46 @@
     <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body class="day-mode">
-    <nav class="navbar">
-        <a href="/" class="nav-brand" style="text-decoration: none; color: inherit;">PRABALHOUSING</a>
-        <button class="menu-toggle" aria-label="Toggle Menu">
-            <span></span><span></span>
-        </button>
-        <ul class="nav-links">
-            <li><a href="/properties">PROPERTIES</a></li>
-            <li><a href="/about">ABOUT</a></li>
-            <li><a href="/contact">CONTACT</a></li>
-            <li class="dropdown">
-                <a href="javascript:void(0)" style="cursor: default;">MORE</a>
-                <ul class="dropdown-menu">
-                    <li><a href="#">Blogs</a></li>
-                    <li><a href="/career">Career</a></li>
-                </ul>
-            </li>
-            <li>
-                <button id="btn-toggle-aesthetics" class="theme-switch" aria-label="Toggle Theme">
-                    <div class="switch-clouds">
-                        <div class="switch-cloud cloud-1"></div>
-                        <div class="switch-cloud cloud-2"></div>
-                        <div class="switch-cloud cloud-3"></div>
-                    </div>
-                    <div class="switch-stars">
-                        <div class="switch-star s-star-1"></div>
-                        <div class="switch-star s-star-2"></div>
-                        <div class="switch-star s-star-3"></div>
-                        <div class="switch-star s-star-4"></div>
-                    </div>
-                    <div class="switch-orb">
-                        <div class="switch-crater crater-1"></div>
-                        <div class="switch-crater crater-2"></div>
-                        <div class="switch-crater crater-3"></div>
-                    </div>
-                </button>
+    <nav class="navbar" aria-label="Main">
+        <a href="/" class="nav-brand" aria-label="PRABALHOUSING home">
+            <span class="brand-mark"><img src="https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_80/v1790075126/Prabal_Final_Logo_ozw283.png" alt="" width="40" height="38"></span>
+            <span class="brand-word">PRABALHOUSING</span>
+        </a>
+        <ul class="nav-links" id="nav-links">
+            <li style="--i:0"><a href="/properties" class="nav-link" aria-current="page"><span class="nav-num" aria-hidden="true">01</span>Properties</a></li>
+            <li style="--i:1"><a href="/#process" class="nav-link"><span class="nav-num" aria-hidden="true">02</span>How it works</a></li>
+            <li style="--i:2"><a href="/about" class="nav-link"><span class="nav-num" aria-hidden="true">03</span>About</a></li>
+            <li style="--i:3"><a href="/career" class="nav-link"><span class="nav-num" aria-hidden="true">04</span>Careers</a></li>
+            <li style="--i:4"><a href="/contact" class="nav-link"><span class="nav-num" aria-hidden="true">05</span>Contact</a></li>
+            <li class="nav-mobile-extra" style="--i:5">
+                <a href="/contact" class="nav-mobile-cta" data-track="nav_mobile_cta">Get my free shortlist &rarr;</a>
+                <p class="nav-mobile-note">&#8377;0 brokerage &middot; RERA-verified projects &middot; Pune</p>
             </li>
         </ul>
+        <div class="nav-actions">
+            <button id="btn-toggle-aesthetics" class="theme-switch" aria-label="Toggle day and night mode">
+                <div class="switch-clouds">
+                    <div class="switch-cloud cloud-1"></div>
+                    <div class="switch-cloud cloud-2"></div>
+                    <div class="switch-cloud cloud-3"></div>
+                </div>
+                <div class="switch-stars">
+                    <div class="switch-star s-star-1"></div>
+                    <div class="switch-star s-star-2"></div>
+                    <div class="switch-star s-star-3"></div>
+                    <div class="switch-star s-star-4"></div>
+                </div>
+                <div class="switch-orb">
+                    <div class="switch-crater crater-1"></div>
+                    <div class="switch-crater crater-2"></div>
+                    <div class="switch-crater crater-3"></div>
+                </div>
+            </button>
+            <a href="/contact" class="nav-cta" data-track="nav_cta">Free shortlist <span aria-hidden="true">&rarr;</span></a>
+            <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+                <span></span><span></span>
+            </button>
+        </div>
     </nav>
 
     <main>
@@ -85,147 +88,56 @@
             </div>
         </section>
 
-        <!-- Search & Filters -->
-        <section class="section filter-section" style="padding: 40px 0; background-color: var(--surface-color); border-bottom: 1px solid var(--border-color);">
+        <!-- Search & Filters (wired up by js/listings.js) -->
+        <section class="filter-section">
             <div class="container">
-                <form class="property-search-form" style="display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between;">
-                    
-                    <!-- Search by Location -->
-                    <div class="filter-group" style="flex: 1; min-width: 250px;">
-                        <input type="text" placeholder="Search by location..." style="width: 100%; padding: 15px 20px; border: 1px solid var(--border-color); border-radius: 4px; background: transparent; color: inherit; font-family: var(--font-ui); font-size: 1rem;">
-                    </div>
-
-                    <!-- Budget Filter -->
-                    <div class="filter-group" style="min-width: 150px;">
-                        <select style="width: 100%; padding: 15px; border: 1px solid var(--border-color); border-radius: 4px; background: transparent; color: inherit; font-family: var(--font-ui); font-size: 1rem;">
+                <form class="property-filters" id="property-filters" role="search">
+                    <label class="filter-field filter-field--search">
+                        <span class="visually-hidden">Search by location, project or builder</span>
+                        <input type="search" name="q" placeholder="Search location, project or builder..." autocomplete="off">
+                    </label>
+                    <label class="filter-field">
+                        <span class="visually-hidden">Budget</span>
+                        <select name="budget">
                             <option value="">Budget</option>
                             <option value="under-1cr">Under 1 Cr</option>
                             <option value="1cr-3cr">1 Cr - 3 Cr</option>
                             <option value="3cr-5cr">3 Cr - 5 Cr</option>
                             <option value="above-5cr">Above 5 Cr</option>
                         </select>
-                    </div>
-
-                    <!-- BHK Filter -->
-                    <div class="filter-group" style="min-width: 150px;">
-                        <select style="width: 100%; padding: 15px; border: 1px solid var(--border-color); border-radius: 4px; background: transparent; color: inherit; font-family: var(--font-ui); font-size: 1rem;">
+                    </label>
+                    <label class="filter-field">
+                        <span class="visually-hidden">Configuration</span>
+                        <select name="bhk">
                             <option value="">BHK</option>
                             <option value="studio">Studio</option>
                             <option value="1bhk">1 BHK</option>
                             <option value="2bhk">2 BHK</option>
                             <option value="3bhk">3 BHK</option>
                             <option value="4bhk">4 BHK</option>
-                            <option value="5bhk">5+ BHK</option>
+                            <option value="5bhk">5+ BHK / Villa</option>
                         </select>
-                    </div>
-
-                    <!-- Builder Filter -->
-                    <div class="filter-group" style="min-width: 150px;">
-                        <select style="width: 100%; padding: 15px; border: 1px solid var(--border-color); border-radius: 4px; background: transparent; color: inherit; font-family: var(--font-ui); font-size: 1rem;">
+                    </label>
+                    <label class="filter-field">
+                        <span class="visually-hidden">Builder</span>
+                        <select name="builder" id="filter-builder">
                             <option value="">Builder</option>
-                            <option value="godrej">Godrej</option>
-                            <option value="mahindra">Mahindra</option>
-                            <option value="lodha">Lodha</option>
-                            <option value="kohinoor">Kohinoor</option>
-                            <option value="birla">Birla</option>
                         </select>
-                    </div>
-
-                    <button type="button" style="padding: 15px 40px; background: var(--text-color); color: var(--bg-color); border: none; border-radius: 4px; font-weight: 600; font-family: var(--font-ui); text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer;">Search</button>
-
+                    </label>
+                    <button type="submit" class="btn-premium btn-solid filter-submit">Search</button>
                 </form>
             </div>
         </section>
 
-        <!-- Properties Grid -->
+        <!-- Properties Grid (rendered from the dashboard's listings) -->
         <section class="section properties-grid-section">
             <div class="container">
-                <h2 class="display-title" style="font-size: clamp(2rem, 4vw, 3.5rem); margin-bottom: 50px; text-align: center;">Our Top Properties</h2>
-                
-                <div class="cards-grid" style="grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 40px;">
-                    <!-- Property 1 -->
-                    <div class="residence-card parallax-item">
-                        <img src="https://picsum.photos/seed/prop1/600/400" alt="Property 1" style="width: 100%; height: 250px; object-fit: cover;">
-                        <div class="card-content">
-                            <div style="font-size: 0.8rem; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 10px; text-transform: uppercase;">Godrej Properties • 3 BHK</div>
-                            <h3 style="font-size: 1.5rem; margin-bottom: 10px;">Godrej River Crest</h3>
-                            <p style="font-size: 1rem; opacity: 0.8; margin-bottom: 20px;">Kalyani Nagar, Pune</p>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <strong style="font-size: 1.2rem;">₹ 2.5 Cr*</strong>
-                                <button class="btn-outline" style="padding: 8px 16px; font-size: 0.8rem;">View Details</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Property 2 -->
-                    <div class="residence-card parallax-item">
-                        <img src="https://picsum.photos/seed/prop2/600/400" alt="Property 2" style="width: 100%; height: 250px; object-fit: cover;">
-                        <div class="card-content">
-                            <div style="font-size: 0.8rem; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 10px; text-transform: uppercase;">Lodha Group • 4 BHK</div>
-                            <h3 style="font-size: 1.5rem; margin-bottom: 10px;">Lodha Bellagio</h3>
-                            <p style="font-size: 1rem; opacity: 0.8; margin-bottom: 20px;">Koregaon Park, Pune</p>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <strong style="font-size: 1.2rem;">₹ 4.2 Cr*</strong>
-                                <button class="btn-outline" style="padding: 8px 16px; font-size: 0.8rem;">View Details</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Property 3 -->
-                    <div class="residence-card parallax-item">
-                        <img src="https://picsum.photos/seed/prop3/600/400" alt="Property 3" style="width: 100%; height: 250px; object-fit: cover;">
-                        <div class="card-content">
-                            <div style="font-size: 0.8rem; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 10px; text-transform: uppercase;">Mahindra Lifespaces • 2 BHK</div>
-                            <h3 style="font-size: 1.5rem; margin-bottom: 10px;">Mahindra Citadel</h3>
-                            <p style="font-size: 1rem; opacity: 0.8; margin-bottom: 20px;">Pimpri, Pune</p>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <strong style="font-size: 1.2rem;">₹ 1.1 Cr*</strong>
-                                <button class="btn-outline" style="padding: 8px 16px; font-size: 0.8rem;">View Details</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Property 4 -->
-                    <div class="residence-card parallax-item">
-                        <img src="https://picsum.photos/seed/prop4/600/400" alt="Property 4" style="width: 100%; height: 250px; object-fit: cover;">
-                        <div class="card-content">
-                            <div style="font-size: 0.8rem; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 10px; text-transform: uppercase;">Kohinoor • 3 BHK</div>
-                            <h3 style="font-size: 1.5rem; margin-bottom: 10px;">Kohinoor Presidentia</h3>
-                            <p style="font-size: 1rem; opacity: 0.8; margin-bottom: 20px;">Sopan Baug Annexe, Pune</p>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <strong style="font-size: 1.2rem;">₹ 1.8 Cr*</strong>
-                                <button class="btn-outline" style="padding: 8px 16px; font-size: 0.8rem;">View Details</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Property 5 -->
-                    <div class="residence-card parallax-item">
-                        <img src="https://picsum.photos/seed/prop5/600/400" alt="Property 5" style="width: 100%; height: 250px; object-fit: cover;">
-                        <div class="card-content">
-                            <div style="font-size: 0.8rem; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 10px; text-transform: uppercase;">Birla Estates • 4 BHK</div>
-                            <h3 style="font-size: 1.5rem; margin-bottom: 10px;">Birla Niyaara</h3>
-                            <p style="font-size: 1rem; opacity: 0.8; margin-bottom: 20px;">Worli, Mumbai</p>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <strong style="font-size: 1.2rem;">₹ 8.5 Cr*</strong>
-                                <button class="btn-outline" style="padding: 8px 16px; font-size: 0.8rem;">View Details</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Property 6 -->
-                    <div class="residence-card parallax-item">
-                        <img src="https://picsum.photos/seed/prop6/600/400" alt="Property 6" style="width: 100%; height: 250px; object-fit: cover;">
-                        <div class="card-content">
-                            <div style="font-size: 0.8rem; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 10px; text-transform: uppercase;">Godrej Properties • Studio</div>
-                            <h3 style="font-size: 1.5rem; margin-bottom: 10px;">Godrej Horizon</h3>
-                            <p style="font-size: 1rem; opacity: 0.8; margin-bottom: 20px;">Undri, Pune</p>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <strong style="font-size: 1.2rem;">₹ 45 L*</strong>
-                                <button class="btn-outline" style="padding: 8px 16px; font-size: 0.8rem;">View Details</button>
-                            </div>
-                        </div>
-                    </div>
+                <h2 class="display-title listings-heading">Our Top Properties</h2>
+                <p class="listings-count" id="listings-count" aria-live="polite"></p>
+                <div class="listings-grid" id="listings-grid">
+                    <div class="listing-skeleton"></div>
+                    <div class="listing-skeleton"></div>
+                    <div class="listing-skeleton"></div>
                 </div>
             </div>
         </section>
@@ -278,6 +190,8 @@
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <script src="js/store.js" defer></script>
+    <script src="js/listings.js" defer></script>
+    <script src="js/main.js" defer></script>
 </body>
 </html>

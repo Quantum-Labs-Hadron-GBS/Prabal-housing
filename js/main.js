@@ -175,6 +175,7 @@ function initDayNightToggle() {
 // that twinkle. Previously every star was an animated element.
 let starsBuilt = false;
 function generateStars() {
+    if (window.PrabalSky) window.PrabalSky.ensureAurora();
     const container = document.getElementById('stars-container');
     if (!container || starsBuilt) return;
     starsBuilt = true;
@@ -310,24 +311,37 @@ function initParallax() {
 function initMobileMenu() {
     const menuToggle = document.querySelector('.menu-toggle');
     const navLinks = document.querySelector('.nav-links');
-
     if (!menuToggle || !navLinks) return;
 
-    menuToggle.addEventListener('click', () => {
-        menuToggle.classList.toggle('active');
-        navLinks.classList.toggle('active');
+    const setOpen = open => {
+        menuToggle.classList.toggle('active', open);
+        navLinks.classList.toggle('active', open);
+        document.body.classList.toggle('menu-open', open);
+        menuToggle.setAttribute('aria-expanded', String(open));
+        menuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
         // Prevent body scroll when menu is open
-        document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
-    });
-    
+        document.body.style.overflow = open ? 'hidden' : '';
+        if (open) {
+            const navbar = document.querySelector('.navbar');
+            if (navbar) navbar.style.setProperty('--nav-offset', '0px');
+            setTimeout(() => navLinks.querySelector('a')?.focus({ preventScroll: true }), 350);
+        }
+    };
+
+    menuToggle.addEventListener('click', () => setOpen(!navLinks.classList.contains('active')));
+
     // Close menu when clicking a link
-    navLinks.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            menuToggle.classList.remove('active');
-            navLinks.classList.remove('active');
-            document.body.style.overflow = '';
-        });
+    navLinks.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setOpen(false)));
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && navLinks.classList.contains('active')) {
+            setOpen(false);
+            menuToggle.focus();
+        }
     });
+
+    // Back to desktop width with the menu open: reset
+    window.matchMedia('(min-width: 1025px)').addEventListener('change', e => { if (e.matches) setOpen(false); });
 }
 
 // Dynamic Navbar System
@@ -350,12 +364,12 @@ function initDynamicNavbar() {
         const menuOpen = navbar.querySelector('.nav-links.active');
         if (currentScrollY > heroHeight && !menuOpen) {
             if (currentScrollY > lastScrollY && currentScrollY > heroHeight + 50) {
-                navbar.style.top = `-${navbar.offsetHeight + 8}px`;
+                navbar.style.setProperty('--nav-offset', `-${navbar.offsetHeight + 24}px`);
             } else if (currentScrollY < lastScrollY) {
-                navbar.style.top = '0px';
+                navbar.style.setProperty('--nav-offset', '0px');
             }
         } else {
-            navbar.style.top = '0px';
+            navbar.style.setProperty('--nav-offset', '0px');
         }
         navbar.classList.toggle('is-scrolled', currentScrollY > heroHeight * 0.85);
         lastScrollY = currentScrollY;
@@ -749,11 +763,11 @@ function initLeadForm() {
     const form = document.getElementById('lead-form');
     if (!form) return;
 
-    // Any CTA that carries context pre-fills the form
-    document.querySelectorAll('a[href="#get-shortlist"]').forEach(link => {
-        link.addEventListener('click', () => {
-            prefillLead({ bhk: link.dataset.bhk, area: link.dataset.area });
-        });
+    // Any CTA that carries context pre-fills the form (delegated, so listing
+    // cards rendered later from the dashboard data work too)
+    document.addEventListener('click', e => {
+        const link = e.target.closest('a[href="#get-shortlist"]');
+        if (link) prefillLead({ bhk: link.dataset.bhk, area: link.dataset.area });
     });
 
     const nameInput = form.querySelector('#lead-name');
@@ -877,9 +891,10 @@ function track(name, data) {
 }
 
 function initTracking() {
-    document.querySelectorAll('[data-track]').forEach(el => {
-        if (el.dataset.track === 'lead_submit') return; // tracked on successful submit
-        el.addEventListener('click', () => track('cta_click', { id: el.dataset.track }));
+    document.addEventListener('click', e => {
+        const el = e.target.closest('[data-track]');
+        if (!el || el.dataset.track === 'lead_submit') return; // lead_submit is tracked on success
+        track('cta_click', { id: el.dataset.track });
     });
 
     // How far do people get? Fire once per section.
