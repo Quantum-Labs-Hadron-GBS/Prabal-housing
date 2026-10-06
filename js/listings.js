@@ -48,7 +48,7 @@
         const priceHTML = closed
             ? `<span class="listing-price listing-price--hidden" aria-label="Final price on request">
                    <span class="price-blur" aria-hidden="true">${esc(price.replace(/\d/g, '•'))}</span>
-                   <small>Ask what it closed at</small>
+                   <small>Ask us the final price</small>
                </span>`
             : `<span class="listing-price">${esc(price)}</span>`;
 
@@ -57,7 +57,7 @@
             p.featured && !closed ? '<span class="listing-badge">Featured</span>' : ''
         ].join('');
 
-        const ctaLabel = closed ? 'Get similar homes &rarr;' : 'Get best price &rarr;';
+        const ctaLabel = closed ? 'Show similar homes &rarr;' : 'Get best price &rarr;';
         const area = esc(p.location);
 
         return `
@@ -108,8 +108,8 @@
         try {
             all = await S.listPublic();
         } catch (err) {
-            grid.innerHTML = `<p class="listings-empty">We couldn't load the latest properties. Please refresh, or
-                <a href="/contact">ask an advisor</a> directly.</p>`;
+            grid.innerHTML = `<p class="listings-empty">We could not load the properties. Please refresh the page, or
+                <a href="/contact">contact us</a>.</p>`;
             return;
         }
 
@@ -132,15 +132,15 @@
             const open = list.filter(p => p.status !== 'closed').length;
             if (countEl) {
                 countEl.textContent = list.length
-                    ? `${open} available${list.length - open ? ` · ${list.length - open} recently closed` : ''}`
+                    ? `${open} available${list.length - open ? ` · ${list.length - open} sold` : ''}`
                     : '';
             }
 
             grid.innerHTML = list.length
                 ? list.map(p => cardHTML(p)).join('')
                 : `<div class="listings-empty">
-                       <p>Nothing matches those filters right now — but new projects come to us before they're public.</p>
-                       <a class="btn-premium btn-solid" href="/contact?message=${encodeURIComponent('Hi, please tell me about upcoming projects that match my needs.')}">Get early access</a>
+                       <p>No properties match your search right now. New projects come to us early, so please contact us.</p>
+                       <a class="btn-premium btn-solid" href="/contact?message=${encodeURIComponent('Hi, please tell me about upcoming projects that match my needs.')}">Contact Us</a>
                    </div>`;
             animateStamps(grid);
         };

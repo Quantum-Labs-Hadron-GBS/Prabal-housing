@@ -126,48 +126,54 @@ function loadNightBuilding() {
 
 // Day/Night Toggle System
 function initDayNightToggle() {
-    const btn = document.getElementById('btn-toggle-aesthetics');
-    if (!btn) return;
+    // Every [data-theme-toggle] switches the theme (navbar icon + mobile menu row)
+    const buttons = Array.from(document.querySelectorAll('[data-theme-toggle]'));
+    if (!buttons.length) return;
 
-    let isNight = localStorage.getItem('theme') === 'night';
+    let isNight = false;
+    try { isNight = localStorage.getItem('theme') === 'night'; } catch (err) { /* storage blocked */ }
+
+    const apply = () => {
+        document.body.classList.toggle('night-mode', isNight);
+        document.body.classList.toggle('day-mode', !isNight);
+        const label = isNight ? 'Switch to day mode' : 'Switch to night mode';
+        buttons.forEach(btn => {
+            btn.setAttribute('aria-pressed', String(isNight));
+            if (!btn.classList.contains('nav-theme-row')) {
+                btn.setAttribute('aria-label', label);
+                btn.title = label;
+            }
+            const text = btn.querySelector('.nav-theme-label');
+            if (text) text.textContent = isNight ? 'Day mode' : 'Night mode';
+        });
+    };
 
     // Apply immediately on load
     if (isNight) {
-        document.body.classList.replace('day-mode', 'night-mode');
-        btn.classList.add('active');
         loadNightBuilding();
         generateStars();
-    } else {
-        document.body.classList.replace('night-mode', 'day-mode');
-        btn.classList.remove('active');
     }
+    apply();
 
     // Prefetch night assets when the page is idle on desktop, or as soon as a
-    // visitor shows intent (hover / touch) on the toggle.
+    // visitor shows intent (hover / touch) on a toggle.
     const warm = () => { loadNightBuilding(); generateStars(); };
-    btn.addEventListener('pointerenter', warm, { once: true });
-    btn.addEventListener('touchstart', warm, { once: true, passive: true });
+    buttons.forEach(btn => {
+        btn.addEventListener('pointerenter', warm, { once: true });
+        btn.addEventListener('touchstart', warm, { once: true, passive: true });
+    });
     if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && !navigator.connection?.saveData) {
         window.addEventListener('load', () => {
             (window.requestIdleCallback || (cb => setTimeout(cb, 2500)))(warm, { timeout: 4000 });
         });
     }
 
-    btn.addEventListener('click', () => {
+    buttons.forEach(btn => btn.addEventListener('click', () => {
         isNight = !isNight;
-        
-        if (isNight) {
-            loadNightBuilding();
-            generateStars();
-            document.body.classList.replace('day-mode', 'night-mode');
-            btn.classList.add('active');
-            localStorage.setItem('theme', 'night');
-        } else {
-            document.body.classList.replace('night-mode', 'day-mode');
-            btn.classList.remove('active');
-            localStorage.setItem('theme', 'day');
-        }
-    });
+        if (isNight) warm();
+        apply();
+        try { localStorage.setItem('theme', isNight ? 'night' : 'day'); } catch (err) { /* ignore */ }
+    }));
 }
 
 // Night Stars
@@ -744,8 +750,8 @@ function prefillLead({ bhk, budget, area } = {}) {
         const note = document.getElementById('lead-area-note');
         if (note) {
             note.textContent = area === 'Not sure yet'
-                ? "No problem — we'll help you pick the right area."
-                : `Looking in ${area} — noted.`;
+                ? 'No problem. We will help you choose the right area.'
+                : `Area selected: ${area}`;
             note.hidden = false;
         }
     }
@@ -796,7 +802,7 @@ function initLeadForm() {
         if (data.name.length < 2) {
             nameInput.setAttribute('aria-invalid', 'true');
             nameInput.focus();
-            return showError('Please tell us your name.');
+            return showError('Please enter your name.');
         }
         if (!/^[6-9]\d{9}$/.test(data.phone || '')) {
             phoneInput.setAttribute('aria-invalid', 'true');
@@ -810,7 +816,7 @@ function initLeadForm() {
         const bhkLabel = form.querySelector('#lead-bhk').selectedOptions[0]?.textContent || '';
         const summary = [
             `Hi PRABALHOUSING, I'm ${data.name} (+91 ${data.phone}).`,
-            `I'd like a free shortlist.`,
+            `Please call me with the best options.`,
             data.bhk ? `Looking for: ${bhkLabel}.` : '',
             data.budget ? `Budget: ₹${data.budget}.` : '',
             data.area ? `Area: ${data.area}.` : ''
@@ -849,7 +855,7 @@ function initLeadForm() {
                 : 'Something went wrong. Please try again in a moment.');
         } finally {
             submitBtn.disabled = false;
-            submitBtn.textContent = 'GET MY FREE SHORTLIST';
+            submitBtn.textContent = 'REQUEST A CALL BACK';
         }
     });
 }

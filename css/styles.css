@@ -68,6 +68,9 @@ html {
     font-size: 100%;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    /* Standard-height numbers everywhere: Cormorant's old-style "0" reads like "o" */
+    font-variant-numeric: lining-nums;
+    font-feature-settings: "lnum" 1;
 }
 
 @media (min-width: 1025px) {
@@ -1095,119 +1098,6 @@ body.night-mode .partner-card {
     .cloud-strip, .cloud-bank {
         animation: none !important;
     }
-}
-
-/* Theme Switcher */
-.theme-switch {
-    background: #60a5fa;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    width: 4.25rem;
-    height: 2rem;
-    border-radius: 16px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
-    transition: background 0.4s ease;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-.theme-switch.active {
-    background: #1e293b;
-}
-
-.switch-orb {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 1.75rem;
-    height: 1.75rem;
-    border-radius: 50%;
-    background: #fcd34d;
-    box-shadow: inset -2px -2px 4px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.2);
-    transition: transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1), background 0.4s ease;
-    z-index: 3;
-}
-
-.theme-switch.active .switch-orb {
-    transform: translateX(36px);
-    background: #cbd5e1;
-    box-shadow: inset -2px -2px 4px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2);
-}
-
-.switch-crater {
-    position: absolute;
-    background: #94a3b8;
-    border-radius: 50%;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    box-shadow: inset 1px 1px 2px rgba(0,0,0,0.2);
-}
-.crater-1 { width: 0.375rem; height: 0.375rem; top: 0.375rem; left: 0.375rem; }
-.crater-2 { width: 0.25rem; height: 0.25rem; top: 1rem; left: 0.625rem; }
-.crater-3 { width: 0.5rem; height: 0.5rem; top: 0.75rem; left: 1rem; }
-
-.theme-switch.active .switch-crater {
-    opacity: 1;
-}
-
-.switch-clouds {
-    position: absolute;
-    bottom: -0.3125rem;
-    right: -0.3125rem;
-    width: 2.5rem;
-    height: 2.5rem;
-    transition: transform 0.4s ease, opacity 0.4s ease;
-    z-index: 1;
-}
-.switch-cloud {
-    position: absolute;
-    background: white;
-    border-radius: 50%;
-}
-.cloud-1 { width: 1.25rem; height: 1.25rem; bottom: 0; right: 0; }
-.cloud-2 { width: 1rem; height: 1rem; bottom: 0.3125rem; right: 0.75rem; }
-.cloud-3 { width: 0.875rem; height: 0.875rem; bottom: 0; right: 1.375rem; }
-
-.theme-switch.active .switch-clouds {
-    transform: translateY(20px);
-    opacity: 0;
-}
-
-.switch-stars {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 2.5rem;
-    height: 100%;
-    opacity: 0;
-    transform: translateY(-20px);
-    transition: transform 0.4s ease, opacity 0.4s ease;
-    z-index: 1;
-}
-.switch-star {
-    position: absolute;
-    background: white;
-    width: 2px;
-    height: 2px;
-    border-radius: 50%;
-}
-.switch-star::before, .switch-star::after {
-    content: '';
-    position: absolute;
-    background: white;
-    border-radius: 50%;
-}
-.s-star-1 { top: 0.5rem; left: 0.75rem; }
-.s-star-2 { top: 1.125rem; left: 0.5rem; }
-.s-star-3 { top: 0.875rem; left: 1.375rem; }
-.s-star-4 { top: 1.5rem; left: 1.125rem; }
-
-.theme-switch.active .switch-stars {
-    opacity: 1;
-    transform: translateY(0);
 }
 
 /* =====================================================================
@@ -2917,10 +2807,6 @@ body.night-mode .nav-link:hover { background: rgba(255, 255, 255, 0.1); }
     z-index: 102;
 }
 
-.nav-actions .theme-switch {
-    transform: scale(0.88);
-}
-
 .nav-cta {
     display: inline-flex;
     align-items: center;
@@ -2985,7 +2871,6 @@ body.night-mode .nav-link:hover { background: rgba(255, 255, 255, 0.1); }
     .menu-toggle { display: block; }
     .nav-actions { margin-left: auto; gap: 0.4rem; }
     .nav-cta { display: none; }
-    .nav-actions .theme-switch { transform: scale(0.8); }
 
     /* Full-screen menu */
     .nav-links {
@@ -3107,4 +2992,91 @@ body.night-mode .hero-title,
 body.night-mode .hero-sub,
 body.night-mode .hero-eyebrow {
     text-shadow: 0 2px 30px rgba(4, 7, 15, 0.75), 0 0 2px rgba(4, 7, 15, 0.4);
+}
+
+/* ---------------------------------------------------------------------
+   Theme toggle: a quiet icon at the end of the navbar. It inherits the
+   navbar colour, so it matches day, night and dark-hero states.
+   --------------------------------------------------------------------- */
+.theme-toggle {
+    display: inline-grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    padding: 0;
+    border: 1px solid currentColor;
+    border-color: color-mix(in srgb, currentColor 22%, transparent);
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.75;
+    transition: opacity 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
+    opacity: 1;
+    border-color: currentColor;
+}
+
+.theme-toggle svg,
+.nav-theme-row svg {
+    grid-area: 1 / 1;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+}
+
+/* Show the mode you can switch TO: moon by day, sun at night */
+.icon-sun { opacity: 0; transform: rotate(-90deg) scale(0.6); }
+body.night-mode .icon-moon { opacity: 0; transform: rotate(90deg) scale(0.6); }
+body.night-mode .icon-sun { opacity: 1; transform: none; }
+
+.nav-cta svg {
+    flex: none;
+}
+
+/* Mobile: the toggle moves into the menu, so the bar only has logo + menu */
+.nav-theme-row {
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    .nav-actions .theme-toggle {
+        display: none;
+    }
+    .nav-theme-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        width: 100%;
+        margin-top: 1.4rem;
+        padding: 0.8rem;
+        border: 1px solid var(--border-color);
+        border-radius: 999px;
+        background: transparent;
+        color: inherit;
+        font-family: var(--font-ui);
+        font-size: 0.85rem;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+    }
+    .nav-theme-row svg {
+        display: block;
+    }
+    .nav-theme-row .icon-sun,
+    .nav-theme-row .icon-moon {
+        position: relative;
+    }
+    body:not(.night-mode) .nav-theme-row .icon-sun,
+    body.night-mode .nav-theme-row .icon-moon {
+        display: none;
+    }
+    .nav-mobile-cta {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        font-size: 0.95rem !important;
+    }
 }

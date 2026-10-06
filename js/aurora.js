@@ -190,10 +190,20 @@
             gl.uniform1f(uFadeStart, window.innerWidth <= 768 ? 0.5 : 0.62);
             gl.uniform1f(uBrightness, BRIGHTNESS * 1.33);
         };
-        if ('ResizeObserver' in window) new ResizeObserver(resize).observe(canvas);
+        let redrawStill = () => {};
+        if ('ResizeObserver' in window) new ResizeObserver(() => { resize(); redrawStill(); }).observe(canvas);
         resize();
 
-        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        // A still frame for reduced-motion users and anyone on Data Saver
+        const conn = navigator.connection || {};
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches || conn.saveData === true;
+
+        // Weaker devices (few cores / little memory / slow network) get ~20 fps
+        // instead of ~30. Aurora motion is slow, so the difference isn't visible.
+        const lowEnd = (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) ||
+            (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
+            /(^|-)2g|3g/.test(conn.effectiveType || '');
+        const FRAME_MS = lowEnd ? 50 : 33;
         const body = document.body;
         const t0 = performance.now() - 40000; // start mid-motion, not from a uniform state
         let raf = 0, last = 0;
@@ -212,12 +222,14 @@
         const loop = now => {
             raf = 0;
             if (!shouldRun()) return;
-            if (now - last >= 33) { // ~30 fps
+            if (now - last >= FRAME_MS) {
                 last = now;
                 draw(now);
             }
             raf = requestAnimationFrame(loop);
         };
+
+        redrawStill = () => { if (reduced && body.classList.contains('night-mode')) draw(performance.now()); };
 
         const kick = () => {
             if (reduced) {
