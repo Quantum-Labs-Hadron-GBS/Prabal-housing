@@ -3,6 +3,20 @@
  * Main JavaScript File
  */
 
+// ---------------------------------------------------------------------------
+// CONTACT & LEADS CONFIG — fill these in and every CTA on the site updates.
+//   phone:        e.g. '+919876543210'  (shows "Call" buttons)
+//   whatsapp:     e.g. '919876543210'   (digits only, with country code; shows WhatsApp buttons)
+//   leadEndpoint: a form backend URL that accepts POST (Formspree, Web3Forms,
+//                 Google Apps Script, your CRM webhook...). If empty, the form
+//                 falls back to WhatsApp, then to the /contact page.
+// ---------------------------------------------------------------------------
+const CONTACT = {
+    phone: '',
+    whatsapp: '',
+    leadEndpoint: ''
+};
+
 // Centralized Cloudinary Config for Hero
 const CLOUDINARY = {
     dayBuilding: "https://res.cloudinary.com/dyhlpxwwo/image/upload/v1789483116/ChatGPT_Image_Sep_15_2026_08_01_57_PM_u8yeqr.png",
@@ -35,7 +49,6 @@ const MEDIA = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    initHeroImages();
     injectMedia();
     initDayNightToggle();
     generateStars();
@@ -45,16 +58,14 @@ document.addEventListener('DOMContentLoaded', () => {
     initKeyboardNavigation();
     initGlobalParallax();
     initPartners();
+    initReveal();
+    initContactLinks();
+    initSavingsCalculator();
+    initLeadForm();
+    initStickyCTAs();
+    initTracking();
+    initContactPagePrefill();
 });
-
-// Load hero assets
-function initHeroImages() {
-    // Cloud video speed
-    const cloudVideo = document.querySelector('.hero-cloud-video');
-    if (cloudVideo) {
-        cloudVideo.playbackRate = 1.0;
-    }
-}
 
 // Inject placeholders from MEDIA config
 function injectMedia() {
@@ -204,17 +215,18 @@ function generateStars() {
 }
 
 // Hero Parallax Effect
+// Layers move at different rates so the towers sink into the cloud bank
+// while the sky drifts away, instead of a flat colour wiping over everything.
 function initParallax() {
     const fgClouds = document.getElementById('fg-clouds');
+    const skyClouds = document.getElementById('sky-clouds');
+    const buildings = document.getElementById('hero-buildings');
+    const heroContent = document.getElementById('hero-content');
     const scrollIndicator = document.querySelector('.scroll-indicator');
     const heroStage = document.querySelector('.hero-stage');
-    
+
     if (!fgClouds || !heroStage) return;
 
-    // Limits the max distance foreground clouds can travel
-    const MAX_CLOUD_TRAVEL = 600; 
-
-    // Respect reduced motion
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) return;
 
@@ -232,26 +244,26 @@ function initParallax() {
 
     function updateParallax() {
         const scrollY = window.scrollY;
-        const heroHeight = heroStage.offsetHeight; 
-        
+        const heroHeight = heroStage.offsetHeight;
+
         if (scrollY > heroHeight) return; // Stop calculating if past hero
 
-        // Calculate progress (0 to 1)
         const progress = Math.min(scrollY / heroHeight, 1);
-        
-        // Calculate offset
-        const cloudOffset = progress * MAX_CLOUD_TRAVEL;
 
-        // Apply transform via translate3d for hardware acceleration
-        fgClouds.style.transform = `translate3d(0, ${-cloudOffset}px, 0)`;
+        // Foreground bank rises fastest, sky barely moves, towers sink slightly.
+        fgClouds.style.transform = `translate3d(0, ${-progress * heroHeight * 0.35}px, 0)`;
+        if (skyClouds) skyClouds.style.transform = `translate3d(0, ${progress * heroHeight * 0.25}px, 0)`;
+        if (buildings) buildings.style.transform = `translate3d(0, ${progress * heroHeight * 0.18}px, 0)`;
 
-        // Fade out and shift scroll indicator
+        if (heroContent) {
+            heroContent.style.opacity = Math.max(0, 1 - progress * 1.8);
+            heroContent.style.setProperty('--hero-lift', `${progress * 90}px`);
+        }
+
         if (scrollIndicator) {
-            const fadePoint = 200;
-            const opacity = Math.max(0, 1 - (scrollY / fadePoint));
+            const opacity = Math.max(0, 1 - (scrollY / 200));
             scrollIndicator.style.opacity = opacity;
             scrollIndicator.style.transform = `translateY(${scrollY * 0.3}px)`;
-            // Disable pointer events when faded out
             scrollIndicator.style.pointerEvents = opacity === 0 ? 'none' : 'auto';
         }
     }
@@ -344,7 +356,8 @@ function initKeyboardNavigation() {
     window.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
             // Prevent if user is typing in a form field
-            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
+            const tag = document.activeElement && document.activeElement.tagName;
+            if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag) || document.activeElement.isContentEditable) return;
             
             e.preventDefault();
 
@@ -395,7 +408,7 @@ function initGlobalParallax() {
     if (prefersReducedMotion) return;
 
     // Elements that should receive the subtle float parallax effect
-    const selectors = ['.amenity-item', '.details-box', '.footer-grid > div', '.residence-card', '.cta-section .container'];
+    const selectors = ['.amenity-item', '.details-box', '.footer-grid > div', '.residence-card'];
     const elements = document.querySelectorAll(selectors.join(', '));
     
     elements.forEach(el => {
@@ -556,4 +569,297 @@ function initPartners() {
             ticking = true;
         }
     });
+}
+
+
+// ---------------------------------------------------------------------------
+// Conversion features
+// ---------------------------------------------------------------------------
+
+// Fade sections up as they enter the viewport
+function initReveal() {
+    const items = document.querySelectorAll('.reveal');
+    if (!items.length) return;
+
+    if (!('IntersectionObserver' in window)) {
+        items.forEach(el => el.classList.add('is-visible'));
+        return;
+    }
+
+    const io = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                io.unobserve(entry.target);
+            }
+        });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+
+    items.forEach(el => io.observe(el));
+}
+
+function whatsappURL(message) {
+    return `https://wa.me/${CONTACT.whatsapp}${message ? `?text=${encodeURIComponent(message)}` : ''}`;
+}
+
+// Wire up Call / WhatsApp buttons; hide them until a number is configured
+function initContactLinks() {
+    document.querySelectorAll('[data-contact]').forEach(el => {
+        const type = el.dataset.contact;
+        if (type === 'phone' && CONTACT.phone) {
+            el.href = `tel:${CONTACT.phone}`;
+            el.hidden = false;
+        } else if (type === 'whatsapp' && CONTACT.whatsapp) {
+            el.href = whatsappURL("Hi PRABALHOUSING, I'm looking for a home in Pune.");
+            el.target = '_blank';
+            el.rel = 'noopener';
+            el.hidden = false;
+        }
+    });
+
+    document.querySelectorAll('[data-contact-direct]').forEach(el => {
+        el.hidden = !(CONTACT.phone || CONTACT.whatsapp);
+    });
+}
+
+function formatINR(lakhs) {
+    if (lakhs >= 100) {
+        const cr = lakhs / 100;
+        return `₹${cr.toFixed(cr >= 10 ? 1 : 2).replace(/\.?0+$/, '')} Cr`;
+    }
+    return `₹${lakhs.toFixed(lakhs >= 10 ? 1 : 2).replace(/\.?0+$/, '')} L`;
+}
+
+function budgetBucket(lakhs) {
+    if (lakhs < 75) return 'Under 75 L';
+    if (lakhs <= 150) return '75 L - 1.5 Cr';
+    if (lakhs <= 300) return '1.5 - 3 Cr';
+    return '3 Cr+';
+}
+
+// Brokerage savings calculator
+function initSavingsCalculator() {
+    const range = document.getElementById('budget-range');
+    if (!range) return;
+
+    const out = document.getElementById('budget-output');
+    const fee = document.getElementById('broker-fee');
+    const total = document.getElementById('savings-total');
+    const GST = 1.18;
+
+    const update = () => {
+        const lakhs = Number(range.value);
+        const low = lakhs * 0.01 * GST;
+        const high = lakhs * 0.02 * GST;
+        out.textContent = formatINR(lakhs);
+        fee.textContent = `${formatINR(low)} – ${formatINR(high)}`;
+        total.textContent = formatINR(high);
+        const pct = ((lakhs - range.min) / (range.max - range.min)) * 100;
+        range.style.setProperty('--fill', `${pct}%`);
+    };
+
+    range.addEventListener('input', update);
+    update();
+
+    // Carry the chosen budget into the lead form
+    const cta = document.querySelector('.savings-cta');
+    if (cta) {
+        cta.addEventListener('click', () => {
+            prefillLead({ budget: budgetBucket(Number(range.value)) });
+        });
+    }
+}
+
+function prefillLead({ bhk, budget, area } = {}) {
+    const form = document.getElementById('lead-form');
+    if (!form) return;
+    if (bhk) form.querySelector('#lead-bhk').value = bhk;
+    if (budget) form.querySelector('#lead-budget').value = budget;
+    if (area) {
+        form.querySelector('#lead-area').value = area;
+        const note = document.getElementById('lead-area-note');
+        if (note) {
+            note.textContent = area === 'Not sure yet'
+                ? "No problem — we'll help you pick the right area."
+                : `Looking in ${area} — noted.`;
+            note.hidden = false;
+        }
+    }
+    form.classList.remove('form-flash');
+    void form.offsetWidth;
+    form.classList.add('form-flash');
+
+    // Put the cursor in the first field once the smooth scroll lands
+    const name = form.querySelector('#lead-name');
+    if (name && !name.value) setTimeout(() => name.focus({ preventScroll: true }), 700);
+}
+
+// Inline lead form
+function initLeadForm() {
+    const form = document.getElementById('lead-form');
+    if (!form) return;
+
+    // Any CTA that carries context pre-fills the form
+    document.querySelectorAll('a[href="#get-shortlist"]').forEach(link => {
+        link.addEventListener('click', () => {
+            prefillLead({ bhk: link.dataset.bhk, area: link.dataset.area });
+        });
+    });
+
+    const nameInput = form.querySelector('#lead-name');
+    const phoneInput = form.querySelector('#lead-phone');
+    const errorEl = document.getElementById('lead-error');
+    const submitBtn = form.querySelector('.lead-submit');
+
+    phoneInput.addEventListener('input', () => {
+        phoneInput.value = phoneInput.value.replace(/\D/g, '').replace(/^91(?=\d{10})/, '').slice(0, 10);
+        phoneInput.removeAttribute('aria-invalid');
+    });
+    nameInput.addEventListener('input', () => nameInput.removeAttribute('aria-invalid'));
+
+    const showError = msg => {
+        errorEl.textContent = msg;
+        errorEl.hidden = !msg;
+    };
+
+    form.addEventListener('submit', async e => {
+        e.preventDefault();
+        showError('');
+
+        const data = Object.fromEntries(new FormData(form).entries());
+        data.name = (data.name || '').trim();
+
+        if (data.name.length < 2) {
+            nameInput.setAttribute('aria-invalid', 'true');
+            nameInput.focus();
+            return showError('Please tell us your name.');
+        }
+        if (!/^[6-9]\d{9}$/.test(data.phone || '')) {
+            phoneInput.setAttribute('aria-invalid', 'true');
+            phoneInput.focus();
+            return showError('Please enter a valid 10-digit mobile number.');
+        }
+
+        data.source = 'homepage_shortlist';
+        data.page = window.location.href;
+
+        const bhkLabel = form.querySelector('#lead-bhk').selectedOptions[0]?.textContent || '';
+        const summary = [
+            `Hi PRABALHOUSING, I'm ${data.name} (+91 ${data.phone}).`,
+            `I'd like a free shortlist.`,
+            data.bhk ? `Looking for: ${bhkLabel}.` : '',
+            data.budget ? `Budget: ₹${data.budget}.` : '',
+            data.area ? `Area: ${data.area}.` : ''
+        ].filter(Boolean).join(' ');
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'SENDING...';
+
+        try {
+            if (CONTACT.leadEndpoint) {
+                const res = await fetch(CONTACT.leadEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                    body: JSON.stringify({ ...data, message: summary })
+                });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            } else if (CONTACT.whatsapp) {
+                window.open(whatsappURL(summary), '_blank', 'noopener');
+            } else {
+                // No backend configured yet: hand over to the contact page, pre-filled.
+                const params = new URLSearchParams({
+                    name: data.name, phone: data.phone, bhk: data.bhk || '', message: summary
+                });
+                track('lead_submit', { method: 'contact_page' });
+                window.location.href = `/contact?${params.toString()}`;
+                return;
+            }
+
+            track('lead_submit', { method: CONTACT.leadEndpoint ? 'endpoint' : 'whatsapp' });
+            form.querySelector('.lead-form-body').hidden = true;
+            document.getElementById('lead-success-name').textContent = `, ${data.name.split(' ')[0]}`;
+            document.getElementById('lead-success').hidden = false;
+        } catch (err) {
+            showError(CONTACT.whatsapp || CONTACT.phone
+                ? 'Something went wrong. Please try again, or reach us directly on WhatsApp / call.'
+                : 'Something went wrong. Please try again in a moment.');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'GET MY FREE SHORTLIST';
+        }
+    });
+}
+
+// Floating "talk to an advisor" pill (desktop) + bottom action bar (mobile).
+// They appear once the visitor has scrolled past the hero and get out of the
+// way when the lead form itself is on screen.
+function initStickyCTAs() {
+    const pill = document.getElementById('float-cta');
+    const bar = document.getElementById('mobile-cta-bar');
+    const hero = document.querySelector('.hero-stage');
+    const formSection = document.getElementById('get-shortlist');
+    if ((!pill && !bar) || !hero) return;
+
+    let formVisible = false;
+    if (formSection && 'IntersectionObserver' in window) {
+        new IntersectionObserver(entries => {
+            formVisible = entries[0].isIntersecting;
+            update();
+        }, { threshold: 0.15 }).observe(formSection);
+    }
+
+    function update() {
+        const pastHero = window.scrollY > hero.offsetHeight * 0.7;
+        const show = pastHero && !formVisible;
+        if (pill) pill.classList.toggle('is-visible', show);
+        if (bar) bar.classList.toggle('is-visible', show);
+    }
+
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+}
+
+// Vercel Analytics custom events (no-op if analytics isn't loaded)
+function track(name, data) {
+    try {
+        if (window.va) window.va('event', { name, data });
+    } catch (err) { /* ignore */ }
+}
+
+function initTracking() {
+    document.querySelectorAll('[data-track]').forEach(el => {
+        if (el.dataset.track === 'lead_submit') return; // tracked on successful submit
+        el.addEventListener('click', () => track('cta_click', { id: el.dataset.track }));
+    });
+
+    // How far do people get? Fire once per section.
+    const sections = document.querySelectorAll('main section[id]');
+    if (!sections.length || !('IntersectionObserver' in window)) return;
+    const seen = new Set();
+    const io = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            const id = entry.target.id;
+            if (entry.isIntersecting && !seen.has(id)) {
+                seen.add(id);
+                track('section_view', { id });
+                io.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.4 });
+    sections.forEach(s => io.observe(s));
+}
+
+// /contact?name=..&phone=..&bhk=..&message=.. -> pre-fill the contact form
+function initContactPagePrefill() {
+    const form = document.querySelector('.contact-form-wrapper form');
+    if (!form || !window.location.search) return;
+    const params = new URLSearchParams(window.location.search);
+    const set = (sel, val) => {
+        const el = form.querySelector(sel);
+        if (el && val) el.value = val;
+    };
+    set('#fullName', params.get('name'));
+    set('#mobileNumber', params.get('phone'));
+    set('#bhkSelect', params.get('bhk'));
+    set('#message', params.get('message'));
 }
