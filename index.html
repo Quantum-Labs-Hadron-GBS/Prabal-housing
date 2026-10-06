@@ -52,6 +52,8 @@
       ]
     }
     </script>
+    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -128,12 +130,17 @@
 
                 <!-- Buildings (Stable anchor) -->
                 <div class="hero-buildings" id="hero-buildings">
-                    <img id="day-building-img" class="day-building" fetchpriority="high"
-                        src="https://res.cloudinary.com/dyhlpxwwo/image/upload/v1789483116/ChatGPT_Image_Sep_15_2026_08_01_57_PM_u8yeqr.png"
-                        alt="Premium residential towers in Pune">
-                    <img id="night-building-img" class="night-building"
-                        src="https://res.cloudinary.com/dyhlpxwwo/image/upload/v1789736957/ChatGPT_Image_Sep_18_2026_06_38_31_PM_ewkjq9.png"
-                        alt="Premium residential towers in Pune at night">
+                    <img id="day-building-img" class="day-building" fetchpriority="high" decoding="async"
+                        src="https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_1200/v1789483116/ChatGPT_Image_Sep_15_2026_08_01_57_PM_u8yeqr.png"
+                        srcset="https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_480/v1789483116/ChatGPT_Image_Sep_15_2026_08_01_57_PM_u8yeqr.png 480w, https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_720/v1789483116/ChatGPT_Image_Sep_15_2026_08_01_57_PM_u8yeqr.png 720w, https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_960/v1789483116/ChatGPT_Image_Sep_15_2026_08_01_57_PM_u8yeqr.png 960w, https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_1200/v1789483116/ChatGPT_Image_Sep_15_2026_08_01_57_PM_u8yeqr.png 1200w, https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_1428/v1789483116/ChatGPT_Image_Sep_15_2026_08_01_57_PM_u8yeqr.png 1428w"
+                        sizes="(max-width: 768px) 92vw, (max-height: 520px) 42vw, 50vw"
+                        width="1428" height="1102" alt="Premium residential towers in Pune">
+                    <!-- Night image is fetched by JS only when night mode is used (saves ~200 KB) -->
+                    <img id="night-building-img" class="night-building" decoding="async"
+                        data-src="https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_1200/v1789736957/ChatGPT_Image_Sep_18_2026_06_38_31_PM_ewkjq9.png"
+                        data-srcset="https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_480/v1789736957/ChatGPT_Image_Sep_18_2026_06_38_31_PM_ewkjq9.png 480w, https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_720/v1789736957/ChatGPT_Image_Sep_18_2026_06_38_31_PM_ewkjq9.png 720w, https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_960/v1789736957/ChatGPT_Image_Sep_18_2026_06_38_31_PM_ewkjq9.png 960w, https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_1200/v1789736957/ChatGPT_Image_Sep_18_2026_06_38_31_PM_ewkjq9.png 1200w, https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_1428/v1789736957/ChatGPT_Image_Sep_18_2026_06_38_31_PM_ewkjq9.png 1428w"
+                        sizes="(max-width: 768px) 92vw, (max-height: 520px) 42vw, 50vw"
+                        width="1428" height="1102" alt="Premium residential towers in Pune at night">
                 </div>
 
                 <!-- Foreground cloud bank (Parallax) -->
@@ -284,7 +291,7 @@
                 <h2 class="section-title reveal">THE RESIDENCES</h2>
                 <div class="cards-grid">
                     <div class="residence-card">
-                        <img data-media="residences" data-index="0" src="" alt="2 BHK">
+                        <img data-media="residences" data-index="0" alt="2 BHK">
                         <div class="card-content">
                             <h3>2 BHK SIGNATURE</h3>
                             <p class="meta">1,250 SQ.FT &bull; 2 BEDROOMS</p>
@@ -294,7 +301,7 @@
                         </div>
                     </div>
                     <div class="residence-card">
-                        <img data-media="residences" data-index="1" src="" alt="3 BHK">
+                        <img data-media="residences" data-index="1" alt="3 BHK">
                         <div class="card-content">
                             <h3>3 BHK PREMIUM</h3>
                             <p class="meta">1,850 SQ.FT &bull; 3 BEDROOMS</p>
@@ -303,7 +310,7 @@
                         </div>
                     </div>
                     <div class="residence-card">
-                        <img data-media="residences" data-index="2" src="" alt="4 BHK">
+                        <img data-media="residences" data-index="2" alt="4 BHK">
                         <div class="card-content">
                             <h3>4 BHK PENTHOUSE</h3>
                             <p class="meta">3,200 SQ.FT &bull; 4 BEDROOMS</p>
@@ -321,19 +328,19 @@
                 <h2 class="section-title">CURATED AMENITIES</h2>
                 <div class="amenities-grid">
                     <div class="amenity-item">
-                        <img data-media="amenities" data-index="0" src="" alt="Swimming Pool">
+                        <img data-media="amenities" data-index="0" alt="Swimming Pool">
                         <h4>INFINITY POOL</h4>
                     </div>
                     <div class="amenity-item">
-                        <img data-media="amenities" data-index="1" src="" alt="Fitness Center">
+                        <img data-media="amenities" data-index="1" alt="Fitness Center">
                         <h4>WELLNESS STUDIO</h4>
                     </div>
                     <div class="amenity-item">
-                        <img data-media="amenities" data-index="2" src="" alt="Lounge">
+                        <img data-media="amenities" data-index="2" alt="Lounge">
                         <h4>RESIDENTS LOUNGE</h4>
                     </div>
                     <div class="amenity-item">
-                        <img data-media="amenities" data-index="3" src="" alt="Gardens">
+                        <img data-media="amenities" data-index="3" alt="Gardens">
                         <h4>LANDSCAPED GARDENS</h4>
                     </div>
                 </div>
@@ -480,9 +487,9 @@
         </style>
         <section class="curtain-section" data-theme="dark">
             <div class="curtain-images">
-                <img src="https://cdn.prod.website-files.com/69e1cc2c4bb2c432ebac4f2b/69ee715c5a1922a3cf704f04_Mask%20group-1.webp"
+                <img loading="lazy" decoding="async" src="https://cdn.prod.website-files.com/69e1cc2c4bb2c432ebac4f2b/69ee715c5a1922a3cf704f04_Mask%20group-1.webp"
                     alt="Architecture Sketch Left">
-                <img src="https://cdn.prod.website-files.com/69e1cc2c4bb2c432ebac4f2b/69ee715cd027b41f18e6543d_Mask%20group.webp"
+                <img loading="lazy" decoding="async" src="https://cdn.prod.website-files.com/69e1cc2c4bb2c432ebac4f2b/69ee715cd027b41f18e6543d_Mask%20group.webp"
                     alt="Architecture Sketch Right">
             </div>
             <div class="curtain-text">
@@ -502,9 +509,9 @@
                 <div class="container">
                     <h2 class="section-title">GALLERY</h2>
                     <div class="masonry-gallery">
-                        <img data-media="gallery" data-index="0" src="" class="span-2" alt="Gallery Image 1">
-                        <img data-media="gallery" data-index="1" src="" alt="Gallery Image 2">
-                        <img data-media="gallery" data-index="2" src="" alt="Gallery Image 3">
+                        <img data-media="gallery" data-index="0" class="span-2" alt="Gallery Image 1">
+                        <img data-media="gallery" data-index="1" alt="Gallery Image 2">
+                        <img data-media="gallery" data-index="2" alt="Gallery Image 3">
                     </div>
                 </div>
             </section>
@@ -700,8 +707,8 @@
         </div>
     </footer>
 
-    <script src="js/clouds.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/clouds.js" defer></script>
+    <script src="js/main.js" defer></script>
     <!-- Minor update trigger -->
 </body>
 

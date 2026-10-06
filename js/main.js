@@ -51,8 +51,8 @@ const MEDIA = {
 document.addEventListener('DOMContentLoaded', () => {
     injectMedia();
     initDayNightToggle();
-    generateStars();
     initParallax();
+    initHeroVisibility();
     initMobileMenu();
     initDynamicNavbar();
     initKeyboardNavigation();
@@ -67,31 +67,61 @@ document.addEventListener('DOMContentLoaded', () => {
     initContactPagePrefill();
 });
 
-// Inject placeholders from MEDIA config
+// Unsplash URLs accept a width parameter; build a srcset from it
+function unsplashAt(url, w) {
+    return url.replace(/([?&])w=\d+/, `$1w=${w}`);
+}
+
+// Inject placeholders from MEDIA config (lazy, sized to the slot they fill)
 function injectMedia() {
-    // Standard images
+    const WIDTHS = [400, 800, 1200, 1600];
+
     document.querySelectorAll('[data-media]').forEach(el => {
         const key = el.getAttribute('data-media');
         const index = parseInt(el.getAttribute('data-index') || "0");
-        
-        if (MEDIA[key]) {
-            const src = Array.isArray(MEDIA[key]) ? MEDIA[key][index] : MEDIA[key];
-            if (src && el.tagName === 'IMG') {
-                el.src = src;
-            }
-        }
+        if (!MEDIA[key] || el.tagName !== 'IMG') return;
+
+        const src = Array.isArray(MEDIA[key]) ? MEDIA[key][index] : MEDIA[key];
+        if (!src) return;
+
+        const slot = Math.ceil(el.getBoundingClientRect().width) || window.innerWidth;
+        el.loading = 'lazy';
+        el.decoding = 'async';
+        el.sizes = `${slot}px`;
+        el.srcset = WIDTHS.map(w => `${unsplashAt(src, w)} ${w}w`).join(', ');
+        el.src = unsplashAt(src, 800);
     });
 
-    // Background images
-    document.querySelectorAll('[data-media-bg]').forEach(el => {
+    // Background images: only fetch when the section is about to scroll into view
+    const bgEls = document.querySelectorAll('[data-media-bg]');
+    const loadBg = el => {
         const key = el.getAttribute('data-media-bg');
-        if (MEDIA[key]) {
-            const src = Array.isArray(MEDIA[key]) ? MEDIA[key][0] : MEDIA[key];
-            if (src) {
-                el.style.backgroundImage = `url(${src})`;
+        const src = Array.isArray(MEDIA[key]) ? MEDIA[key][0] : MEDIA[key];
+        if (!src) return;
+        const w = Math.min(2400, Math.ceil(window.innerWidth * Math.min(window.devicePixelRatio || 1, 2) / 400) * 400);
+        el.style.backgroundImage = `url(${unsplashAt(src, w)})`;
+    };
+    if (!('IntersectionObserver' in window)) return bgEls.forEach(loadBg);
+    const io = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                loadBg(entry.target);
+                io.unobserve(entry.target);
             }
-        }
-    });
+        });
+    }, { rootMargin: '600px 0px' });
+    bgEls.forEach(el => io.observe(el));
+}
+
+// Night tower image is only downloaded when night mode is actually used.
+// On desktop it is also prefetched once the page is idle so the toggle is instant.
+function loadNightBuilding() {
+    const img = document.getElementById('night-building-img');
+    if (!img || !img.dataset.src) return;
+    if (img.dataset.srcset) img.srcset = img.dataset.srcset;
+    img.src = img.dataset.src;
+    delete img.dataset.src;
+    delete img.dataset.srcset;
 }
 
 // Day/Night Toggle System
@@ -105,15 +135,30 @@ function initDayNightToggle() {
     if (isNight) {
         document.body.classList.replace('day-mode', 'night-mode');
         btn.classList.add('active');
+        loadNightBuilding();
+        generateStars();
     } else {
         document.body.classList.replace('night-mode', 'day-mode');
         btn.classList.remove('active');
+    }
+
+    // Prefetch night assets when the page is idle on desktop, or as soon as a
+    // visitor shows intent (hover / touch) on the toggle.
+    const warm = () => { loadNightBuilding(); generateStars(); };
+    btn.addEventListener('pointerenter', warm, { once: true });
+    btn.addEventListener('touchstart', warm, { once: true, passive: true });
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && !navigator.connection?.saveData) {
+        window.addEventListener('load', () => {
+            (window.requestIdleCallback || (cb => setTimeout(cb, 2500)))(warm, { timeout: 4000 });
+        });
     }
 
     btn.addEventListener('click', () => {
         isNight = !isNight;
         
         if (isNight) {
+            loadNightBuilding();
+            generateStars();
             document.body.classList.replace('day-mode', 'night-mode');
             btn.classList.add('active');
             localStorage.setItem('theme', 'night');
@@ -125,93 +170,85 @@ function initDayNightToggle() {
     });
 }
 
-// Generate Night Stars
+// Night Stars
+// ~750 stars painted once onto a canvas (cheap), plus a few dozen DOM stars
+// that twinkle. Previously every star was an animated element.
+let starsBuilt = false;
 function generateStars() {
     const container = document.getElementById('stars-container');
-    if (!container) return;
+    if (!container || starsBuilt) return;
+    starsBuilt = true;
 
+    // Deterministic layout so a resize repaints the same sky
+    let seed = 7;
+    const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+    const stars = [];
+
+    // 1. Base stars, spread everywhere
+    for (let i = 0; i < 150; i++) {
+        stars.push({ x: rand(), y: rand(), r: rand() * 1 + 0.5, a: 0.5 + rand() * 0.5, tint: false });
+    }
+    // 2. Milky Way: dense diagonal band from the top-left
+    for (let i = 0; i < 400; i++) {
+        const core = rand() * 0.45;
+        stars.push({
+            x: Math.max(0, Math.min(1, core + (rand() - 0.5) * 0.25)),
+            y: Math.max(0, Math.min(1, core + (rand() - 0.5) * 0.25)),
+            r: rand() * 0.6 + 0.15, a: rand() * 0.4 + 0.1, tint: rand() > 0.6
+        });
+    }
+    // 3. Cluster above the towers (upper right)
+    for (let i = 0; i < 200; i++) {
+        stars.push({ x: 0.5 + rand() * 0.5, y: rand() * 0.45, r: rand() * 0.75 + 0.25, a: rand() * 0.5 + 0.1, tint: false });
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.className = 'stars-canvas';
+    container.appendChild(canvas);
+
+    const paint = () => {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const w = container.clientWidth, h = container.clientHeight;
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+        const ctx = canvas.getContext('2d');
+        ctx.scale(dpr, dpr);
+        stars.forEach(st => {
+            ctx.globalAlpha = st.a;
+            ctx.fillStyle = st.tint ? '#e0e7ff' : '#ffffff';
+            ctx.beginPath();
+            ctx.arc(st.x * w, st.y * h, st.r, 0, Math.PI * 2);
+            ctx.fill();
+        });
+    };
+    paint();
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(paint, 200);
+    });
+
+    // A handful of brighter stars that actually twinkle
     const fragment = document.createDocumentFragment();
-
-    // 1. Base Stars (spread everywhere)
-    const numBaseStars = 150;
-    for (let i = 0; i < numBaseStars; i++) {
+    const twinklers = window.innerWidth <= 768 ? 24 : 48;
+    for (let i = 0; i < twinklers; i++) {
         const star = document.createElement('div');
-        star.classList.add('star');
-        
-        const x = Math.random() * 100;
-        const y = Math.random() * 100;
-        const size = Math.random() * 2 + 1;
-        const delay = Math.random() * 4;
-
-        star.style.left = `${x}%`;
-        star.style.top = `${y}%`;
-        star.style.width = `${size}px`;
-        star.style.height = `${size}px`;
-        star.style.animationDelay = `${delay}s`;
-
+        star.className = 'star';
+        const size = rand() * 1.5 + 1;
+        star.style.cssText = `left:${rand() * 100}%;top:${rand() * 70}%;width:${size}px;height:${size}px;animation-delay:${rand() * 4}s`;
         fragment.appendChild(star);
     }
-
-    // 2. Milky Way Cluster (dense, upper left diagonal band)
-    const numMilkyWay = 400;
-    for (let i = 0; i < numMilkyWay; i++) {
-        const star = document.createElement('div');
-        star.classList.add('star');
-        
-        // Diagonal core stretching from top-left
-        const corePos = Math.random() * 45; // 0% to 45%
-        // Spread thickness
-        const spreadX = (Math.random() - 0.5) * 25; 
-        const spreadY = (Math.random() - 0.5) * 25; 
-
-        // Apply position and clamp edges
-        let x = Math.max(0, Math.min(100, corePos + spreadX));
-        let y = Math.max(0, Math.min(100, corePos + spreadY));
-
-        // Milky Way stars are tiny "stardust"
-        const size = Math.random() * 1.2 + 0.3;
-        const delay = Math.random() * 5;
-
-        star.style.left = `${x}%`;
-        star.style.top = `${y}%`;
-        star.style.width = `${size}px`;
-        star.style.height = `${size}px`;
-        star.style.opacity = Math.random() * 0.4 + 0.1; // Fainter base opacity
-        star.style.animationDelay = `${delay}s`;
-        
-        // Add a slight blue/purple tint to some stardust for a nebula effect
-        if (Math.random() > 0.6) {
-            star.style.backgroundColor = '#e0e7ff'; 
-            star.style.boxShadow = `0 0 4px rgba(224, 231, 255, 0.4)`;
-        }
-
-        fragment.appendChild(star);
-    }
-
-    // 3. Building Cluster (dense, upper right above the building)
-    const numBuildingStars = 200;
-    for (let i = 0; i < numBuildingStars; i++) {
-        const star = document.createElement('div');
-        star.classList.add('star');
-        
-        // Target upper right quadrant (X: 50% to 100%, Y: 0% to 45%)
-        const x = 50 + (Math.random() * 50); 
-        const y = Math.random() * 45; 
-        
-        const size = Math.random() * 1.5 + 0.5;
-        const delay = Math.random() * 4;
-
-        star.style.left = `${x}%`;
-        star.style.top = `${y}%`;
-        star.style.width = `${size}px`;
-        star.style.height = `${size}px`;
-        star.style.opacity = Math.random() * 0.5 + 0.1;
-        star.style.animationDelay = `${delay}s`;
-        
-        fragment.appendChild(star);
-    }
-
     container.appendChild(fragment);
+}
+
+// Toggle a class when the hero is off screen so its animations can pause
+function initHeroVisibility() {
+    const hero = document.querySelector('.hero-stage');
+    if (!hero || !('IntersectionObserver' in window)) return;
+    new IntersectionObserver(entries => {
+        document.body.classList.toggle('hero-offscreen', !entries[0].isIntersecting);
+    }).observe(hero);
 }
 
 // Hero Parallax Effect
@@ -307,20 +344,20 @@ function initDynamicNavbar() {
         const currentScrollY = window.scrollY;
         const heroHeight = heroSection ? heroSection.offsetHeight : 300;
 
-        // Navbar Hide/Show Logic
-        if (currentScrollY > heroHeight) {
-            // Passed hero section
+        // Navbar Hide/Show Logic.
+        // Uses `top` rather than `transform`: a transformed navbar becomes the
+        // containing block for the fixed full-screen mobile menu and squashes it.
+        const menuOpen = navbar.querySelector('.nav-links.active');
+        if (currentScrollY > heroHeight && !menuOpen) {
             if (currentScrollY > lastScrollY && currentScrollY > heroHeight + 50) {
-                // Scrolling down - hide
-                navbar.style.transform = 'translateY(-100%)';
+                navbar.style.top = `-${navbar.offsetHeight + 8}px`;
             } else if (currentScrollY < lastScrollY) {
-                // Scrolling up - show
-                navbar.style.transform = 'translateY(0)';
+                navbar.style.top = '0px';
             }
         } else {
-            // In hero section - always show
-            navbar.style.transform = 'translateY(0)';
+            navbar.style.top = '0px';
         }
+        navbar.classList.toggle('is-scrolled', currentScrollY > heroHeight * 0.85);
         lastScrollY = currentScrollY;
 
         // Theme Toggle Logic
@@ -491,10 +528,23 @@ function initPartners() {
         let rawProgress = -rect.top / scrollDistance;
         let progress = Math.max(0, Math.min(1, rawProgress));
         
-        const isMobile = window.innerWidth < 768;
-        // Adjust radii based on screen size for an elliptical path, spread further horizontally
-        const radiusX = isMobile ? window.innerWidth * 0.40 : window.innerWidth * 0.36;
-        const radiusY = isMobile ? windowHeight * 0.38 : windowHeight * 0.35;
+        // Skip the work entirely while the section is off screen
+        if (rect.bottom < -50 || rect.top > windowHeight + 50) {
+            ticking = false;
+            return;
+        }
+
+        const isMobile = window.innerWidth <= 768;
+        // Fit the orbit to the space actually available (card size included,
+        // plus ~10% for rotation) so no card is ever clipped, on any screen.
+        const cardW = cards[0].offsetWidth * 0.55;
+        const cardH = cards[0].offsetHeight * 0.55;
+        const safeTop = isMobile ? 16 : 24;
+        const safeBottom = isMobile ? 84 : 24; // clear the mobile CTA bar
+        const availHalfH = (windowHeight - safeTop - safeBottom) / 2;
+        const centerShift = (safeTop - safeBottom) / 2;
+        const radiusX = Math.min(window.innerWidth * 0.36, window.innerWidth / 2 - cardW - 12);
+        const radiusY = Math.min(windowHeight * 0.36, availHalfH - cardH);
 
         cards.forEach((card, i) => {
             if (!card) return;
@@ -519,7 +569,7 @@ function initPartners() {
             
             // Radial destination offset
             const radX = Math.cos(c.angle) * radiusX;
-            const radY = (Math.sin(c.angle) * radiusY) + (c.offsetY || 0);
+            const radY = (Math.sin(c.angle) * radiusY) + centerShift;
             
             // Current position via interpolation
             const currentX = stackX + (radX - stackX) * p;
