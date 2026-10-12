@@ -1045,6 +1045,22 @@ body.night-mode .partner-card {
         align-items: center;
         top: 25%;
     }
+    .cloud-strip {
+        width: 400%;
+        background-size: 50% 100%;
+    }
+    .cloud-layer--high {
+        top: -4%;
+        height: 38%;
+    }
+    .cloud-layer--mid {
+        top: 6%;
+        height: 50%;
+    }
+    .cloud-layer--far {
+        top: 34%;
+        height: 24%;
+    }
     .cloud-bank {
         top: 60%;
     }
@@ -1055,8 +1071,6 @@ body.night-mode .partner-card {
     .cloud-bank-base {
         top: calc(60vh - 2px);
     }
-    .cloud-layer--mid { top: 6%; height: 52%; }
-    .cloud-layer--far { top: 34%; height: 24%; }
     .cards-grid, .amenities-grid {
         grid-template-columns: minmax(100%, 1fr);
     }
