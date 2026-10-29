@@ -31,8 +31,7 @@
         return m ? `${m[1]}bhk` : '';
     }
 
-    function enquiryLink(p, closed, onHomepage) {
-        if (onHomepage) return '#get-shortlist';
+    function enquiryLink(p, closed) {
         const message = closed
             ? `Hi, I saw ${p.title} (${p.location}) is closed. Please share similar options.`
             : `Hi, I'm interested in ${p.title} at ${p.location}. Please share the best price.`;
@@ -77,7 +76,7 @@
                 ${p.rera ? `<p class="listing-rera">RERA ${esc(p.rera)}</p>` : ''}
                 <div class="listing-foot">
                     ${priceHTML}
-                    <a class="btn-link listing-cta" href="${esc(enquiryLink(p, closed, onHomepage))}"
+                    <a class="btn-link listing-cta" href="${esc(enquiryLink(p, closed))}"
                        data-area="${area}" data-bhk="${esc(bhkSlug(p.configurations))}"
                        data-track="${closed ? 'listing_similar' : 'listing_enquire'}">${ctaLabel}</a>
                 </div>
