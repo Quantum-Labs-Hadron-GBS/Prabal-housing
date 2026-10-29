@@ -1,0 +1,94 @@
+[
+  {
+    "id": "prop-1",
+    "title": "Godrej River Crest",
+    "developer": "Godrej Properties",
+    "configurations": [
+      "3 BHK"
+    ],
+    "price_lakhs": 250,
+    "price_onwards": false,
+    "location": "Kalyani Nagar",
+    "city": "Pune",
+    "status": "available",
+    "featured": true,
+    "rera": "P52100051234",
+    "image_url": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80",
+    "sort_order": 0,
+    "created_at": "2026-10-27T10:00:00.000Z"
+  },
+  {
+    "id": "prop-2",
+    "title": "Lodha Bellagio",
+    "developer": "Lodha Group",
+    "configurations": [
+      "4 BHK"
+    ],
+    "price_lakhs": 420,
+    "price_onwards": false,
+    "location": "Koregaon Park",
+    "city": "Pune",
+    "status": "new_launch",
+    "featured": true,
+    "rera": "P52100049876",
+    "image_url": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80",
+    "sort_order": 0,
+    "created_at": "2026-10-26T10:00:00.000Z"
+  },
+  {
+    "id": "prop-3",
+    "title": "Mahindra Citadel",
+    "developer": "Mahindra Lifespaces",
+    "configurations": [
+      "2 BHK",
+      "3 BHK"
+    ],
+    "price_lakhs": 110,
+    "price_onwards": true,
+    "location": "Pimpri",
+    "city": "Pune",
+    "status": "available",
+    "featured": true,
+    "rera": "P52100048123",
+    "image_url": "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=80",
+    "sort_order": 0,
+    "created_at": "2026-10-25T10:00:00.000Z"
+  },
+  {
+    "id": "prop-4",
+    "title": "Kohinoor Presidentia",
+    "developer": "Kohinoor",
+    "configurations": [
+      "3 BHK"
+    ],
+    "price_lakhs": 180,
+    "price_onwards": false,
+    "location": "Sopan Baug Annexe",
+    "city": "Pune",
+    "status": "closed",
+    "featured": false,
+    "rera": "P52100047321",
+    "image_url": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+    "sort_order": 0,
+    "created_at": "2026-10-24T10:00:00.000Z"
+  },
+  {
+    "id": "prop-5",
+    "title": "Godrej Horizon",
+    "developer": "Godrej Properties",
+    "configurations": [
+      "Studio",
+      "1 BHK"
+    ],
+    "price_lakhs": 45,
+    "price_onwards": true,
+    "location": "Undri",
+    "city": "Pune",
+    "status": "available",
+    "featured": false,
+    "rera": "P52100046555",
+    "image_url": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80",
+    "sort_order": 0,
+    "created_at": "2026-10-23T10:00:00.000Z"
+  }
+]

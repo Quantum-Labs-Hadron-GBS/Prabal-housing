@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+    <!-- Homepage -->
+    <url>
+        <loc>https://www.prabalhousing.com/</loc>
+        <lastmod>2026-10-27</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+        <image:image>
+            <image:loc>https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_1200,h_630,c_fill/v1789483116/ChatGPT_Image_Sep_15_2026_08_01_57_PM_u8yeqr.png</image:loc>
+            <image:title>PRABALHOUSING Luxury Residences in Pune</image:title>
+            <image:caption>Zero brokerage luxury 2, 3 and 4 BHK flats in Pune</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://res.cloudinary.com/dyhlpxwwo/image/upload/f_png,w_512/v1790075126/Prabal_Final_Logo_ozw283.png</image:loc>
+            <image:title>PRABALHOUSING Brand Logo</image:title>
+        </image:image>
+    </url>
+
+    <!-- Properties Collection -->
+    <url>
+        <loc>https://www.prabalhousing.com/properties</loc>
+        <lastmod>2026-10-27</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+        <image:image>
+            <image:loc>https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_1200,h_630,c_fill/v1789483116/ChatGPT_Image_Sep_15_2026_08_01_57_PM_u8yeqr.png</image:loc>
+            <image:title>Luxury Real Estate Properties in Pune</image:title>
+            <image:caption>Curated RERA verified apartments and penthouses in Pune</image:caption>
+        </image:image>
+    </url>
+
+    <!-- About Us Page -->
+    <url>
+        <loc>https://www.prabalhousing.com/about</loc>
+        <lastmod>2026-10-27</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://res.cloudinary.com/dyhlpxwwo/image/upload/v1790074718/Prabal_Final_Logo_ghlra0.png</image:loc>
+            <image:title>About PRABALHOUSING Real Estate Advisory</image:title>
+        </image:image>
+    </url>
+
+    <!-- Careers Page -->
+    <url>
+        <loc>https://www.prabalhousing.com/career</loc>
+        <lastmod>2026-10-27</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&amp;fit=crop&amp;w=1200&amp;h=630&amp;q=80</image:loc>
+            <image:title>Careers at PRABALHOUSING Pune</image:title>
+            <image:caption>Team culture and real estate career opportunities at PRABALHOUSING</image:caption>
+        </image:image>
+    </url>
+
+    <!-- Contact Page -->
+    <url>
+        <loc>https://www.prabalhousing.com/contact</loc>
+        <lastmod>2026-10-27</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+</urlset>

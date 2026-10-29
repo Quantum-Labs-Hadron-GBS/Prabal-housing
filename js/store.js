@@ -126,10 +126,39 @@ const PrabalStore = (() => {
         }
     }
 
+    // Helper to communicate with local backend file storage (/data/properties.json via server.js)
+    async function fetchLocalApi(endpoint, options = {}) {
+        try {
+            const res = await fetch(endpoint, { ...options, cache: 'no-cache' });
+            if (res.ok) {
+                return await res.json();
+            }
+        } catch (err) {
+            // Server API not running (fallback to demo/localStorage)
+        }
+        return null;
+    }
+
+    function clearLocalCache() {
+        try {
+            localStorage.removeItem(DEMO_KEY);
+            localStorage.removeItem(DEMO_EDITED);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
     // ---- public read (no library) -----------------------------------------
 
     async function listPublic() {
-        if (!LIVE) return sortListings(demoRead());
+        if (!LIVE) {
+            const apiData = await fetchLocalApi('/api/properties');
+            if (Array.isArray(apiData) && apiData.length > 0) {
+                return sortListings(apiData.map(normalise));
+            }
+            return sortListings(demoRead());
+        }
         const url = `${SUPABASE_URL}/rest/v1/${TABLE}?select=*&order=created_at.desc`;
         const res = await fetch(url, {
             headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
@@ -186,7 +215,13 @@ const PrabalStore = (() => {
         },
 
         async list() {
-            if (!LIVE) return sortListings(demoRead());
+            if (!LIVE) {
+                const apiData = await fetchLocalApi('/api/properties');
+                if (Array.isArray(apiData) && apiData.length > 0) {
+                    return sortListings(apiData.map(normalise));
+                }
+                return sortListings(demoRead());
+            }
             const sb = await getClient();
             const { data, error } = await sb.from(TABLE).select('*').order('created_at', { ascending: false });
             if (error) throw new Error(error.message);
@@ -200,6 +235,21 @@ const PrabalStore = (() => {
             if (!p.configurations.length) throw new Error('Pick at least one configuration (e.g. 2 BHK).');
 
             if (!LIVE) {
+                // 1. Save directly to backend data/properties.json via local API
+                const apiRes = await fetchLocalApi('/api/properties', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(p)
+                });
+
+                if (apiRes && apiRes.property) {
+                    // Wipe stale localStorage cache so file is always source of truth
+                    clearLocalCache();
+                    markDemoEdited();
+                    return normalise(apiRes.property);
+                }
+
+                // 2. Fallback to localStorage if server API isn't reachable
                 const list = demoRead();
                 const i = list.findIndex(x => x.id === p.id);
                 if (i >= 0) list[i] = { ...list[i], ...p };
@@ -221,9 +271,16 @@ const PrabalStore = (() => {
 
         async setStatus(id, status) {
             if (!LIVE) {
+                const currentList = await admin.list();
+                const p = currentList.find(x => x.id === id);
+                if (p) {
+                    p.status = status;
+                    await admin.save(p);
+                    return;
+                }
                 const list = demoRead();
-                const p = list.find(x => x.id === id);
-                if (p) p.status = status;
+                const item = list.find(x => x.id === id);
+                if (item) item.status = status;
                 demoWrite(list);
                 markDemoEdited();
                 return;
@@ -235,6 +292,15 @@ const PrabalStore = (() => {
 
         async remove(property) {
             if (!LIVE) {
+                // Delete from backend data/properties.json
+                const apiRes = await fetchLocalApi(`/api/properties/${encodeURIComponent(property.id)}`, {
+                    method: 'DELETE'
+                });
+                if (apiRes) {
+                    clearLocalCache();
+                    markDemoEdited();
+                    return;
+                }
                 demoWrite(demoRead().filter(x => x.id !== property.id));
                 markDemoEdited();
                 return;
@@ -302,7 +368,7 @@ const PrabalStore = (() => {
         });
     }
 
-    return { LIVE, demoEdited, STATUS, CONFIG_OPTIONS, escapeHTML, safeImageURL, formatPrice, listPublic, admin };
+    return { LIVE, demoEdited, clearLocalCache, STATUS, CONFIG_OPTIONS, escapeHTML, safeImageURL, formatPrice, listPublic, admin };
 })();
 
 window.PrabalStore = PrabalStore;

@@ -165,9 +165,6 @@
 
     // ---- homepage -------------------------------------------------------------
     async function initHomepage(grid) {
-        // Before Supabase is connected, keep the designed static cards for real
-        // visitors; only swap if this browser has used the demo dashboard.
-        if (!S.LIVE && !S.demoEdited()) return;
         let list;
         try {
             list = await S.listPublic();

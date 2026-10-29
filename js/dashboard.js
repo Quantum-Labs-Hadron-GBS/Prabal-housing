@@ -77,6 +77,19 @@
         showLogin();
     });
 
+    const syncBtn = $('sync-backend');
+    if (syncBtn) {
+        syncBtn.addEventListener('click', async () => {
+            syncBtn.disabled = true;
+            syncBtn.textContent = 'Syncing...';
+            if (S.clearLocalCache) S.clearLocalCache();
+            await refresh();
+            toast('Synced with backend data file!');
+            syncBtn.disabled = false;
+            syncBtn.textContent = 'Sync / Reload Data';
+        });
+    }
+
     // ---- list -------------------------------------------------------------------
 
     async function refresh() {
