@@ -518,18 +518,22 @@ function initPartners() {
         document.getElementById('pc-2'),
         document.getElementById('pc-3'),
         document.getElementById('pc-4'),
-        document.getElementById('pc-5')
+        document.getElementById('pc-5'),
+        document.getElementById('pc-6'),
+        document.getElementById('pc-7')
     ];
     const centerText = document.getElementById('partners-center');
     
-    // Angles to form an elliptical orbit (now 6 items):
+    // Angles to form an elliptical orbit (8 partner builders):
     const config = [
-        { angle: -Math.PI / 2, stackRot: -4, finalRot: -10 },       // P1 Top Center
-        { angle: -Math.PI * 5 / 6, stackRot: 3, finalRot: 8 },      // P2 Top Left
-        { angle: -Math.PI / 6, stackRot: -7, finalRot: -6 },        // P3 Top Right
-        { angle: Math.PI * 5 / 6, stackRot: 5, finalRot: 12 },      // P4 Bottom Left
-        { angle: Math.PI / 6, stackRot: -2, finalRot: -9 },         // P5 Bottom Right
-        { angle: Math.PI / 2, stackRot: 4, finalRot: 6, offsetY: -15 } // P6 Bottom Center (Shifted UP to prevent cutoff)
+        { angle: -Math.PI / 2, stackRot: -4, finalRot: -5 },          // 0: Top Center (Godrej)
+        { angle: -Math.PI / 4, stackRot: 3, finalRot: 6 },           // 1: Top Right (Lodha)
+        { angle: 0, stackRot: -5, finalRot: -4 },                    // 2: Right (VTP)
+        { angle: Math.PI / 4, stackRot: 4, finalRot: 5 },            // 3: Bottom Right (Kohinoor)
+        { angle: Math.PI / 2, stackRot: -2, finalRot: 4, offsetY: -12 }, // 4: Bottom Center (Shapoorji)
+        { angle: Math.PI * 3 / 4, stackRot: 5, finalRot: -6 },       // 5: Bottom Left (ANP)
+        { angle: Math.PI, stackRot: -3, finalRot: 6 },               // 6: Left (VJ)
+        { angle: -Math.PI * 3 / 4, stackRot: 2, finalRot: -5 }       // 7: Top Left (Mahindra)
     ];
 
     let ticking = false;
@@ -576,7 +580,7 @@ function initPartners() {
             
             // Per-card timing offset for cascading peel
             // P1 moves first, P5 moves last
-            const delay = i * 0.04;
+            const delay = i * 0.025;
             const duration = 0.65;
             
             let cardProgress = (progress - 0.1 - delay) / duration;
@@ -589,7 +593,7 @@ function initPartners() {
             
             // Radial destination offset
             const radX = Math.cos(c.angle) * radiusX;
-            const radY = (Math.sin(c.angle) * radiusY) + centerShift;
+            const radY = (Math.sin(c.angle) * radiusY) + centerShift + (c.offsetY || 0);
             
             // Current position via interpolation
             const currentX = stackX + (radX - stackX) * p;

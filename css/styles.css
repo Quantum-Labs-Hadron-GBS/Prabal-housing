@@ -896,8 +896,8 @@ body.night-mode .night-building {
 
 .partner-card {
     position: absolute;
-    width: clamp(8.75rem, 12vw, 13.75rem);
-    aspect-ratio: 1 / 1.15;
+    width: clamp(8.5rem, 11vw, 13.5rem);
+    aspect-ratio: 1 / 1.18;
     background-color: var(--surface-color);
     border: 1px solid var(--border-color);
     border-radius: 16px;
@@ -907,24 +907,52 @@ body.night-mode .night-building {
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 1.25rem;
+    padding: clamp(0.75rem, 1.1vw, 1.25rem);
     z-index: 2;
     transform-origin: center center;
     will-change: transform;
     opacity: 0; /* JS handles reveal */
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 body.night-mode .partner-card {
     box-shadow: 0 15px 40px rgba(0,0,0,0.4);
 }
 
+.partner-logo-box {
+    width: 100%;
+    height: clamp(2.4rem, 4vw, 3.8rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 6px 12px;
+    margin-bottom: clamp(0.45rem, 0.8vw, 0.85rem);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+body.night-mode .partner-logo-box {
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+}
+
+.partner-logo {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+}
+
 .partner-type {
     font-family: var(--font-display);
-    font-size: clamp(1.2rem, 1.5vw, 1.8rem);
-    font-weight: 500;
-    line-height: 1.2;
-    letter-spacing: 0.05em;
-    opacity: 0.9;
+    font-size: clamp(0.85rem, 1.15vw, 1.35rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: 0.04em;
+    opacity: 0.95;
     text-transform: uppercase;
 }
 
@@ -2042,11 +2070,18 @@ body:not(.night-mode) .star {
         bottom: 0.75rem;
     }
     .partner-card {
-        width: clamp(5.25rem, min(27vw, 15vh), 8.5rem);
+        width: clamp(5.25rem, min(25vw, 13vh), 7.8rem);
         border-radius: 0.75rem;
+        padding: 0.45rem 0.5rem;
+    }
+    .partner-logo-box {
+        height: clamp(1.8rem, 6vw, 2.4rem);
+        padding: 3px 6px;
+        margin-bottom: 0.3rem;
+        border-radius: 6px;
     }
     .partner-type {
-        font-size: clamp(0.7rem, 3.3vw, 0.95rem);
+        font-size: clamp(0.58rem, 2.5vw, 0.78rem);
         letter-spacing: 0.02em;
     }
     .section-title {
@@ -2125,7 +2160,16 @@ body:not(.night-mode) .star {
         padding: 9px 10px;
     }
     .partner-card {
-        width: clamp(4.5rem, 20vh, 7rem);
+        width: clamp(4.2rem, 18vh, 6.5rem);
+        padding: 0.35rem;
+    }
+    .partner-logo-box {
+        height: clamp(1.5rem, 6vh, 2rem);
+        padding: 2px 4px;
+        margin-bottom: 0.2rem;
+    }
+    .partner-type {
+        font-size: clamp(0.55rem, 3vh, 0.72rem);
     }
 }
 
