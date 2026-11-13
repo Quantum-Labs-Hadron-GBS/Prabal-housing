@@ -12,8 +12,8 @@
 //                 falls back to WhatsApp, then to the /contact page.
 // ---------------------------------------------------------------------------
 const CONTACT = {
-    phone: '',
-    whatsapp: '',
+    phone: '+918956603548',
+    whatsapp: '918956603548',
     leadEndpoint: ''
 };
 

@@ -986,6 +986,34 @@ body.night-mode .partner-logo-box {
     max-width: 18.75rem;
 }
 
+.footer-brand .footer-rera {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 1rem;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: rgba(var(--bg-color-rgb), 0.5);
+    color: var(--text-color);
+    text-decoration: none;
+    opacity: 0.9;
+    transition: opacity 0.3s, border-color 0.3s;
+}
+
+.footer-brand .footer-rera:hover {
+    opacity: 1;
+    border-color: var(--accent);
+}
+
+.footer-brand .footer-rera svg {
+    color: var(--accent);
+    flex-shrink: 0;
+}
+
 .footer-links ul {
     list-style: none;
     display: flex;
@@ -1007,6 +1035,17 @@ body.night-mode .partner-logo-box {
     margin-bottom: 0.625rem;
 }
 
+.footer-contact a {
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.3s, color 0.3s;
+}
+
+.footer-contact a:hover {
+    opacity: 1;
+    color: var(--accent);
+}
+
 .social-links {
     display: flex;
     flex-direction: column;
@@ -1026,8 +1065,28 @@ body.night-mode .partner-logo-box {
     text-align: center;
     padding-top: 2.5rem;
     border-top: 1px solid var(--border-color);
-    opacity: 0.5;
     font-size: 0.85rem;
+}
+
+.footer-bottom p {
+    opacity: 0.65;
+}
+
+.footer-sep {
+    margin: 0 0.5rem;
+    opacity: 0.6;
+}
+
+.footer-bottom-link {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.3s, opacity 0.3s;
+}
+
+.footer-bottom-link:hover {
+    color: var(--accent);
+    opacity: 1;
 }
 
 /* --- RESPONSIVE DESIGN --- */
@@ -2385,10 +2444,17 @@ body.day-mode .listing-card { background: #f7f6f1; }
     font-size: 0.95rem;
 }
 
+.listing-carpet {
+    font-size: 0.78rem;
+    opacity: 0.76;
+    margin-top: 0.45rem;
+    line-height: 1.45;
+}
+
 .listing-rera {
     font-size: 0.72rem;
-    opacity: 0.5;
-    margin-top: 0.3rem;
+    opacity: 0.55;
+    margin-top: 0.35rem;
     letter-spacing: 0.04em;
 }
 
@@ -2401,6 +2467,12 @@ body.day-mode .listing-card { background: #f7f6f1; }
     gap: 1rem;
 }
 
+.listing-foot--stack {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
+}
+
 .listing-price {
     font-family: var(--font-display);
     font-size: 1.45rem;
@@ -2408,6 +2480,13 @@ body.day-mode .listing-card { background: #f7f6f1; }
     font-variant-numeric: lining-nums;
     font-feature-settings: "lnum" 1;
     line-height: 1.1;
+}
+
+.listing-price--multi {
+    font-family: var(--font-ui);
+    font-size: 0.88rem;
+    font-weight: 600;
+    line-height: 1.45;
 }
 
 .listing-price--hidden {

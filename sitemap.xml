@@ -66,4 +66,12 @@
         <priority>0.8</priority>
     </url>
 
+    <!-- Privacy Policy Page -->
+    <url>
+        <loc>https://www.prabalhousing.com/privacy-policy</loc>
+        <lastmod>2026-11-12</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
 </urlset>

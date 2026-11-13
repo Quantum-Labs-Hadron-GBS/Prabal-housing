@@ -13,7 +13,7 @@
     const esc = S.escapeHTML;
 
     const BHK_FILTER = {
-        studio: ['Studio'], '1bhk': ['1 BHK'], '2bhk': ['2 BHK'], '3bhk': ['3 BHK'],
+        studio: ['Studio'], '1bhk': ['1 BHK'], '2bhk': ['2 BHK', '2.5 BHK'], '3bhk': ['3 BHK', '3.5 BHK'],
         '4bhk': ['4 BHK'], '5bhk': ['5+ BHK', 'Villa']
     };
 
@@ -44,12 +44,13 @@
         const img = S.safeImageURL(p.image_url);
         const price = S.formatPrice(p);
         // Closed deals keep their price private: a blurred placeholder invites the question.
+        const isMultiPrice = !closed && price.length > 22;
         const priceHTML = closed
             ? `<span class="listing-price listing-price--hidden" aria-label="Final price on request">
                    <span class="price-blur" aria-hidden="true">${esc(price.replace(/\d/g, '•'))}</span>
                    <small>Ask us the final price</small>
                </span>`
-            : `<span class="listing-price">${esc(price)}</span>`;
+            : `<span class="listing-price${isMultiPrice ? ' listing-price--multi' : ''}">${esc(price)}</span>`;
 
         const badges = [
             p.status === 'new_launch' ? '<span class="listing-badge listing-badge--new">New launch</span>' : '',
@@ -72,9 +73,10 @@
             <div class="listing-body">
                 <p class="listing-meta">${esc([p.developer, p.configurations.join(' · ')].filter(Boolean).join(' • '))}</p>
                 <h3 class="listing-title">${esc(p.title)}</h3>
-                <p class="listing-location">${area}${p.city ? `, ${esc(p.city)}` : ''}</p>
+                <p class="listing-location">${area}${p.city && !new RegExp(p.city, 'i').test(p.location) ? `, ${esc(p.city)}` : ''}</p>
+                ${p.carpet_area ? `<p class="listing-carpet">Carpet Area: ${esc(p.carpet_area)}</p>` : ''}
                 ${p.rera ? `<p class="listing-rera">RERA ${esc(p.rera)}</p>` : ''}
-                <div class="listing-foot">
+                <div class="listing-foot${isMultiPrice ? ' listing-foot--stack' : ''}">
                     ${priceHTML}
                     <a class="btn-link listing-cta" href="${esc(enquiryLink(p, closed))}"
                        data-area="${area}" data-bhk="${esc(bhkSlug(p.configurations))}"
@@ -121,9 +123,10 @@
 
         const apply = () => {
             const data = form ? Object.fromEntries(new FormData(form).entries()) : {};
-            const q = (data.q || '').trim().toLowerCase();
+            const norm = s => s.toLowerCase().replace(/hinj[ae]wadi/g, 'hinjewadi');
+            const q = norm((data.q || '').trim());
             const list = all.filter(p =>
-                (!q || [p.title, p.location, p.city, p.developer].join(' ').toLowerCase().includes(q)) &&
+                (!q || norm([p.title, p.location, p.city, p.developer].join(' ')).includes(q)) &&
                 (!data.budget || (BUDGET_FILTER[data.budget] || (() => true))(p)) &&
                 (!data.bhk || p.configurations.some(c => (BHK_FILTER[data.bhk] || []).includes(c))) &&
                 (!data.builder || p.developer === data.builder));
@@ -173,10 +176,8 @@
         const open = list.filter(p => p.status !== 'closed');
         if (!open.length) return;
 
-        // Up to three open listings, plus one closed deal as social proof when there's room
+        // Show only top 3 properties on the main page; remaining properties live on /properties
         const picks = open.slice(0, 3);
-        const closed = list.find(p => p.status === 'closed');
-        if (picks.length < 3 && closed) picks.push(closed);
 
         grid.classList.add('cards-grid--listings');
         grid.innerHTML = picks.map(p => cardHTML(p, { onHomepage: true })).join('');

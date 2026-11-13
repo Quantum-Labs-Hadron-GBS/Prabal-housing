@@ -31,7 +31,7 @@ const PrabalStore = (() => {
         closed: 'Closed'
     };
 
-    const CONFIG_OPTIONS = ['Studio', '1 BHK', '2 BHK', '3 BHK', '4 BHK', '5+ BHK', 'Villa', 'Plot', 'Commercial'];
+    const CONFIG_OPTIONS = ['Studio', '1 BHK', '2 BHK', '2.5 BHK', '3 BHK', '3.5 BHK', '4 BHK', '5+ BHK', 'Villa', 'Plot', 'Commercial'];
 
     // ---- helpers -----------------------------------------------------------
 
@@ -45,11 +45,12 @@ const PrabalStore = (() => {
     function safeImageURL(url) {
         if (!url) return '';
         const s = String(url);
-        if (/^https:\/\//i.test(s) || /^data:image\/(webp|jpeg|png);base64,/i.test(s)) return s;
+        if (/^https:\/\//i.test(s) || /^\/?images\/[a-zA-Z0-9_.\-\/]+\.(?:png|jpe?g|webp|gif|svg)$/i.test(s) || /^data:image\/(webp|jpeg|png);base64,/i.test(s)) return s;
         return '';
     }
 
     function formatPrice(p) {
+        if (p.price_label) return p.price_label;
         if (p.price_lakhs == null || p.price_lakhs === '' || Number(p.price_lakhs) <= 0) return 'Price on request';
         const lakhs = Number(p.price_lakhs);
         const trim = n => n.toFixed(2).replace(/\.?0+$/, '');
@@ -66,6 +67,8 @@ const PrabalStore = (() => {
             configurations: Array.isArray(p.configurations) ? p.configurations.filter(Boolean) : [],
             price_lakhs: p.price_lakhs === '' || p.price_lakhs == null ? null : Number(p.price_lakhs),
             price_onwards: Boolean(p.price_onwards),
+            price_label: (p.price_label || '').trim(),
+            carpet_area: (p.carpet_area || '').trim(),
             location: (p.location || '').trim(),
             city: (p.city || 'Pune').trim(),
             image_url: p.image_url || '',
@@ -90,12 +93,114 @@ const PrabalStore = (() => {
     // ---- demo storage ------------------------------------------------------
 
     const DEMO_SEED = [
-        { title: 'Godrej River Crest', developer: 'Godrej Properties', configurations: ['3 BHK'], price_lakhs: 250, location: 'Kalyani Nagar', status: 'available', featured: true, image_url: 'https://picsum.photos/seed/prop1/1200/800' },
-        { title: 'Lodha Bellagio', developer: 'Lodha Group', configurations: ['4 BHK'], price_lakhs: 420, location: 'Koregaon Park', status: 'new_launch', featured: true, image_url: 'https://picsum.photos/seed/prop2/1200/800' },
-        { title: 'Mahindra Citadel', developer: 'Mahindra Lifespaces', configurations: ['2 BHK', '3 BHK'], price_lakhs: 110, price_onwards: true, location: 'Pimpri', status: 'available', featured: true, image_url: 'https://picsum.photos/seed/prop3/1200/800' },
-        { title: 'Kohinoor Presidentia', developer: 'Kohinoor', configurations: ['3 BHK'], price_lakhs: 180, location: 'Sopan Baug Annexe', status: 'closed', image_url: 'https://picsum.photos/seed/prop4/1200/800' },
-        { title: 'Godrej Horizon', developer: 'Godrej Properties', configurations: ['Studio', '1 BHK'], price_lakhs: 45, price_onwards: true, location: 'Undri', status: 'available', image_url: 'https://picsum.photos/seed/prop6/1200/800' }
-    ];
+        {
+                "id": "prop-binary-highness",
+                "title": "BINARY HIGHNESS",
+                "developer": "BINARY",
+                "configurations": [
+                        "3 BHK",
+                        "4 BHK"
+                ],
+                "carpet_area": "3BHK (1265, 1285, 948, 901) SQ.FT, 4BHK (1552) SQ.FT",
+                "price_lakhs": 132,
+                "price_onwards": true,
+                "price_label": "3BHK (1.32 CR ONWARDS), 4BHK (2.10 CR ONWARDS)",
+                "location": "NEXT TO TIP TOP HOTEL WAKAD",
+                "city": "Pune",
+                "status": "available",
+                "featured": true,
+                "rera": "PR12600025002183",
+                "image_url": "images/properties/binary-highness.png",
+                "sort_order": 1,
+                "created_at": "2026-11-12T10:00:00.000Z"
+        },
+        {
+                "id": "prop-kings-county",
+                "title": "KINGS COUNTY",
+                "developer": "KINGS MARQUE GROUP",
+                "configurations": [
+                        "3 BHK",
+                        "4 BHK"
+                ],
+                "carpet_area": "3BHK (1093, 1195) SQ.FT, 4BHK (1540) SQ.FT",
+                "price_lakhs": 178,
+                "price_onwards": false,
+                "price_label": "3BHK (1.78L), 4BHK (2.26L)",
+                "location": "NEAR DRAUPDA LAWNS",
+                "city": "Pune",
+                "status": "available",
+                "featured": true,
+                "rera": "P52100055635",
+                "image_url": "images/properties/kings-county.png",
+                "sort_order": 2,
+                "created_at": "2026-11-12T09:50:00.000Z"
+        },
+        {
+                "id": "prop-lodha-massimo",
+                "title": "LODHA MASSIMO",
+                "developer": "LODHA",
+                "configurations": [
+                        "3 BHK",
+                        "3.5 BHK",
+                        "4 BHK"
+                ],
+                "carpet_area": "3BHK (1721, 1776) SQ.FT, 4BHK (2056, 2108) SQ.FT",
+                "price_lakhs": 435,
+                "price_onwards": true,
+                "price_label": "3BHK (4.35 CR ONWARDS), 4BHK (5.35 CR ONWARDS)",
+                "location": "PANCARD CLUB ROAD, BANER",
+                "city": "Pune",
+                "status": "available",
+                "featured": true,
+                "rera": "PR1261012400049",
+                "image_url": "images/properties/lodha-massimo.png",
+                "sort_order": 3,
+                "created_at": "2026-11-12T09:40:00.000Z"
+        },
+        {
+                "id": "prop-merlin-ventana",
+                "title": "MERLIN VENTANA",
+                "developer": "MERLIN BHINGARWALA DEVELOPERS",
+                "configurations": [
+                        "2 BHK",
+                        "3 BHK",
+                        "4 BHK"
+                ],
+                "carpet_area": "2BHK (793, 959) SQ.FT, 3BHK (1088, 1072, 1051, 995) SQ.FT, 4BHK (1481) SQ.FT",
+                "price_lakhs": 120,
+                "price_onwards": true,
+                "price_label": "2BHK (1.20 CR ONWARDS), 3BHK (2.15 CR ONWARDS), 4BHK (2.74 CR ONWARDS)",
+                "location": "OFF MUMBAI – PUNE HIGHWAY, BANER",
+                "city": "Pune",
+                "status": "available",
+                "featured": true,
+                "rera": "P52100053687",
+                "image_url": "images/properties/merlin-ventana.png",
+                "sort_order": 4,
+                "created_at": "2026-11-12T09:30:00.000Z"
+        },
+        {
+                "id": "prop-nyati-emerald",
+                "title": "NYATI EMERALD",
+                "developer": "NYATI GROUP",
+                "configurations": [
+                        "2 BHK",
+                        "3 BHK"
+                ],
+                "carpet_area": "2BHK (838) SQ.FT, 3BHK (1213) SQ.FT",
+                "price_lakhs": 194,
+                "price_onwards": true,
+                "price_label": "2BHK (1.94L ONWARDS), 3BHK (2.58L ONWARDS)",
+                "location": "NYATI EMERALD, MOHAN NAGAR CO. OP. SOCIETY, BANER, PUNE",
+                "city": "Pune",
+                "status": "available",
+                "featured": true,
+                "rera": "P52100051235",
+                "image_url": "images/properties/nyati-emerald.png",
+                "sort_order": 5,
+                "created_at": "2026-11-12T09:20:00.000Z"
+        }
+];
 
     function demoRead() {
         try {
@@ -156,6 +261,10 @@ const PrabalStore = (() => {
             const apiData = await fetchLocalApi('/api/properties');
             if (Array.isArray(apiData) && apiData.length > 0) {
                 return sortListings(apiData.map(normalise));
+            }
+            const staticData = await fetchLocalApi('/data/properties.json');
+            if (Array.isArray(staticData) && staticData.length > 0) {
+                return sortListings(staticData.map(normalise));
             }
             return sortListings(demoRead());
         }
