@@ -65,6 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initStickyCTAs();
     initTracking();
     initContactPagePrefill();
+    initEditorialTestimonials();
 });
 
 // Unsplash URLs accept a width parameter; build a srcset from it
@@ -467,6 +468,7 @@ function initGlobalParallax() {
     // Elements that should receive the subtle float parallax effect
     const selectors = ['.amenity-item', '.details-box', '.footer-grid > div', '.residence-card'];
     const elements = document.querySelectorAll(selectors.join(', '));
+    if (!elements.length) return;
     
     elements.forEach(el => {
         if (!el.classList.contains('residence-card')) {
@@ -474,31 +476,39 @@ function initGlobalParallax() {
         }
     });
 
+    // Performance optimization: track visible items via IntersectionObserver
+    // to avoid layout thrashing (calling getBoundingClientRect() on every item every frame)
+    const visibleElements = new Set();
+    if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    visibleElements.add(entry.target);
+                } else {
+                    visibleElements.delete(entry.target);
+                }
+            });
+        }, { rootMargin: '100px 0px' });
+        elements.forEach(el => io.observe(el));
+    } else {
+        elements.forEach(el => visibleElements.add(el));
+    }
+
     let ticking = false;
 
     window.addEventListener('scroll', () => {
         if (!ticking) {
             window.requestAnimationFrame(() => {
                 const windowHeight = window.innerHeight;
+                const halfHeight = windowHeight / 2;
+                const speed = 30; 
                 
-                elements.forEach((el, index) => {
+                visibleElements.forEach(el => {
                     const rect = el.getBoundingClientRect();
-                    
-                    // Proceed only if element is inside the viewport
-                    if (rect.top < windowHeight && rect.bottom > 0) {
-                        // Calculate offset relative to the center of the viewport
-                        const centerOffset = (rect.top + rect.height / 2) - (windowHeight / 2);
-                        // Normalize the position to roughly -1 to 1
-                        const position = centerOffset / (windowHeight / 2);
-                        
-                        // Use a uniform speed to ensure horizontal alignment of grid elements is preserved
-                        const speed = 30; 
-                        
-                        // Calculate parallax offset
-                        const yOffset = position * speed;
-                        
-                        el.style.setProperty('--parallax-y', `${yOffset}px`);
-                    }
+                    const centerOffset = (rect.top + rect.height / 2) - halfHeight;
+                    const position = centerOffset / halfHeight;
+                    const yOffset = position * speed;
+                    el.style.setProperty('--parallax-y', `${yOffset}px`);
                 });
                 ticking = false;
             });
@@ -538,6 +548,18 @@ function initPartners() {
 
     let ticking = false;
 
+    // Cache dimensions to avoid forced reflows during scroll
+    let cachedCardW = 80;
+    let cachedCardH = 50;
+    const updateCardMetrics = () => {
+        if (cards[0] && cards[0].offsetWidth) {
+            cachedCardW = cards[0].offsetWidth * 0.55;
+            cachedCardH = cards[0].offsetHeight * 0.55;
+        }
+    };
+    updateCardMetrics();
+    window.addEventListener('resize', updateCardMetrics, { passive: true });
+
     // Easing function for smooth peeling
     const ease = t => t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 
@@ -561,8 +583,8 @@ function initPartners() {
         const isMobile = window.innerWidth <= 768;
         // Fit the orbit to the space actually available (card size included,
         // plus ~10% for rotation) so no card is ever clipped, on any screen.
-        const cardW = cards[0].offsetWidth * 0.55;
-        const cardH = cards[0].offsetHeight * 0.55;
+        const cardW = cachedCardW;
+        const cardH = cachedCardH;
         const safeTop = isMobile ? 16 : 24;
         const safeBottom = isMobile ? 84 : 24; // clear the mobile CTA bar
         const availHalfH = (windowHeight - safeTop - safeBottom) / 2;
@@ -937,4 +959,167 @@ function initContactPagePrefill() {
     set('#mobileNumber', params.get('phone'));
     set('#bhkSelect', params.get('bhk'));
     set('#message', params.get('message'));
+}
+
+
+// ---------------------------------------------------------------------------
+// Editorial Testimonials Carousel (3 visible on desktop, moves forward every 4s)
+// Sequence: 1-2-3 -> 2-3-4 -> 3-4-5 -> 4-5-6 -> 5-6-7 -> 6-7-8 -> 7-8-9 -> 8-9-1...
+// ---------------------------------------------------------------------------
+function initEditorialTestimonials() {
+    const section = document.getElementById('testimonials');
+    if (!section) return;
+
+    const track = section.querySelector('#editorial-track');
+    if (!track) return;
+
+    const originalCards = Array.from(track.querySelectorAll('.editorial-card'));
+    const totalOriginal = originalCards.length; // 9
+    if (totalOriginal === 0) return;
+
+    // Clone the first 3 cards to allow seamless infinite looping
+    for (let i = 0; i < 3; i++) {
+        const clone = originalCards[i].cloneNode(true);
+        clone.setAttribute('aria-hidden', 'true');
+        clone.classList.add('is-clone');
+        track.appendChild(clone);
+    }
+
+    const lines = Array.from(section.querySelectorAll('.editorial-line'));
+    const counterEl = section.querySelector('#editorial-current-num');
+    const prevBtn = section.querySelector('#editorial-prev-btn');
+    const nextBtn = section.querySelector('#editorial-next-btn');
+
+    let currentIndex = 0;
+    let isTransitioning = false;
+    let autoInterval = null;
+
+    function getCardStride() {
+        const firstCard = track.querySelector('.editorial-card');
+        if (!firstCard) return 0;
+        const style = window.getComputedStyle(firstCard);
+        const marginRight = parseFloat(style.marginRight) || 0;
+        return firstCard.offsetWidth + marginRight;
+    }
+
+    function updateControls(index) {
+        const activeIdx = index % totalOriginal;
+        lines.forEach((line, i) => {
+            line.classList.toggle('is-active', i === activeIdx);
+            line.setAttribute('aria-current', i === activeIdx ? 'true' : 'false');
+        });
+        if (counterEl) {
+            counterEl.textContent = String(activeIdx + 1).padStart(2, '0');
+        }
+    }
+
+    function goToSlide(index, animate = true) {
+        if (animate) {
+            track.style.transition = 'transform 0.65s cubic-bezier(0.16, 1, 0.3, 1)';
+        } else {
+            track.style.transition = 'none';
+        }
+        const stride = getCardStride();
+        track.style.transform = `translateX(-${index * stride}px)`;
+        currentIndex = index;
+        updateControls(index);
+    }
+
+    function nextSlide() {
+        if (isTransitioning) return;
+        isTransitioning = true;
+        currentIndex++;
+        goToSlide(currentIndex, true);
+    }
+
+    function prevSlide() {
+        if (isTransitioning) return;
+        isTransitioning = true;
+        if (currentIndex === 0) {
+            // Jump to end clone first without animation, then animate back
+            goToSlide(totalOriginal, false);
+            track.offsetHeight; // force reflow
+            currentIndex = totalOriginal - 1;
+            goToSlide(currentIndex, true);
+        } else {
+            currentIndex--;
+            goToSlide(currentIndex, true);
+        }
+    }
+
+    track.addEventListener('transitionend', () => {
+        isTransitioning = false;
+        // If we reached the clone position at index = totalOriginal (which visually mirrors slide 0)
+        if (currentIndex >= totalOriginal) {
+            goToSlide(0, false);
+        }
+    });
+
+    if (nextBtn) nextBtn.addEventListener('click', () => {
+        nextSlide();
+        resetAuto();
+    });
+
+    if (prevBtn) prevBtn.addEventListener('click', () => {
+        prevSlide();
+        resetAuto();
+    });
+
+    lines.forEach((line, idx) => {
+        line.addEventListener('click', () => {
+            if (isTransitioning) return;
+            goToSlide(idx, true);
+            resetAuto();
+        });
+    });
+
+    // Auto-advance every 4 seconds (4000ms)
+    function startAuto() {
+        if (autoInterval) clearInterval(autoInterval);
+        autoInterval = setInterval(nextSlide, 4000);
+    }
+
+    function pauseAuto() {
+        if (autoInterval) {
+            clearInterval(autoInterval);
+            autoInterval = null;
+        }
+    }
+
+    function resetAuto() {
+        pauseAuto();
+        startAuto();
+    }
+
+    section.addEventListener('mouseenter', pauseAuto);
+    section.addEventListener('mouseleave', startAuto);
+    section.addEventListener('focusin', pauseAuto);
+    section.addEventListener('focusout', startAuto);
+
+    // Responsive resize handler to adjust translation offset
+    window.addEventListener('resize', () => {
+        goToSlide(currentIndex, false);
+    }, { passive: true });
+
+    // Touch swipe support for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+    track.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        pauseAuto();
+    }, { passive: true });
+
+    track.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        const diff = touchStartX - touchEndX;
+        if (Math.abs(diff) > 40) {
+            if (diff > 0) nextSlide();
+            else prevSlide();
+        }
+        startAuto();
+    }, { passive: true });
+
+    // Initial state
+    updateControls(0);
+    startAuto();
 }

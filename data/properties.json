@@ -1,24 +1,25 @@
 [
   {
-    "id": "prop-binary-highness",
-    "title": "BINARY HIGHNESS",
-    "developer": "BINARY",
+    "id": "prop-godrej-aqua-retret",
+    "title": "AQUA RETRET",
+    "developer": "Godrej",
     "configurations": [
-      "3 BHK",
-      "4 BHK"
+      "1 BHK",
+      "2 BHK",
+      "3 BHK"
     ],
-    "carpet_area": "3BHK (1265, 1285, 948, 901) SQ.FT, 4BHK (1552) SQ.FT",
-    "price_lakhs": 132,
-    "price_onwards": true,
-    "price_label": "3BHK (1.32 CR ONWARDS), 4BHK (2.10 CR ONWARDS)",
-    "location": "NEXT TO TIP TOP HOTEL WAKAD",
+    "carpet_area": "1BHK (588) SQ.FT, 2BHK (861-888) SQ.FT, 3BHK (1081-1082) SQ.FT",
+    "price_lakhs": 83,
+    "price_onwards": false,
+    "price_label": "1BHK - 83 LAC, 2BHK - 1.19 CR, 3BHK - 1.44 CR",
+    "location": "Mahluge",
     "city": "Pune",
     "status": "available",
     "featured": true,
-    "rera": "PR12600025002183",
-    "image_url": "images/properties/binary-highness.png",
+    "rera": "PM1260002500070",
+    "image_url": "images/properties/godrej-aqua-retret.png",
     "sort_order": 1,
-    "created_at": "2026-11-12T10:00:00.000Z"
+    "created_at": "2026-11-12T08:00:00.000Z"
   },
   {
     "id": "prop-kings-county",
@@ -31,7 +32,7 @@
     "carpet_area": "3BHK (1093, 1195) SQ.FT, 4BHK (1540) SQ.FT",
     "price_lakhs": 178,
     "price_onwards": false,
-    "price_label": "3BHK (1.78L), 4BHK (2.26L)",
+    "price_label": "3BHK (1.78 CR), 4BHK (2.26 CR)",
     "location": "NEAR DRAUPDA LAWNS",
     "city": "Pune",
     "status": "available",
@@ -96,7 +97,7 @@
     "carpet_area": "2BHK (838) SQ.FT, 3BHK (1213) SQ.FT",
     "price_lakhs": 194,
     "price_onwards": true,
-    "price_label": "2BHK (1.94L ONWARDS), 3BHK (2.58L ONWARDS)",
+    "price_label": "2BHK (1.94 CR ONWARDS), 3BHK (2.58 CR ONWARDS)",
     "location": "NYATI EMERALD, MOHAN NAGAR CO. OP. SOCIETY, BANER, PUNE",
     "city": "Pune",
     "status": "available",
@@ -205,7 +206,7 @@
     "carpet_area": "2BHK (740, 874, 936) SQ.FT, 3BHK (1073, 1189) SQ.FT",
     "price_lakhs": 130,
     "price_onwards": false,
-    "price_label": "(874 SQ.FT = 1.30L), (1189 SQ.FT = 1.88L)",
+    "price_label": "(874 SQ.FT = 1.30 CR), (1189 SQ.FT = 1.88 CR)",
     "location": "NEAR BHUJBAL CHOWK",
     "city": "Pune",
     "status": "available",
@@ -216,26 +217,25 @@
     "created_at": "2026-11-12T08:30:00.000Z"
   },
   {
-    "id": "prop-godrej-aqua-retret",
-    "title": "AQUA RETRET",
-    "developer": "Godrej",
+    "id": "prop-binary-highness",
+    "title": "BINARY HIGHNESS",
+    "developer": "BINARY",
     "configurations": [
-      "1 BHK",
-      "2 BHK",
-      "3 BHK"
+      "3 BHK",
+      "4 BHK"
     ],
-    "carpet_area": "1BHK (588) SQ.FT, 2BHK (861-888) SQ.FT, 3BHK (1081-1082) SQ.FT",
-    "price_lakhs": 83,
-    "price_onwards": false,
-    "price_label": "1BHK - 83 LAC, 2BHK - 1.19 CR, 3BHK - 1.44 CR",
-    "location": "Mahluge",
+    "carpet_area": "3BHK (1265, 1285, 948, 901) SQ.FT, 4BHK (1552) SQ.FT",
+    "price_lakhs": 132,
+    "price_onwards": true,
+    "price_label": "3BHK (1.32 CR ONWARDS), 4BHK (2.10 CR ONWARDS)",
+    "location": "NEXT TO TIP TOP HOTEL WAKAD",
     "city": "Pune",
     "status": "available",
     "featured": false,
-    "rera": "PM1260002500070",
-    "image_url": "images/properties/godrej-aqua-retret.png",
+    "rera": "PR12600025002183",
+    "image_url": "images/properties/binary-highness.png",
     "sort_order": 11,
-    "created_at": "2026-11-12T08:00:00.000Z"
+    "created_at": "2026-11-12T10:00:00.000Z"
   },
   {
     "id": "prop-gera-jott",

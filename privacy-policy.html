@@ -71,6 +71,14 @@
             margin: 0 auto;
         }
 
+                /* Anti-Copy Protection */
+        .policy-hero, .policy-section, .policy-container, .policy-block, .policy-block p, .policy-block h2, .policy-block h3, .policy-block li {
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+        }
+
         .policy-section {
             padding: 4.5rem 5% 6rem;
         }
@@ -376,6 +384,29 @@
     </footer>
 
     <script defer src="js/main.js"></script>
+    <script>
+        // Prevent copying, text selection, and context menu on Privacy Policy
+        document.addEventListener('DOMContentLoaded', () => {
+            const targets = document.querySelectorAll('.policy-section, .policy-hero');
+            targets.forEach(el => {
+                ['copy', 'cut', 'contextmenu', 'selectstart', 'dragstart'].forEach(evt => {
+                    el.addEventListener(evt, e => {
+                        e.preventDefault();
+                        return false;
+                    });
+                });
+            });
+
+            document.addEventListener('keydown', e => {
+                if ((e.ctrlKey || e.metaKey) && ['c', 'C', 'a', 'A', 'x', 'X'].includes(e.key)) {
+                    const sel = window.getSelection();
+                    if (sel) sel.removeAllRanges();
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

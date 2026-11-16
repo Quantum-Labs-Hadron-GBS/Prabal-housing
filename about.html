@@ -32,6 +32,7 @@
 
     <!-- Preconnect & DNS Prefetch -->
     <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+    <link rel="preload" as="image" href="https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_1400/v1790865044/Pabout_kuiu8a.webp" fetchpriority="high">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://res.cloudinary.com">
@@ -138,8 +139,17 @@
 
     <main>
         <!-- Hero Title Card -->
-        <section class="about-hero" data-theme="dark" style="position: relative; height: 75vh; min-height: 500px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-            <div style="position: absolute; inset: 0; background-color: var(--bg-color); background-image: url('https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_1920/v1790865044/Pabout_kuiu8a.webp'); background-size: cover; background-position: center center;"></div>
+        <section class="about-hero" data-theme="dark" style="position: relative; height: 75vh; min-height: 500px; display: flex; align-items: center; justify-content: center; overflow: hidden; background-color: #161a20;">
+            <img src="https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_1400/v1790865044/Pabout_kuiu8a.webp"
+                 srcset="https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_600/v1790865044/Pabout_kuiu8a.webp 600w,
+                         https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_1000/v1790865044/Pabout_kuiu8a.webp 1000w,
+                         https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_1400/v1790865044/Pabout_kuiu8a.webp 1400w,
+                         https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_1920/v1790865044/Pabout_kuiu8a.webp 1920w"
+                 sizes="100vw"
+                 alt="About PRABALHOUSING"
+                 fetchpriority="high"
+                 decoding="async"
+                 style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; pointer-events: none;">
             <div style="position: absolute; inset: 0; background: rgba(0, 0, 0, 0.35);"></div>
             <div style="position: relative; z-index: 2; width: 100%; height: 100%; display: flex; align-items: center; color: #ffffff;">
                 <h1 class="display-title" style="position: absolute; left: 10%; top: 50%; transform: translateY(-50%); font-size: clamp(3rem, 7vw, 6.5rem); letter-spacing: 0.15em; margin: 0; text-shadow: 0 4px 12px rgba(0,0,0,0.6);">ABOUT</h1>
@@ -152,6 +162,30 @@
             <div class="container text-center">
                 <h1 class="display-title" style="font-size: clamp(1.2rem, 2.5vw, 2.2rem); max-width: 1200px; margin: 0 auto;">Property Advisors in Pune &mdash; Helping You Buy the Right Home</h1>
                 <p class="lead-text mt-4" style="max-width: 900px; margin-left: auto; margin-right: auto;">Our experienced team uses its knowledge of the market to help families and individuals buy their dream home.</p>
+            </div>
+        </section>
+
+        <!-- Trust Metrics Bar -->
+        <section class="section" style="padding-top: 0; padding-bottom: 30px;">
+            <div class="container">
+                <div class="about-stats-grid">
+                    <div class="about-stat-card">
+                        <div class="about-stat-val">&#8377;0</div>
+                        <p class="about-stat-label">Brokerage Charged</p>
+                    </div>
+                    <div class="about-stat-card">
+                        <div class="about-stat-val">100%</div>
+                        <p class="about-stat-label">RERA Verified Homes</p>
+                    </div>
+                    <div class="about-stat-card">
+                        <div class="about-stat-val">500+</div>
+                        <p class="about-stat-label">Happy Families Settled</p>
+                    </div>
+                    <div class="about-stat-card">
+                        <div class="about-stat-val">&#8377;2.8L+</div>
+                        <p class="about-stat-label">Avg. Savings Per Buyer</p>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -203,8 +237,8 @@
                         <p style="margin-bottom: 20px;">We help people buy flats, luxury villas, offices and investment properties, and we help with relocation. We work with companies, business owners, senior professionals, people moving from abroad and NRIs to find the best options across Pune.</p>
                         <p>Our customers always come first. You get honest dealings, a smooth process and advice you can trust. Whether you want to buy, sell or invest, our team will help you make the right choice.</p>
                     </div>
-                    <div style="text-align: center;">
-                        <img src="https://res.cloudinary.com/dyhlpxwwo/image/upload/v1790074718/Prabal_Final_Logo_ghlra0.png" alt="PRABALHOUSING Logo" style="width: 100%; max-width: 450px; margin: 0 auto; object-fit: contain;">
+                    <div style="text-align: center; display: flex; align-items: center; justify-content: center; padding: 15px;">
+                        <img src="https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_1200/v1790074718/Prabal_Final_Logo_ghlra0.png" alt="PRABALHOUSING Logo" width="750" height="300" loading="lazy" decoding="async" style="width: 100%; max-width: 680px; height: auto; margin: 0 auto; object-fit: contain; filter: drop-shadow(0 12px 30px rgba(0,0,0,0.12));">
                     </div>
                 </div>
             </div>
@@ -216,37 +250,37 @@
                 <div class="cards-grid about-features-grid">
                     <!-- 1 -->
                     <div class="residence-card sky-blue-card" style="padding: 40px 30px; text-align: center; border: 1px solid rgba(212, 175, 55, 0.5);">
-                        <img src="https://picsum.photos/seed/experience/100/100" alt="Experience" style="width: 70px; height: 70px; margin: 0 auto 20px; object-fit: cover; border-radius: 50%;">
+                        <div style="width: 64px; height: 64px; margin: 0 auto 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(212, 175, 55, 0.12); border: 1px solid rgba(212, 175, 55, 0.4); color: #d4af37;" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></div>
                         <h3 style="font-size: 1.3rem; margin-bottom: 15px; font-family: var(--font-ui); font-weight: 600; text-transform: none;">Our experience</h3>
                         <p style="font-size: 0.95rem; opacity: 0.85;">Years of success in real estate, with expert advice and excellent service from start to finish.</p>
                     </div>
                     <!-- 2 -->
                     <div class="residence-card sky-blue-card" style="padding: 40px 30px; text-align: center; border: 1px solid var(--border-color);">
-                        <img src="https://picsum.photos/seed/customer/100/100" alt="Customer Approach" style="width: 70px; height: 70px; margin: 0 auto 20px; object-fit: cover; border-radius: 50%;">
+                        <div style="width: 64px; height: 64px; margin: 0 auto 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(212, 175, 55, 0.12); border: 1px solid rgba(212, 175, 55, 0.4); color: #d4af37;" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
                         <h3 style="font-size: 1.3rem; margin-bottom: 15px; font-family: var(--font-ui); font-weight: 600; text-transform: none;">Customer Focused Approach</h3>
                         <p style="font-size: 0.95rem; opacity: 0.85;">Everything we do is planned around you and your needs, at every step.</p>
                     </div>
                     <!-- 3 -->
                     <div class="residence-card sky-blue-card" style="padding: 40px 30px; text-align: center; border: 1px solid rgba(212, 175, 55, 0.5);">
-                        <img src="https://picsum.photos/seed/consultant/100/100" alt="Consultants" style="width: 70px; height: 70px; margin: 0 auto 20px; object-fit: cover; border-radius: 50%;">
+                        <div style="width: 64px; height: 64px; margin: 0 auto 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(212, 175, 55, 0.12); border: 1px solid rgba(212, 175, 55, 0.4); color: #d4af37;" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
                         <h3 style="font-size: 1.3rem; margin-bottom: 15px; font-family: var(--font-ui); font-weight: 600; text-transform: none;">Seasoned Consultants</h3>
                         <p style="font-size: 0.95rem; opacity: 0.85;">Our team has many years of experience, so you get the right guidance for every property decision.</p>
                     </div>
                     <!-- 4 -->
                     <div class="residence-card sky-blue-card" style="padding: 40px 30px; text-align: center; border: 1px solid var(--border-color);">
-                        <img src="https://picsum.photos/seed/international/100/100" alt="International" style="width: 70px; height: 70px; margin: 0 auto 20px; object-fit: cover; border-radius: 50%;">
+                        <div style="width: 64px; height: 64px; margin: 0 auto 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(212, 175, 55, 0.12); border: 1px solid rgba(212, 175, 55, 0.4); color: #d4af37;" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
                         <h3 style="font-size: 1.3rem; margin-bottom: 15px; font-family: var(--font-ui); font-weight: 600; text-transform: none;">Local & International</h3>
                         <p style="font-size: 0.95rem; opacity: 0.85;">We help with property in India and abroad, for every kind of need.</p>
                     </div>
                     <!-- 5 -->
                     <div class="residence-card sky-blue-card" style="padding: 40px 30px; text-align: center; border: 1px solid rgba(212, 175, 55, 0.5);">
-                        <img src="https://picsum.photos/seed/properties/100/100" alt="Properties" style="width: 70px; height: 70px; margin: 0 auto 20px; object-fit: cover; border-radius: 50%;">
+                        <div style="width: 64px; height: 64px; margin: 0 auto 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(212, 175, 55, 0.12); border: 1px solid rgba(212, 175, 55, 0.4); color: #d4af37;" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9h1"/><path d="M9 13h1"/><path d="M9 17h1"/><path d="M14 13h1"/><path d="M14 17h1"/></svg></div>
                         <h3 style="font-size: 1.3rem; margin-bottom: 15px; font-family: var(--font-ui); font-weight: 600; text-transform: none;">The biggest choice of properties</h3>
                         <p style="font-size: 0.95rem; opacity: 0.85;">Choose from the widest range of properties, to match exactly what you want.</p>
                     </div>
                     <!-- 6 -->
                     <div class="residence-card sky-blue-card" style="padding: 40px 30px; text-align: center; border: 1px solid var(--border-color);">
-                        <img src="https://picsum.photos/seed/solution/100/100" alt="Solution" style="width: 70px; height: 70px; margin: 0 auto 20px; object-fit: cover; border-radius: 50%;">
+                        <div style="width: 64px; height: 64px; margin: 0 auto 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(212, 175, 55, 0.12); border: 1px solid rgba(212, 175, 55, 0.4); color: #d4af37;" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
                         <h3 style="font-size: 1.3rem; margin-bottom: 15px; font-family: var(--font-ui); font-weight: 600; text-transform: none;">Full-service solution</h3>
                         <p style="font-size: 0.95rem; opacity: 0.85;">We take care of every part of buying a property, so you do not have to worry about anything.</p>
                     </div>

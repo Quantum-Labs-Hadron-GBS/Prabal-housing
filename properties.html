@@ -32,6 +32,7 @@
 
     <!-- Preconnect & DNS Prefetch -->
     <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+    <link rel="preload" as="image" href="https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_1400/v1791182548/pproperties_yux0yf.png" fetchpriority="high">
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -120,8 +121,17 @@
 
     <main>
         <!-- Hero Title Card -->
-        <section class="properties-hero" data-theme="dark" style="position: relative; height: 65vh; min-height: 450px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-            <div style="position: absolute; inset: 0; background-color: var(--bg-color); background-image: url('https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_1920/v1791182548/pproperties_yux0yf.png'); background-size: cover; background-position: center center; transform: scale(1.06);"></div>
+        <section class="properties-hero" data-theme="dark" style="position: relative; height: 65vh; min-height: 450px; display: flex; align-items: center; justify-content: center; overflow: hidden; background-color: #161a20;">
+            <img src="https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_1400/v1791182548/pproperties_yux0yf.png"
+                 srcset="https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_600/v1791182548/pproperties_yux0yf.png 600w,
+                         https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_1000/v1791182548/pproperties_yux0yf.png 1000w,
+                         https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_1400/v1791182548/pproperties_yux0yf.png 1400w,
+                         https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_1920/v1791182548/pproperties_yux0yf.png 1920w"
+                 sizes="100vw"
+                 alt="Luxury Properties in Pune"
+                 fetchpriority="high"
+                 decoding="async"
+                 style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; transform: scale(1.06); pointer-events: none;">
             <div style="position: absolute; inset: 0; background: rgba(0, 0, 0, 0.4);"></div>
             <div style="position: relative; z-index: 2; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #ffffff;">
                 <h1 class="display-title" style="font-size: clamp(3rem, 8vw, 7rem); letter-spacing: 0.15em; margin: 0; text-shadow: 0 4px 12px rgba(0,0,0,0.6);">PROPERTIES</h1>

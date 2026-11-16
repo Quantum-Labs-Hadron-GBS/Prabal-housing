@@ -92,115 +92,439 @@ const PrabalStore = (() => {
 
     // ---- demo storage ------------------------------------------------------
 
-    const DEMO_SEED = [
+    const DEMO_SEED =     [
         {
-                "id": "prop-binary-highness",
-                "title": "BINARY HIGHNESS",
-                "developer": "BINARY",
-                "configurations": [
-                        "3 BHK",
-                        "4 BHK"
-                ],
-                "carpet_area": "3BHK (1265, 1285, 948, 901) SQ.FT, 4BHK (1552) SQ.FT",
-                "price_lakhs": 132,
-                "price_onwards": true,
-                "price_label": "3BHK (1.32 CR ONWARDS), 4BHK (2.10 CR ONWARDS)",
-                "location": "NEXT TO TIP TOP HOTEL WAKAD",
-                "city": "Pune",
-                "status": "available",
-                "featured": true,
-                "rera": "PR12600025002183",
-                "image_url": "images/properties/binary-highness.png",
-                "sort_order": 1,
-                "created_at": "2026-11-12T10:00:00.000Z"
+            "id": "prop-godrej-aqua-retret",
+            "title": "AQUA RETRET",
+            "developer": "Godrej",
+            "configurations": [
+                "1 BHK",
+                "2 BHK",
+                "3 BHK"
+            ],
+            "carpet_area": "1BHK (588) SQ.FT, 2BHK (861-888) SQ.FT, 3BHK (1081-1082) SQ.FT",
+            "price_lakhs": 83,
+            "price_onwards": false,
+            "price_label": "1BHK - 83 LAC, 2BHK - 1.19 CR, 3BHK - 1.44 CR",
+            "location": "Mahluge",
+            "city": "Pune",
+            "status": "available",
+            "featured": true,
+            "rera": "PM1260002500070",
+            "image_url": "images/properties/godrej-aqua-retret.png",
+            "sort_order": 1,
+            "created_at": "2026-11-12T08:00:00.000Z"
         },
         {
-                "id": "prop-kings-county",
-                "title": "KINGS COUNTY",
-                "developer": "KINGS MARQUE GROUP",
-                "configurations": [
-                        "3 BHK",
-                        "4 BHK"
-                ],
-                "carpet_area": "3BHK (1093, 1195) SQ.FT, 4BHK (1540) SQ.FT",
-                "price_lakhs": 178,
-                "price_onwards": false,
-                "price_label": "3BHK (1.78L), 4BHK (2.26L)",
-                "location": "NEAR DRAUPDA LAWNS",
-                "city": "Pune",
-                "status": "available",
-                "featured": true,
-                "rera": "P52100055635",
-                "image_url": "images/properties/kings-county.png",
-                "sort_order": 2,
-                "created_at": "2026-11-12T09:50:00.000Z"
+            "id": "prop-kings-county",
+            "title": "KINGS COUNTY",
+            "developer": "KINGS MARQUE GROUP",
+            "configurations": [
+                "3 BHK",
+                "4 BHK"
+            ],
+            "carpet_area": "3BHK (1093, 1195) SQ.FT, 4BHK (1540) SQ.FT",
+            "price_lakhs": 178,
+            "price_onwards": false,
+            "price_label": "3BHK (1.78 CR), 4BHK (2.26 CR)",
+            "location": "NEAR DRAUPDA LAWNS",
+            "city": "Pune",
+            "status": "available",
+            "featured": true,
+            "rera": "P52100055635",
+            "image_url": "images/properties/kings-county.png",
+            "sort_order": 2,
+            "created_at": "2026-11-12T09:50:00.000Z"
         },
         {
-                "id": "prop-lodha-massimo",
-                "title": "LODHA MASSIMO",
-                "developer": "LODHA",
-                "configurations": [
-                        "3 BHK",
-                        "3.5 BHK",
-                        "4 BHK"
-                ],
-                "carpet_area": "3BHK (1721, 1776) SQ.FT, 4BHK (2056, 2108) SQ.FT",
-                "price_lakhs": 435,
-                "price_onwards": true,
-                "price_label": "3BHK (4.35 CR ONWARDS), 4BHK (5.35 CR ONWARDS)",
-                "location": "PANCARD CLUB ROAD, BANER",
-                "city": "Pune",
-                "status": "available",
-                "featured": true,
-                "rera": "PR1261012400049",
-                "image_url": "images/properties/lodha-massimo.png",
-                "sort_order": 3,
-                "created_at": "2026-11-12T09:40:00.000Z"
+            "id": "prop-lodha-massimo",
+            "title": "LODHA MASSIMO",
+            "developer": "LODHA",
+            "configurations": [
+                "3 BHK",
+                "3.5 BHK",
+                "4 BHK"
+            ],
+            "carpet_area": "3BHK (1721, 1776) SQ.FT, 4BHK (2056, 2108) SQ.FT",
+            "price_lakhs": 435,
+            "price_onwards": true,
+            "price_label": "3BHK (4.35 CR ONWARDS), 4BHK (5.35 CR ONWARDS)",
+            "location": "PANCARD CLUB ROAD, BANER",
+            "city": "Pune",
+            "status": "available",
+            "featured": true,
+            "rera": "PR1261012400049",
+            "image_url": "images/properties/lodha-massimo.png",
+            "sort_order": 3,
+            "created_at": "2026-11-12T09:40:00.000Z"
         },
         {
-                "id": "prop-merlin-ventana",
-                "title": "MERLIN VENTANA",
-                "developer": "MERLIN BHINGARWALA DEVELOPERS",
-                "configurations": [
-                        "2 BHK",
-                        "3 BHK",
-                        "4 BHK"
-                ],
-                "carpet_area": "2BHK (793, 959) SQ.FT, 3BHK (1088, 1072, 1051, 995) SQ.FT, 4BHK (1481) SQ.FT",
-                "price_lakhs": 120,
-                "price_onwards": true,
-                "price_label": "2BHK (1.20 CR ONWARDS), 3BHK (2.15 CR ONWARDS), 4BHK (2.74 CR ONWARDS)",
-                "location": "OFF MUMBAI – PUNE HIGHWAY, BANER",
-                "city": "Pune",
-                "status": "available",
-                "featured": true,
-                "rera": "P52100053687",
-                "image_url": "images/properties/merlin-ventana.png",
-                "sort_order": 4,
-                "created_at": "2026-11-12T09:30:00.000Z"
+            "id": "prop-merlin-ventana",
+            "title": "MERLIN VENTANA",
+            "developer": "MERLIN BHINGARWALA DEVELOPERS",
+            "configurations": [
+                "2 BHK",
+                "3 BHK",
+                "4 BHK"
+            ],
+            "carpet_area": "2BHK (793, 959) SQ.FT, 3BHK (1088, 1072, 1051, 995) SQ.FT, 4BHK (1481) SQ.FT",
+            "price_lakhs": 120,
+            "price_onwards": true,
+            "price_label": "2BHK (1.20 CR ONWARDS), 3BHK (2.15 CR ONWARDS), 4BHK (2.74 CR ONWARDS)",
+            "location": "OFF MUMBAI – PUNE HIGHWAY, BANER",
+            "city": "Pune",
+            "status": "available",
+            "featured": true,
+            "rera": "P52100053687",
+            "image_url": "images/properties/merlin-ventana.png",
+            "sort_order": 4,
+            "created_at": "2026-11-12T09:30:00.000Z"
         },
         {
-                "id": "prop-nyati-emerald",
-                "title": "NYATI EMERALD",
-                "developer": "NYATI GROUP",
-                "configurations": [
-                        "2 BHK",
-                        "3 BHK"
-                ],
-                "carpet_area": "2BHK (838) SQ.FT, 3BHK (1213) SQ.FT",
-                "price_lakhs": 194,
-                "price_onwards": true,
-                "price_label": "2BHK (1.94L ONWARDS), 3BHK (2.58L ONWARDS)",
-                "location": "NYATI EMERALD, MOHAN NAGAR CO. OP. SOCIETY, BANER, PUNE",
-                "city": "Pune",
-                "status": "available",
-                "featured": true,
-                "rera": "P52100051235",
-                "image_url": "images/properties/nyati-emerald.png",
-                "sort_order": 5,
-                "created_at": "2026-11-12T09:20:00.000Z"
+            "id": "prop-nyati-emerald",
+            "title": "NYATI EMERALD",
+            "developer": "NYATI GROUP",
+            "configurations": [
+                "2 BHK",
+                "3 BHK"
+            ],
+            "carpet_area": "2BHK (838) SQ.FT, 3BHK (1213) SQ.FT",
+            "price_lakhs": 194,
+            "price_onwards": true,
+            "price_label": "2BHK (1.94 CR ONWARDS), 3BHK (2.58 CR ONWARDS)",
+            "location": "NYATI EMERALD, MOHAN NAGAR CO. OP. SOCIETY, BANER, PUNE",
+            "city": "Pune",
+            "status": "available",
+            "featured": true,
+            "rera": "P52100051235",
+            "image_url": "images/properties/nyati-emerald.png",
+            "sort_order": 5,
+            "created_at": "2026-11-12T09:20:00.000Z"
+        },
+        {
+            "id": "prop-kumar-parth-towers",
+            "title": "KUMAR PARTH TOWERS",
+            "developer": "KUMAR PROPERTIES",
+            "configurations": [
+                "2 BHK",
+                "3 BHK",
+                "4 BHK"
+            ],
+            "carpet_area": "2BHK (774) SQ.FT, 3BHK (1090, 1177) SQ.FT, 4BHK (1700) SQ.FT",
+            "price_lakhs": 117,
+            "price_onwards": true,
+            "price_label": "2BHK (1.17 CR ONWARDS), 3BHK (1.75 CR ONWARDS), 4BHK (2.81 CR)",
+            "location": "BESIDES, KUMAR PINAKIN, MOHAN NAGAR",
+            "city": "Pune",
+            "status": "available",
+            "featured": true,
+            "rera": "P52100047987",
+            "image_url": "images/properties/kumar-parth-towers.png",
+            "sort_order": 6,
+            "created_at": "2026-11-12T09:10:00.000Z"
+        },
+        {
+            "id": "prop-sahil-luxton",
+            "title": "SAHIL LUXTON",
+            "developer": "SAHIL",
+            "configurations": [
+                "2 BHK",
+                "3 BHK",
+                "4 BHK"
+            ],
+            "carpet_area": "2BHK (753, 805) SQ.FT, 3BHK (1029, 1162) SQ.FT, 4BHK (1457) SQ.FT",
+            "price_lakhs": 111,
+            "price_onwards": true,
+            "price_label": "2BHK (1.11 CR ONWARDS), 3BHK (1.31 CR ONWARDS), 4BHK (1.95 CR ONWARDS)",
+            "location": "NEXT TO INDIRA SCHOOL",
+            "city": "Pune",
+            "status": "available",
+            "featured": true,
+            "rera": "PM1260002502043",
+            "image_url": "images/properties/sahil-luxton.png",
+            "sort_order": 7,
+            "created_at": "2026-11-12T09:00:00.000Z"
+        },
+        {
+            "id": "prop-vtp-skylights",
+            "title": "VTP SKYLIGHTS",
+            "developer": "VTP REALTY",
+            "configurations": [
+                "2 BHK",
+                "2.5 BHK",
+                "3 BHK"
+            ],
+            "carpet_area": "2BHK (737, 795, 820, 849) SQ.FT, 3BHK (906, 1083, 1258) SQ.FT",
+            "price_lakhs": 117,
+            "price_onwards": true,
+            "price_label": "2BHK (1.17 CR ONWARDS), 3BHK (1.88 CR ONWARDS)",
+            "location": "MUMBAI – BENGALURU HIGHWAY, BALEWADI HIGH STREET",
+            "city": "Pune",
+            "status": "available",
+            "featured": true,
+            "rera": "P52100028378",
+            "image_url": "images/properties/vtp-skylights.png",
+            "sort_order": 8,
+            "created_at": "2026-11-12T08:50:00.000Z"
+        },
+        {
+            "id": "prop-trident-tower",
+            "title": "TRIDENT TOWER",
+            "developer": "PARANJPE TRIDENT TOWER",
+            "configurations": [
+                "1 BHK",
+                "2 BHK",
+                "3 BHK"
+            ],
+            "carpet_area": "1BHK (1.30) SQ.M, 2BHK (797, 791) SQ.FT, 3BHK (1079, 1076, 1081) SQ.FT",
+            "price_lakhs": 105,
+            "price_onwards": true,
+            "price_label": "2BHK (1.05 CR ONWARDS), 3BHK (1.50 CR ONWARDS)",
+            "location": "CLOSE TO TAJ VIVANTA, HINJEWADI-WAKAD LINK ROAD",
+            "city": "Pune",
+            "status": "available",
+            "featured": true,
+            "rera": "P52100029377",
+            "image_url": "images/properties/trident-tower.png",
+            "sort_order": 9,
+            "created_at": "2026-11-12T08:40:00.000Z"
+        },
+        {
+            "id": "prop-vardhaman-sky-symphony",
+            "title": "VARDHAMAN SKY SYMPHONY, WAKAD",
+            "developer": "VARDHAMAN",
+            "configurations": [
+                "2 BHK",
+                "3 BHK"
+            ],
+            "carpet_area": "2BHK (740, 874, 936) SQ.FT, 3BHK (1073, 1189) SQ.FT",
+            "price_lakhs": 130,
+            "price_onwards": false,
+            "price_label": "(874 SQ.FT = 1.30 CR), (1189 SQ.FT = 1.88 CR)",
+            "location": "NEAR BHUJBAL CHOWK",
+            "city": "Pune",
+            "status": "available",
+            "featured": true,
+            "rera": "PR1260002502323",
+            "image_url": "images/properties/vardhaman-sky-symphony.png",
+            "sort_order": 10,
+            "created_at": "2026-11-12T08:30:00.000Z"
+        },
+        {
+            "id": "prop-binary-highness",
+            "title": "BINARY HIGHNESS",
+            "developer": "BINARY",
+            "configurations": [
+                "3 BHK",
+                "4 BHK"
+            ],
+            "carpet_area": "3BHK (1265, 1285, 948, 901) SQ.FT, 4BHK (1552) SQ.FT",
+            "price_lakhs": 132,
+            "price_onwards": true,
+            "price_label": "3BHK (1.32 CR ONWARDS), 4BHK (2.10 CR ONWARDS)",
+            "location": "NEXT TO TIP TOP HOTEL WAKAD",
+            "city": "Pune",
+            "status": "available",
+            "featured": false,
+            "rera": "PR12600025002183",
+            "image_url": "images/properties/binary-highness.png",
+            "sort_order": 11,
+            "created_at": "2026-11-12T10:00:00.000Z"
+        },
+        {
+            "id": "prop-gera-jott",
+            "title": "GERA JOTT",
+            "developer": "Gera",
+            "configurations": [
+                "2 BHK",
+                "3 BHK"
+            ],
+            "carpet_area": "2BHK (691-898) SQ.FT, 3BHK (1011-1237) SQ.FT",
+            "price_lakhs": 92,
+            "price_onwards": true,
+            "price_label": "2BHK - 92L ONWARDS, 3BHK - 1.35 CR",
+            "location": "Hinjawadi Phase 3",
+            "city": "Pune",
+            "status": "available",
+            "featured": false,
+            "rera": "PR1261012501648",
+            "image_url": "images/properties/gera-jott.png",
+            "sort_order": 12,
+            "created_at": "2026-11-12T07:50:00.000Z"
+        },
+        {
+            "id": "prop-saheel-landmarc",
+            "title": "LANDMARC",
+            "developer": "SAHEEL",
+            "configurations": [
+                "2 BHK",
+                "3 BHK"
+            ],
+            "carpet_area": "2BHK (733-734) SQ.FT, 3BHK (972-1082) SQ.FT",
+            "price_lakhs": 92,
+            "price_onwards": true,
+            "price_label": "2BHK - 92L ONWARDS, 3BHK - 1.25 CR - 1.35 CR",
+            "location": "Hinjawadi Phase 3",
+            "city": "Pune",
+            "status": "available",
+            "featured": false,
+            "rera": "PM1260002500142",
+            "image_url": "images/properties/saheel-landmarc.png",
+            "sort_order": 13,
+            "created_at": "2026-11-12T07:40:00.000Z"
+        },
+        {
+            "id": "prop-lodha-sylvan",
+            "title": "SYLVAN",
+            "developer": "LODHA",
+            "configurations": [
+                "2 BHK",
+                "2.5 BHK",
+                "3 BHK",
+                "3.5 BHK",
+                "4 BHK"
+            ],
+            "carpet_area": "2BHK (836-955) SQ.FT, 3BHK (1140-2011) SQ.FT, 4BHK (2711) SQ.FT",
+            "price_lakhs": 100,
+            "price_onwards": true,
+            "price_label": "2BHK - 1 CR ONWARDS, 3BHK - 1.45 CR - 4 CR, 4BHK - 5 CR",
+            "location": "Hinjawadi Phase 3",
+            "city": "Pune",
+            "status": "available",
+            "featured": false,
+            "rera": "PR1260002502575",
+            "image_url": "images/properties/lodha-sylvan.png",
+            "sort_order": 14,
+            "created_at": "2026-11-12T07:30:00.000Z"
+        },
+        {
+            "id": "prop-vtp-monarque",
+            "title": "MONARQUE",
+            "developer": "VTP",
+            "configurations": [
+                "2 BHK",
+                "3 BHK"
+            ],
+            "carpet_area": "2BHK (780-880) SQ.FT, 3BHK (861-1281) SQ.FT",
+            "price_lakhs": 110,
+            "price_onwards": true,
+            "price_label": "2BHK - 1.10 CR ONWARDS, 3BHK - 1.19 CR - 1.96 CR",
+            "location": "Hinjawadi Phase 2",
+            "city": "Pune",
+            "status": "available",
+            "featured": false,
+            "rera": "P52100079440",
+            "image_url": "images/properties/vtp-monarque.png",
+            "sort_order": 15,
+            "created_at": "2026-11-12T07:20:00.000Z"
+        },
+        {
+            "id": "prop-kohinoor-royal-tower",
+            "title": "ROYAL TOWER",
+            "developer": "KOHINOOR",
+            "configurations": [
+                "2 BHK",
+                "3 BHK"
+            ],
+            "carpet_area": "2BHK (768-813) SQ.FT, 3BHK (954-1089) SQ.FT",
+            "price_lakhs": 99,
+            "price_onwards": true,
+            "price_label": "2BHK - 99L ONWARDS, 3BHK - 1.25 CR ONWARDS",
+            "location": "Hinjawadi Phase 1",
+            "city": "Pune",
+            "status": "available",
+            "featured": false,
+            "rera": "PR1260002501033",
+            "image_url": "images/properties/kohinoor-royal-tower.jpg",
+            "sort_order": 16,
+            "created_at": "2026-11-12T07:10:00.000Z"
+        },
+        {
+            "id": "prop-kraheja-vistas",
+            "title": "VISTAS",
+            "developer": "K RAHEJA",
+            "configurations": [
+                "2 BHK",
+                "3 BHK"
+            ],
+            "carpet_area": "2BHK (689-936) SQ.FT, 3BHK (1110) SQ.FT, Simplex (1360-1824) SQ.FT",
+            "price_lakhs": 94,
+            "price_onwards": true,
+            "price_label": "2BHK - 94L ONWARDS, 3BHK - 1.55 CR ONWARDS",
+            "location": "Hinjawadi Phase 2",
+            "city": "Pune",
+            "status": "available",
+            "featured": false,
+            "rera": "PR1260002501597",
+            "image_url": "images/properties/k-raheja-vistas.jpg",
+            "sort_order": 17,
+            "created_at": "2026-11-12T07:00:00.000Z"
+        },
+        {
+            "id": "prop-mahindra-revenza",
+            "title": "REVENZA",
+            "developer": "MAHINDRA",
+            "configurations": [
+                "2 BHK",
+                "3 BHK",
+                "4 BHK"
+            ],
+            "carpet_area": "2BHK (688-855) SQ.FT, 3BHK (995-1206) SQ.FT, 4BHK (1615-1650) SQ.FT",
+            "price_lakhs": 104,
+            "price_onwards": true,
+            "price_label": "2BHK - 1.04 CR ONWARDS, 3BHK - 1.34 CR ONWARDS, 4BHK - 2.19 CR ONWARDS",
+            "location": "Hinjawadi Phase 2",
+            "city": "Pune",
+            "status": "available",
+            "featured": false,
+            "rera": "PR1261012602102, PM1261012602103",
+            "image_url": "images/properties/mahindra-revenza.jpeg",
+            "sort_order": 18,
+            "created_at": "2026-11-12T06:50:00.000Z"
+        },
+        {
+            "id": "prop-pride-park-titan",
+            "title": "PARK TITAN",
+            "developer": "PRIDE",
+            "configurations": [
+                "2 BHK",
+                "3 BHK"
+            ],
+            "carpet_area": "2BHK (726, 789) SQ.FT, 3BHK (988, 1212) SQ.FT",
+            "price_lakhs": 89,
+            "price_onwards": true,
+            "price_label": "2BHK - 89L ONWARDS, 3BHK - 1.17 CR - 1.60 CR",
+            "location": "Hinjawadi Phase 1",
+            "city": "Pune",
+            "status": "available",
+            "featured": false,
+            "rera": "PH4/PH5: P52100055911 / P52100080502",
+            "image_url": "images/properties/pride-park-titan.webp",
+            "sort_order": 19,
+            "created_at": "2026-11-12T06:40:00.000Z"
+        },
+        {
+            "id": "prop-shapoorji-joyville-vyomra",
+            "title": "JOY VILLE VYOMRA",
+            "developer": "SHAPOORJI",
+            "configurations": [
+                "2 BHK",
+                "3 BHK"
+            ],
+            "carpet_area": "2BHK (685, 840) SQ.FT, 3BHK (1050, 1190) SQ.FT, 3BHK DUPLEX (1470) SQ.FT",
+            "price_lakhs": 104,
+            "price_onwards": true,
+            "price_label": "2BHK - 1.04 CR ONWARDS, 3BHK - 1.56 CR ONWARDS",
+            "location": "Hinjawadi Phase 2",
+            "city": "Pune",
+            "status": "available",
+            "featured": false,
+            "rera": "PR1260002600999",
+            "image_url": "images/properties/shapoorji-joyville-vyomra.jpeg",
+            "sort_order": 20,
+            "created_at": "2026-11-12T06:30:00.000Z"
         }
-];
+    ];
 
     function demoRead() {
         try {
