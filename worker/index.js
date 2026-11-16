@@ -33,7 +33,20 @@ export default {
     async fetch(request, env, ctx) {
         const url = new URL(request.url);
         try {
-            if (!url.pathname.startsWith('/api/')) return env.ASSETS.fetch(request);
+            if (!url.pathname.startsWith('/api/')) {
+                const response = await env.ASSETS.fetch(request);
+                const contentType = response.headers.get('content-type') || '';
+                if (contentType.includes('text/html') && !contentType.includes('charset')) {
+                    const headers = new Headers(response.headers);
+                    headers.set('content-type', 'text/html; charset=utf-8');
+                    return new Response(response.body, {
+                        status: response.status,
+                        statusText: response.statusText,
+                        headers
+                    });
+                }
+                return response;
+            }
             if (!env.DB || !env.FILES) throw new HttpError(503, 'The database or file storage is not connected. See BACKEND.md.');
 
             // Block cross-site writes (defence in depth on top of SameSite cookies)
