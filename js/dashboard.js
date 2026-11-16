@@ -22,29 +22,48 @@
 
     // ---- boot ---------------------------------------------------------------
 
-    document.querySelectorAll('[data-demo-only]').forEach(el => { el.hidden = S.LIVE; });
+    let setupMode = false;
 
     async function boot() {
         try {
-            const session = await admin.session();
-            session ? showApp(session) : showLogin();
+            const st = await admin.status();
+            st.user ? showApp(st.user) : showLogin('', st.needsSetup);
         } catch (err) {
             showLogin(err.message);
         }
     }
 
-    function showLogin(message) {
+    function showLogin(message, needsSetup = false) {
+        setupMode = needsSetup;
+        document.querySelectorAll('[data-setup-only]').forEach(el => { el.hidden = !needsSetup; });
+        $('login-sub').textContent = needsSetup ? 'Create the first admin account.' : 'Sign in to manage property listings.';
+        $('login-submit').textContent = needsSetup ? 'Create admin & sign in' : 'Sign in';
+        const pw = document.querySelector('#login-form [name=password]');
+        pw.autocomplete = needsSetup ? 'new-password' : 'current-password';
         $('view-app').hidden = true;
         $('view-login').hidden = false;
-        if (message) showError('login-error', message);
-        document.querySelector('#login-form [name=email]').focus();
+        showError('login-error', message || '');
+        document.querySelector(needsSetup ? '#login-form [name=setupKey]' : '#login-form [name=email]').focus();
     }
 
-    async function showApp(session) {
+    async function showApp(user) {
         $('view-login').hidden = true;
         $('view-app').hidden = false;
-        $('dash-user').textContent = session?.user?.email || '';
+        $('dash-user').textContent = user?.email || '';
+        const pf = $('password-form');
+        if (pf) pf.elements.username.value = user?.email || '';
+        showView(viewFromHash());
         await refresh();
+        loadEnquiryCount();
+    }
+
+    // Any request that comes back 401 means the session ended: go back to sign-in
+    function handleAuthError(err) {
+        if (err && err.status === 401) {
+            showLogin(err.message);
+            return true;
+        }
+        return false;
     }
 
     // ---- auth -----------------------------------------------------------------
@@ -55,20 +74,29 @@
         const email = form.email.value.trim();
         const password = form.password.value;
         showError('login-error', '');
-        if (S.LIVE && (!email || !password)) return showError('login-error', 'Enter your email and password.');
+        if (!email || !password) return showError('login-error', 'Enter your email and password.');
+        if (setupMode) {
+            if (!form.setupKey.value.trim()) return showError('login-error', 'Enter the setup key.');
+            if (password.length < 10) return showError('login-error', 'Use a password of at least 10 characters.');
+            if (password !== form.confirm.value) return showError('login-error', "The two passwords don't match.");
+        }
 
         const btn = $('login-submit');
+        const label = btn.textContent;
         btn.disabled = true;
-        btn.textContent = 'Signing in...';
+        btn.textContent = setupMode ? 'Creating account...' : 'Signing in...';
         try {
-            const session = await admin.signIn(email, password);
-            form.password.value = '';
-            showApp(session);
+            const { user } = setupMode
+                ? await admin.setup(form.setupKey.value.trim(), email, password)
+                : await admin.signIn(email, password);
+            form.reset();
+            showApp(user);
         } catch (err) {
-            showError('login-error', err.message);
+            if (err.status === 409) showLogin(err.message, false); // someone already completed setup
+            else showError('login-error', err.message);
         } finally {
             btn.disabled = false;
-            btn.textContent = 'Sign in';
+            btn.textContent = label;
         }
     });
 
@@ -77,18 +105,25 @@
         showLogin();
     });
 
-    const syncBtn = $('sync-backend');
-    if (syncBtn) {
-        syncBtn.addEventListener('click', async () => {
-            syncBtn.disabled = true;
-            syncBtn.textContent = 'Syncing...';
-            if (S.clearLocalCache) S.clearLocalCache();
-            await refresh();
-            toast('Synced with backend data file!');
-            syncBtn.disabled = false;
-            syncBtn.textContent = 'Sync / Reload Data';
+    // ---- views (Listings / Enquiries / Team) ------------------------------------
+
+    const VIEWS = ['listings', 'enquiries', 'team'];
+    const viewFromHash = () => (VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'listings');
+
+    function showView(view) {
+        VIEWS.forEach(v => { $(`panel-${v}`).hidden = v !== view; });
+        $('dash-nav').querySelectorAll('[data-view]').forEach(a => {
+            const on = a.dataset.view === view;
+            a.classList.toggle('is-active', on);
+            if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
         });
+        if (view === 'enquiries') loadEnquiries();
+        if (view === 'team') loadTeam();
     }
+
+    window.addEventListener('hashchange', () => {
+        if (!$('view-app').hidden) showView(viewFromHash());
+    });
 
     // ---- list -------------------------------------------------------------------
 
@@ -98,6 +133,7 @@
             state.listings = await admin.list();
             render();
         } catch (err) {
+            if (handleAuthError(err)) return;
             $('dash-list').innerHTML = `<div class="dash-empty"><p>${esc(err.message)}</p></div>`;
         }
     }
@@ -180,6 +216,7 @@
                 toast(next === 'closed' ? `${p.title} marked closed — stamp added.` : `${p.title} is open again.`);
                 await refresh();
             } catch (err) {
+                if (handleAuthError(err)) return;
                 toast(err.message, true);
                 btn.disabled = false;
             }
@@ -214,7 +251,7 @@
             }
             await refresh();
         } catch (err) {
-            toast(err.message, true);
+            if (!handleAuthError(err)) toast(err.message, true);
         }
     });
 
@@ -298,6 +335,8 @@
             configurations: state.configs.slice(),
             price_lakhs: lakhs == null ? null : Math.round(lakhs * 100) / 100,
             price_onwards: f.price_onwards.checked && !onRequest,
+            price_label: f.price_label.value,
+            carpet_area: f.carpet_area.value,
             location: f.location.value,
             city: f.city.value || 'Pune',
             status: f.status.value,
@@ -352,6 +391,8 @@
         f.location.value = p?.location || '';
         f.city.value = p?.city || 'Pune';
         f.rera.value = p?.rera || '';
+        f.price_label.value = p?.price_label || '';
+        f.carpet_area.value = p?.carpet_area || '';
         f.featured.checked = Boolean(p?.featured);
         f.price_onwards.checked = Boolean(p?.price_onwards);
         f.price_on_request.checked = Boolean(p) && p.price_lakhs == null;
@@ -428,10 +469,206 @@
             await refresh();
         } catch (err) {
             if (uploadedPath) admin.removePhoto(uploadedPath);
-            showError('form-error', err.message);
+            if (err.status === 401) {
+                showError('form-error', 'Your session has ended. Sign in again in a new tab, then click save again.');
+            } else {
+                showError('form-error', err.message);
+            }
         } finally {
             btn.disabled = false;
             btn.textContent = label;
+        }
+    });
+
+    // ---- enquiries ---------------------------------------------------------------------
+
+    const enq = { list: [], type: '', search: '', loaded: false };
+    const SEEN_KEY = 'prabal_enquiries_seen';
+
+    const fmtDate = iso => new Date(iso).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+
+    function lastSeen() {
+        try { return localStorage.getItem(SEEN_KEY) || ''; } catch (err) { return ''; }
+    }
+
+    async function loadEnquiryCount() {
+        try {
+            const list = await admin.enquiries();
+            const seen = lastSeen();
+            const fresh = list.filter(x => x.created_at > seen).length;
+            const badge = $('enquiry-count');
+            badge.textContent = fresh > 99 ? '99+' : String(fresh);
+            badge.hidden = !fresh || !seen;
+        } catch (err) { /* badge is optional */ }
+    }
+
+    async function loadEnquiries() {
+        if (!enq.loaded) $('enquiry-list').innerHTML = '<div class="dash-loading">Loading enquiries...</div>';
+        try {
+            enq.list = await admin.enquiries();
+            enq.loaded = true;
+            renderEnquiries();
+            try { if (enq.list[0]) localStorage.setItem(SEEN_KEY, enq.list[0].created_at); } catch (err) { /* ignore */ }
+            $('enquiry-count').hidden = true;
+        } catch (err) {
+            if (handleAuthError(err)) return;
+            $('enquiry-list').innerHTML = `<div class="dash-empty"><p>${esc(err.message)}</p></div>`;
+        }
+    }
+
+    const MAIL_STATUS = {
+        sent: ['Emailed', 'available'],
+        pending: ['Sending…', 'new_launch'],
+        failed: ['Email failed', 'closed'],
+        not_configured: ['Email not set up', 'closed']
+    };
+
+    function renderEnquiries() {
+        const q = enq.search.toLowerCase();
+        const list = enq.list.filter(x =>
+            (!enq.type || x.type === enq.type) &&
+            (!q || [x.name, x.phone, x.email, ...x.fields.map(f => f.value)].join(' ').toLowerCase().includes(q)));
+
+        if (!list.length) {
+            $('enquiry-list').innerHTML = `<div class="dash-empty"><p>${enq.list.length
+                ? 'No enquiries match this filter.'
+                : 'No enquiries yet. When someone fills in the contact or careers form, it shows up here and in your inbox.'}</p></div>`;
+            return;
+        }
+
+        $('enquiry-list').innerHTML = list.map(x => {
+            const [mailLabel, mailClass] = MAIL_STATUS[x.email_status] || [x.email_status, 'closed'];
+            const phoneDigits = (x.phone || '').replace(/[^\d+]/g, '');
+            const details = x.fields
+                .filter(f => !['Name', 'Mobile', 'Phone', 'Email'].includes(f.label))
+                .map(f => `<div><dt>${esc(f.label)}</dt><dd>${esc(f.value)}</dd></div>`).join('');
+            return `
+            <article class="enquiry" data-enquiry="${esc(x.id)}">
+                <header class="enquiry-head">
+                    <div>
+                        <span class="pill pill--${x.type === 'career' ? 'feat' : 'new_launch'}">${esc(x.typeLabel)}</span>
+                        <h3>${esc(x.name || 'No name')}</h3>
+                        <p class="enquiry-contact">
+                            ${x.phone ? `<a href="tel:${esc(phoneDigits)}">${esc(x.phone)}</a>` : ''}
+                            ${x.phone ? `<a href="https://wa.me/${esc(phoneDigits.replace(/^\+/, ''))}" target="_blank" rel="noopener">WhatsApp</a>` : ''}
+                            ${x.email ? `<a href="mailto:${esc(x.email)}">${esc(x.email)}</a>` : ''}
+                        </p>
+                    </div>
+                    <div class="enquiry-meta">
+                        <time datetime="${esc(x.created_at)}">${esc(fmtDate(x.created_at))}</time>
+                        <span class="pill pill--${mailClass}" ${x.email_error ? `title="${esc(x.email_error)}"` : ''}>${esc(mailLabel)}</span>
+                    </div>
+                </header>
+                ${details ? `<dl class="enquiry-fields">${details}</dl>` : ''}
+                <footer class="enquiry-foot">
+                    ${x.has_file ? `<a class="dash-btn dash-btn--ghost dash-btn--sm" href="${esc(admin.enquiryFileURL(x.id))}">Download ${esc(x.file_name || 'résumé')}</a>` : ''}
+                    ${x.page ? `<span class="field-hint">From ${esc(x.page.replace(/^https?:\/\/[^/]+/, '') || '/')}</span>` : ''}
+                    <button type="button" class="icon-btn" data-enquiry-delete aria-label="Delete enquiry from ${esc(x.name)}" title="Delete">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>
+                    </button>
+                </footer>
+            </article>`;
+        }).join('');
+    }
+
+    $('enquiries-refresh').addEventListener('click', loadEnquiries);
+    $('enquiry-search').addEventListener('input', e => { enq.search = e.target.value.trim(); renderEnquiries(); });
+    $('enquiry-tabs').addEventListener('click', e => {
+        const btn = e.target.closest('[data-type]');
+        if (!btn) return;
+        enq.type = btn.dataset.type;
+        $('enquiry-tabs').querySelectorAll('.seg-btn').forEach(b => b.classList.toggle('is-active', b === btn));
+        renderEnquiries();
+    });
+    $('enquiry-list').addEventListener('click', async e => {
+        const btn = e.target.closest('[data-enquiry-delete]');
+        if (!btn) return;
+        const card = btn.closest('[data-enquiry]');
+        const item = enq.list.find(x => x.id === card.dataset.enquiry);
+        if (!item || !window.confirm(`Delete the enquiry from ${item.name || 'this person'}? This can't be undone.`)) return;
+        btn.disabled = true;
+        try {
+            await admin.deleteEnquiry(item.id);
+            enq.list = enq.list.filter(x => x.id !== item.id);
+            renderEnquiries();
+            toast('Enquiry deleted.');
+        } catch (err) {
+            if (!handleAuthError(err)) toast(err.message, true);
+            btn.disabled = false;
+        }
+    });
+
+    // ---- team -------------------------------------------------------------------------
+
+    async function loadTeam() {
+        $('team-list').innerHTML = '<div class="dash-loading">Loading...</div>';
+        try {
+            const { me, team } = await admin.team();
+            $('team-list').innerHTML = team.map(m => `
+                <div class="team-row" data-member="${esc(m.id)}">
+                    <div>
+                        <strong>${esc(m.email)}</strong>${m.email === me ? ' <span class="pill pill--available">You</span>' : ''}
+                        <small>Added ${esc(fmtDate(m.created_at))}${m.created_by && m.created_by !== 'setup' ? ` by ${esc(m.created_by)}` : ''}</small>
+                    </div>
+                    ${m.email === me ? '' : `<button type="button" class="dash-btn dash-btn--ghost dash-btn--sm" data-member-remove>Remove</button>`}
+                </div>`).join('');
+        } catch (err) {
+            if (handleAuthError(err)) return;
+            $('team-list').innerHTML = `<p class="dash-error">${esc(err.message)}</p>`;
+        }
+    }
+
+    $('team-list').addEventListener('click', async e => {
+        const btn = e.target.closest('[data-member-remove]');
+        if (!btn) return;
+        const row = btn.closest('[data-member]');
+        const email = row.querySelector('strong').textContent;
+        if (!window.confirm(`Remove ${email}? They will be signed out and can no longer use the dashboard.`)) return;
+        btn.disabled = true;
+        try {
+            await admin.removeMember(row.dataset.member);
+            toast(`${email} removed.`);
+            loadTeam();
+        } catch (err) {
+            if (!handleAuthError(err)) toast(err.message, true);
+            btn.disabled = false;
+        }
+    });
+
+    $('team-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const f = e.target;
+        showError('team-error', '');
+        const btn = f.querySelector('button[type=submit]');
+        btn.disabled = true;
+        try {
+            await admin.addMember(f.email.value.trim(), f.password.value);
+            toast(`${f.email.value.trim()} can now sign in.`);
+            f.reset();
+            loadTeam();
+        } catch (err) {
+            if (!handleAuthError(err)) showError('team-error', err.message);
+        } finally {
+            btn.disabled = false;
+        }
+    });
+
+    $('password-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const f = e.target;
+        showError('password-error', '');
+        const btn = f.querySelector('button[type=submit]');
+        btn.disabled = true;
+        try {
+            await admin.changePassword(f.current.value, f.next.value);
+            const username = f.username.value;
+            f.reset();
+            f.username.value = username;
+            toast('Password updated.');
+        } catch (err) {
+            if (!handleAuthError(err)) showError('password-error', err.message);
+        } finally {
+            btn.disabled = false;
         }
     });
 

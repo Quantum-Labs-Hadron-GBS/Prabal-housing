@@ -222,7 +222,7 @@
             <div class="container">
                 <div class="contact-form-wrapper">
                     <h2 class="display-title" style="text-align: center; margin-bottom: 40px; font-size: clamp(2rem, 4vw, 3rem);">Get in touch</h2>
-                    <form action="#" method="POST">
+                    <form action="/api/forms/contact" method="POST" data-form="contact">
                         <div class="form-group">
                             <label for="fullName">Full Name</label>
                             <input type="text" id="fullName" name="fullName" class="form-control" placeholder="Enter your full name" required>
@@ -315,5 +315,6 @@
     </footer>
 
     <script defer src="js/main.js"></script>
+    <script defer src="js/forms.js"></script>
 </body>
 </html>

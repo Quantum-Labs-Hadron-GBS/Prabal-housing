@@ -1,0 +1,6 @@
+# Copy to .dev.vars for local development (`npm run dev`). Never commit .dev.vars.
+SETUP_KEY=choose-a-long-random-string
+NOTIFY_EMAIL=you@prabalhousing.com
+# CAREERS_EMAIL=hr@prabalhousing.com
+# MAIL_FROM=PRABALHOUSING Website <website@prabalhousing.com>
+# RESEND_API_KEY=re_xxxxxxxx

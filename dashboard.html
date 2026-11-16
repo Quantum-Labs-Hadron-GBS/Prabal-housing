@@ -25,13 +25,17 @@
             <img class="login-logo" src="https://res.cloudinary.com/dyhlpxwwo/image/upload/f_auto,q_auto,w_160/v1790075126/Prabal_Final_Logo_ozw283.png"
                 alt="PRABALHOUSING Logo" width="64" height="61">
             <h1>Team Dashboard</h1>
-            <p class="login-sub">Sign in to manage property listings.</p>
+            <p class="login-sub" id="login-sub">Sign in to manage property listings.</p>
 
-            <div class="demo-note" data-demo-only hidden>
-                <strong>Demo mode.</strong> Supabase isn't connected yet, so changes are saved in this browser only.
-                Any email works. See <code>DASHBOARD_SETUP.md</code> to go live.
+            <div class="demo-note" data-setup-only hidden>
+                <strong>First-time setup.</strong> Create the first admin account. You'll need the
+                <code>SETUP_KEY</code> set in Cloudflare (see <code>BACKEND.md</code>).
             </div>
 
+            <label class="dash-field" data-setup-only hidden>
+                <span>Setup key</span>
+                <input type="password" name="setupKey" autocomplete="off" placeholder="From Cloudflare settings">
+            </label>
             <label class="dash-field">
                 <span>Email</span>
                 <input type="email" name="email" autocomplete="username" required placeholder="you@prabalhousing.com">
@@ -39,6 +43,10 @@
             <label class="dash-field">
                 <span>Password</span>
                 <input type="password" name="password" autocomplete="current-password" required placeholder="••••••••">
+            </label>
+            <label class="dash-field" data-setup-only hidden>
+                <span>Confirm password</span>
+                <input type="password" name="confirm" autocomplete="new-password" placeholder="At least 10 characters">
             </label>
             <p class="dash-error" id="login-error" role="alert" hidden></p>
             <button type="submit" class="dash-btn dash-btn--primary dash-btn--block" id="login-submit">Sign in</button>
@@ -54,16 +62,19 @@
                     alt="PRABALHOUSING Logo" width="32" height="30">
                 <span>PRABALHOUSING</span>
             </a>
-            <span class="dash-mode" data-demo-only hidden>Demo mode</span>
+            <nav class="dash-nav" id="dash-nav" aria-label="Dashboard sections">
+                <a href="#listings" data-view="listings" class="is-active">Listings</a>
+                <a href="#enquiries" data-view="enquiries">Enquiries <span class="nav-count" id="enquiry-count" hidden></span></a>
+                <a href="#team" data-view="team">Team</a>
+            </nav>
             <div class="dash-topbar-right">
                 <span class="dash-user" id="dash-user"></span>
-                <button class="dash-btn dash-btn--ghost" id="sync-backend" type="button" title="Sync and reload directly from backend file">Sync / Reload Data</button>
                 <a class="dash-btn dash-btn--ghost" href="/properties" target="_blank" rel="noopener">View site</a>
                 <button class="dash-btn dash-btn--ghost" id="sign-out" type="button">Sign out</button>
             </div>
         </header>
 
-        <main class="dash-main">
+        <main class="dash-main" id="panel-listings">
             <div class="dash-head">
                 <div>
                     <h1>Listings</h1>
@@ -85,6 +96,72 @@
             </div>
 
             <div class="dash-list" id="dash-list" aria-live="polite"></div>
+        </main>
+
+        <!-- Enquiries: every website form submission, also emailed to the team -->
+        <main class="dash-main" id="panel-enquiries" hidden>
+            <div class="dash-head">
+                <div>
+                    <h1>Enquiries</h1>
+                    <p>Every contact and careers form sent from the website. Each one is also emailed to the team.</p>
+                </div>
+                <button class="dash-btn dash-btn--ghost" id="enquiries-refresh" type="button">Refresh</button>
+            </div>
+            <div class="dash-toolbar">
+                <input type="search" id="enquiry-search" placeholder="Search by name, phone or email..." aria-label="Search enquiries">
+                <div class="seg" role="tablist" aria-label="Filter by type" id="enquiry-tabs">
+                    <button type="button" class="seg-btn is-active" data-type="">All</button>
+                    <button type="button" class="seg-btn" data-type="contact">Enquiries</button>
+                    <button type="button" class="seg-btn" data-type="career">Job applications</button>
+                </div>
+            </div>
+            <div class="dash-list" id="enquiry-list" aria-live="polite"></div>
+        </main>
+
+        <!-- Team: who can sign in -->
+        <main class="dash-main" id="panel-team" hidden>
+            <div class="dash-head">
+                <div>
+                    <h1>Team</h1>
+                    <p>People who can sign in to this dashboard.</p>
+                </div>
+            </div>
+            <div class="team-grid">
+                <section class="panel-card">
+                    <h2>Members</h2>
+                    <div id="team-list" class="team-list"></div>
+                </section>
+                <div class="team-side">
+                    <form class="panel-card" id="team-form" novalidate>
+                        <h2>Add a member</h2>
+                        <p class="field-hint">Share the password with them privately; they can change it after signing in.</p>
+                        <label class="dash-field">
+                            <span>Email</span>
+                            <input type="email" name="email" required autocomplete="off" placeholder="name@prabalhousing.com">
+                        </label>
+                        <label class="dash-field">
+                            <span>Temporary password</span>
+                            <input type="text" name="password" required autocomplete="off" minlength="10" placeholder="At least 10 characters">
+                        </label>
+                        <p class="dash-error" id="team-error" role="alert" hidden></p>
+                        <button type="submit" class="dash-btn dash-btn--primary">Add member</button>
+                    </form>
+                    <form class="panel-card" id="password-form" novalidate>
+                        <h2>Change my password</h2>
+                        <input type="email" name="username" autocomplete="username" hidden>
+                        <label class="dash-field">
+                            <span>Current password</span>
+                            <input type="password" name="current" required autocomplete="current-password">
+                        </label>
+                        <label class="dash-field">
+                            <span>New password</span>
+                            <input type="password" name="next" required autocomplete="new-password" minlength="10" placeholder="At least 10 characters">
+                        </label>
+                        <p class="dash-error" id="password-error" role="alert" hidden></p>
+                        <button type="submit" class="dash-btn dash-btn--primary">Update password</button>
+                    </form>
+                </div>
+            </div>
         </main>
     </div>
 
@@ -157,6 +234,17 @@
                             <label><input type="checkbox" name="price_on_request"> Price on request</label>
                         </div>
                     </div>
+
+                    <label class="dash-field">
+                        <span>Price details (optional)</span>
+                        <input type="text" name="price_label" maxlength="300" placeholder="e.g. 3BHK ₹1.32 Cr onwards, 4BHK ₹2.10 Cr onwards">
+                        <small class="field-hint">If filled, this text is shown on the card instead of the price above. The price above is still used for budget filters.</small>
+                    </label>
+
+                    <label class="dash-field">
+                        <span>Carpet area (optional)</span>
+                        <input type="text" name="carpet_area" maxlength="300" placeholder="e.g. 3BHK 1,265 sq.ft, 4BHK 1,552 sq.ft">
+                    </label>
 
                     <div class="field-row">
                         <label class="dash-field">

@@ -1,0 +1,13 @@
+# Files that must NOT be published as part of the public website
+.git
+.gitignore
+.assetsignore
+.wrangler
+.dev.vars*
+node_modules
+worker
+wrangler.jsonc
+package.json
+package-lock.json
+*.md
+vercel.json

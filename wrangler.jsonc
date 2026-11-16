@@ -1,0 +1,35 @@
+// Cloudflare Worker for prabalhousing.com
+//  - Static site (HTML/CSS/JS/images) is served straight from this folder.
+//  - Anything under /api/* runs worker/index.js: listings, admin login, forms → email.
+// See BACKEND.md for setup.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "prabal-housing",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none",
+    "run_worker_first": ["/api/*"]
+  },
+
+  // Created automatically on the first deploy (no IDs needed).
+  "d1_databases": [
+    { "binding": "DB", "database_name": "prabal-housing-db" }
+  ],
+  // Listing photos and résumés. Workers KV is on the free plan (no card needed);
+  // each file can be up to 25 MB.
+  "kv_namespaces": [
+    { "binding": "FILES" }
+  ],
+
+  // Settings live in the Cloudflare dashboard (Worker → Settings → Variables and Secrets),
+  // so deploys never overwrite them. See BACKEND.md.
+  "keep_vars": true,
+
+  "observability": { "enabled": true }
+}

@@ -14,7 +14,7 @@
 const CONTACT = {
     phone: '+918956603548',
     whatsapp: '918956603548',
-    leadEndpoint: ''
+    leadEndpoint: '/api/forms/shortlist'
 };
 
 // Centralized Cloudinary Config for Hero

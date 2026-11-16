@@ -2,28 +2,15 @@
  * PRABAL HOUSING
  * Property data layer, shared by the public pages and the dashboard.
  *
- * Two modes:
- *  - LIVE: SUPABASE_URL + SUPABASE_ANON_KEY are set. Listings live in Supabase
- *    (see supabase/schema.sql and DASHBOARD_SETUP.md). Public pages read them
- *    with a single plain fetch — no client library on the public site.
- *  - DEMO: keys left empty. Listings are kept in this browser's localStorage so
- *    the dashboard can be tried locally. Nothing is shared with visitors.
+ * Listings live in the Cloudflare Worker's D1 database (see worker/ and
+ * BACKEND.md). Public pages read GET /api/properties; the dashboard uses the
+ * signed-in /api/admin/* routes. If the API can't be reached (e.g. the site is
+ * opened from a plain static server) public pages fall back to the snapshot in
+ * data/properties.json so they never show an empty grid.
  */
-
-// ---------------------------------------------------------------------------
-// SUPABASE CONFIG — paste from Supabase: Project Settings → API.
-// The anon key is designed to be public; row-level security protects writes.
-// ---------------------------------------------------------------------------
-const SUPABASE_URL = '';
-const SUPABASE_ANON_KEY = '';
 
 const PrabalStore = (() => {
     'use strict';
-
-    const LIVE = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
-    const TABLE = 'properties';
-    const BUCKET = 'property-images';
-    const DEMO_KEY = 'prabal_demo_properties_v1';
 
     const STATUS = {
         available: 'Available',
@@ -41,11 +28,13 @@ const PrabalStore = (() => {
         }[ch]));
     }
 
-    // Only allow images from http(s) or data URLs we produced ourselves.
+    // Only allow https images, our own /images files, and photos uploaded via the dashboard.
     function safeImageURL(url) {
         if (!url) return '';
         const s = String(url);
-        if (/^https:\/\//i.test(s) || /^\/?images\/[a-zA-Z0-9_.\-\/]+\.(?:png|jpe?g|webp|gif|svg)$/i.test(s) || /^data:image\/(webp|jpeg|png);base64,/i.test(s)) return s;
+        if (/^https:\/\//i.test(s) ||
+            /^\/?images\/[a-zA-Z0-9_.\-\/]+\.(?:png|jpe?g|webp|gif|svg)$/i.test(s) ||
+            /^\/api\/media\/listings\/[a-zA-Z0-9_.\-]+$/.test(s)) return s;
         return '';
     }
 
@@ -90,575 +79,65 @@ const PrabalStore = (() => {
             String(b.created_at).localeCompare(String(a.created_at)));
     }
 
-    // ---- demo storage ------------------------------------------------------
+    // ---- API ---------------------------------------------------------------
 
-    const DEMO_SEED =     [
-        {
-            "id": "prop-godrej-aqua-retret",
-            "title": "AQUA RETRET",
-            "developer": "Godrej",
-            "configurations": [
-                "1 BHK",
-                "2 BHK",
-                "3 BHK"
-            ],
-            "carpet_area": "1BHK (588) SQ.FT, 2BHK (861-888) SQ.FT, 3BHK (1081-1082) SQ.FT",
-            "price_lakhs": 83,
-            "price_onwards": false,
-            "price_label": "1BHK - 83 LAC, 2BHK - 1.19 CR, 3BHK - 1.44 CR",
-            "location": "Mahluge",
-            "city": "Pune",
-            "status": "available",
-            "featured": true,
-            "rera": "PM1260002500070",
-            "image_url": "images/properties/godrej-aqua-retret.png",
-            "sort_order": 1,
-            "created_at": "2026-11-12T08:00:00.000Z"
-        },
-        {
-            "id": "prop-kings-county",
-            "title": "KINGS COUNTY",
-            "developer": "KINGS MARQUE GROUP",
-            "configurations": [
-                "3 BHK",
-                "4 BHK"
-            ],
-            "carpet_area": "3BHK (1093, 1195) SQ.FT, 4BHK (1540) SQ.FT",
-            "price_lakhs": 178,
-            "price_onwards": false,
-            "price_label": "3BHK (1.78 CR), 4BHK (2.26 CR)",
-            "location": "NEAR DRAUPDA LAWNS",
-            "city": "Pune",
-            "status": "available",
-            "featured": true,
-            "rera": "P52100055635",
-            "image_url": "images/properties/kings-county.png",
-            "sort_order": 2,
-            "created_at": "2026-11-12T09:50:00.000Z"
-        },
-        {
-            "id": "prop-lodha-massimo",
-            "title": "LODHA MASSIMO",
-            "developer": "LODHA",
-            "configurations": [
-                "3 BHK",
-                "3.5 BHK",
-                "4 BHK"
-            ],
-            "carpet_area": "3BHK (1721, 1776) SQ.FT, 4BHK (2056, 2108) SQ.FT",
-            "price_lakhs": 435,
-            "price_onwards": true,
-            "price_label": "3BHK (4.35 CR ONWARDS), 4BHK (5.35 CR ONWARDS)",
-            "location": "PANCARD CLUB ROAD, BANER",
-            "city": "Pune",
-            "status": "available",
-            "featured": true,
-            "rera": "PR1261012400049",
-            "image_url": "images/properties/lodha-massimo.png",
-            "sort_order": 3,
-            "created_at": "2026-11-12T09:40:00.000Z"
-        },
-        {
-            "id": "prop-merlin-ventana",
-            "title": "MERLIN VENTANA",
-            "developer": "MERLIN BHINGARWALA DEVELOPERS",
-            "configurations": [
-                "2 BHK",
-                "3 BHK",
-                "4 BHK"
-            ],
-            "carpet_area": "2BHK (793, 959) SQ.FT, 3BHK (1088, 1072, 1051, 995) SQ.FT, 4BHK (1481) SQ.FT",
-            "price_lakhs": 120,
-            "price_onwards": true,
-            "price_label": "2BHK (1.20 CR ONWARDS), 3BHK (2.15 CR ONWARDS), 4BHK (2.74 CR ONWARDS)",
-            "location": "OFF MUMBAI – PUNE HIGHWAY, BANER",
-            "city": "Pune",
-            "status": "available",
-            "featured": true,
-            "rera": "P52100053687",
-            "image_url": "images/properties/merlin-ventana.png",
-            "sort_order": 4,
-            "created_at": "2026-11-12T09:30:00.000Z"
-        },
-        {
-            "id": "prop-nyati-emerald",
-            "title": "NYATI EMERALD",
-            "developer": "NYATI GROUP",
-            "configurations": [
-                "2 BHK",
-                "3 BHK"
-            ],
-            "carpet_area": "2BHK (838) SQ.FT, 3BHK (1213) SQ.FT",
-            "price_lakhs": 194,
-            "price_onwards": true,
-            "price_label": "2BHK (1.94 CR ONWARDS), 3BHK (2.58 CR ONWARDS)",
-            "location": "NYATI EMERALD, MOHAN NAGAR CO. OP. SOCIETY, BANER, PUNE",
-            "city": "Pune",
-            "status": "available",
-            "featured": true,
-            "rera": "P52100051235",
-            "image_url": "images/properties/nyati-emerald.png",
-            "sort_order": 5,
-            "created_at": "2026-11-12T09:20:00.000Z"
-        },
-        {
-            "id": "prop-kumar-parth-towers",
-            "title": "KUMAR PARTH TOWERS",
-            "developer": "KUMAR PROPERTIES",
-            "configurations": [
-                "2 BHK",
-                "3 BHK",
-                "4 BHK"
-            ],
-            "carpet_area": "2BHK (774) SQ.FT, 3BHK (1090, 1177) SQ.FT, 4BHK (1700) SQ.FT",
-            "price_lakhs": 117,
-            "price_onwards": true,
-            "price_label": "2BHK (1.17 CR ONWARDS), 3BHK (1.75 CR ONWARDS), 4BHK (2.81 CR)",
-            "location": "BESIDES, KUMAR PINAKIN, MOHAN NAGAR",
-            "city": "Pune",
-            "status": "available",
-            "featured": true,
-            "rera": "P52100047987",
-            "image_url": "images/properties/kumar-parth-towers.png",
-            "sort_order": 6,
-            "created_at": "2026-11-12T09:10:00.000Z"
-        },
-        {
-            "id": "prop-sahil-luxton",
-            "title": "SAHIL LUXTON",
-            "developer": "SAHIL",
-            "configurations": [
-                "2 BHK",
-                "3 BHK",
-                "4 BHK"
-            ],
-            "carpet_area": "2BHK (753, 805) SQ.FT, 3BHK (1029, 1162) SQ.FT, 4BHK (1457) SQ.FT",
-            "price_lakhs": 111,
-            "price_onwards": true,
-            "price_label": "2BHK (1.11 CR ONWARDS), 3BHK (1.31 CR ONWARDS), 4BHK (1.95 CR ONWARDS)",
-            "location": "NEXT TO INDIRA SCHOOL",
-            "city": "Pune",
-            "status": "available",
-            "featured": true,
-            "rera": "PM1260002502043",
-            "image_url": "images/properties/sahil-luxton.png",
-            "sort_order": 7,
-            "created_at": "2026-11-12T09:00:00.000Z"
-        },
-        {
-            "id": "prop-vtp-skylights",
-            "title": "VTP SKYLIGHTS",
-            "developer": "VTP REALTY",
-            "configurations": [
-                "2 BHK",
-                "2.5 BHK",
-                "3 BHK"
-            ],
-            "carpet_area": "2BHK (737, 795, 820, 849) SQ.FT, 3BHK (906, 1083, 1258) SQ.FT",
-            "price_lakhs": 117,
-            "price_onwards": true,
-            "price_label": "2BHK (1.17 CR ONWARDS), 3BHK (1.88 CR ONWARDS)",
-            "location": "MUMBAI – BENGALURU HIGHWAY, BALEWADI HIGH STREET",
-            "city": "Pune",
-            "status": "available",
-            "featured": true,
-            "rera": "P52100028378",
-            "image_url": "images/properties/vtp-skylights.png",
-            "sort_order": 8,
-            "created_at": "2026-11-12T08:50:00.000Z"
-        },
-        {
-            "id": "prop-trident-tower",
-            "title": "TRIDENT TOWER",
-            "developer": "PARANJPE TRIDENT TOWER",
-            "configurations": [
-                "1 BHK",
-                "2 BHK",
-                "3 BHK"
-            ],
-            "carpet_area": "1BHK (1.30) SQ.M, 2BHK (797, 791) SQ.FT, 3BHK (1079, 1076, 1081) SQ.FT",
-            "price_lakhs": 105,
-            "price_onwards": true,
-            "price_label": "2BHK (1.05 CR ONWARDS), 3BHK (1.50 CR ONWARDS)",
-            "location": "CLOSE TO TAJ VIVANTA, HINJEWADI-WAKAD LINK ROAD",
-            "city": "Pune",
-            "status": "available",
-            "featured": true,
-            "rera": "P52100029377",
-            "image_url": "images/properties/trident-tower.png",
-            "sort_order": 9,
-            "created_at": "2026-11-12T08:40:00.000Z"
-        },
-        {
-            "id": "prop-vardhaman-sky-symphony",
-            "title": "VARDHAMAN SKY SYMPHONY, WAKAD",
-            "developer": "VARDHAMAN",
-            "configurations": [
-                "2 BHK",
-                "3 BHK"
-            ],
-            "carpet_area": "2BHK (740, 874, 936) SQ.FT, 3BHK (1073, 1189) SQ.FT",
-            "price_lakhs": 130,
-            "price_onwards": false,
-            "price_label": "(874 SQ.FT = 1.30 CR), (1189 SQ.FT = 1.88 CR)",
-            "location": "NEAR BHUJBAL CHOWK",
-            "city": "Pune",
-            "status": "available",
-            "featured": true,
-            "rera": "PR1260002502323",
-            "image_url": "images/properties/vardhaman-sky-symphony.png",
-            "sort_order": 10,
-            "created_at": "2026-11-12T08:30:00.000Z"
-        },
-        {
-            "id": "prop-binary-highness",
-            "title": "BINARY HIGHNESS",
-            "developer": "BINARY",
-            "configurations": [
-                "3 BHK",
-                "4 BHK"
-            ],
-            "carpet_area": "3BHK (1265, 1285, 948, 901) SQ.FT, 4BHK (1552) SQ.FT",
-            "price_lakhs": 132,
-            "price_onwards": true,
-            "price_label": "3BHK (1.32 CR ONWARDS), 4BHK (2.10 CR ONWARDS)",
-            "location": "NEXT TO TIP TOP HOTEL WAKAD",
-            "city": "Pune",
-            "status": "available",
-            "featured": false,
-            "rera": "PR12600025002183",
-            "image_url": "images/properties/binary-highness.png",
-            "sort_order": 11,
-            "created_at": "2026-11-12T10:00:00.000Z"
-        },
-        {
-            "id": "prop-gera-jott",
-            "title": "GERA JOTT",
-            "developer": "Gera",
-            "configurations": [
-                "2 BHK",
-                "3 BHK"
-            ],
-            "carpet_area": "2BHK (691-898) SQ.FT, 3BHK (1011-1237) SQ.FT",
-            "price_lakhs": 92,
-            "price_onwards": true,
-            "price_label": "2BHK - 92L ONWARDS, 3BHK - 1.35 CR",
-            "location": "Hinjawadi Phase 3",
-            "city": "Pune",
-            "status": "available",
-            "featured": false,
-            "rera": "PR1261012501648",
-            "image_url": "images/properties/gera-jott.png",
-            "sort_order": 12,
-            "created_at": "2026-11-12T07:50:00.000Z"
-        },
-        {
-            "id": "prop-saheel-landmarc",
-            "title": "LANDMARC",
-            "developer": "SAHEEL",
-            "configurations": [
-                "2 BHK",
-                "3 BHK"
-            ],
-            "carpet_area": "2BHK (733-734) SQ.FT, 3BHK (972-1082) SQ.FT",
-            "price_lakhs": 92,
-            "price_onwards": true,
-            "price_label": "2BHK - 92L ONWARDS, 3BHK - 1.25 CR - 1.35 CR",
-            "location": "Hinjawadi Phase 3",
-            "city": "Pune",
-            "status": "available",
-            "featured": false,
-            "rera": "PM1260002500142",
-            "image_url": "images/properties/saheel-landmarc.png",
-            "sort_order": 13,
-            "created_at": "2026-11-12T07:40:00.000Z"
-        },
-        {
-            "id": "prop-lodha-sylvan",
-            "title": "SYLVAN",
-            "developer": "LODHA",
-            "configurations": [
-                "2 BHK",
-                "2.5 BHK",
-                "3 BHK",
-                "3.5 BHK",
-                "4 BHK"
-            ],
-            "carpet_area": "2BHK (836-955) SQ.FT, 3BHK (1140-2011) SQ.FT, 4BHK (2711) SQ.FT",
-            "price_lakhs": 100,
-            "price_onwards": true,
-            "price_label": "2BHK - 1 CR ONWARDS, 3BHK - 1.45 CR - 4 CR, 4BHK - 5 CR",
-            "location": "Hinjawadi Phase 3",
-            "city": "Pune",
-            "status": "available",
-            "featured": false,
-            "rera": "PR1260002502575",
-            "image_url": "images/properties/lodha-sylvan.png",
-            "sort_order": 14,
-            "created_at": "2026-11-12T07:30:00.000Z"
-        },
-        {
-            "id": "prop-vtp-monarque",
-            "title": "MONARQUE",
-            "developer": "VTP",
-            "configurations": [
-                "2 BHK",
-                "3 BHK"
-            ],
-            "carpet_area": "2BHK (780-880) SQ.FT, 3BHK (861-1281) SQ.FT",
-            "price_lakhs": 110,
-            "price_onwards": true,
-            "price_label": "2BHK - 1.10 CR ONWARDS, 3BHK - 1.19 CR - 1.96 CR",
-            "location": "Hinjawadi Phase 2",
-            "city": "Pune",
-            "status": "available",
-            "featured": false,
-            "rera": "P52100079440",
-            "image_url": "images/properties/vtp-monarque.png",
-            "sort_order": 15,
-            "created_at": "2026-11-12T07:20:00.000Z"
-        },
-        {
-            "id": "prop-kohinoor-royal-tower",
-            "title": "ROYAL TOWER",
-            "developer": "KOHINOOR",
-            "configurations": [
-                "2 BHK",
-                "3 BHK"
-            ],
-            "carpet_area": "2BHK (768-813) SQ.FT, 3BHK (954-1089) SQ.FT",
-            "price_lakhs": 99,
-            "price_onwards": true,
-            "price_label": "2BHK - 99L ONWARDS, 3BHK - 1.25 CR ONWARDS",
-            "location": "Hinjawadi Phase 1",
-            "city": "Pune",
-            "status": "available",
-            "featured": false,
-            "rera": "PR1260002501033",
-            "image_url": "images/properties/kohinoor-royal-tower.jpg",
-            "sort_order": 16,
-            "created_at": "2026-11-12T07:10:00.000Z"
-        },
-        {
-            "id": "prop-kraheja-vistas",
-            "title": "VISTAS",
-            "developer": "K RAHEJA",
-            "configurations": [
-                "2 BHK",
-                "3 BHK"
-            ],
-            "carpet_area": "2BHK (689-936) SQ.FT, 3BHK (1110) SQ.FT, Simplex (1360-1824) SQ.FT",
-            "price_lakhs": 94,
-            "price_onwards": true,
-            "price_label": "2BHK - 94L ONWARDS, 3BHK - 1.55 CR ONWARDS",
-            "location": "Hinjawadi Phase 2",
-            "city": "Pune",
-            "status": "available",
-            "featured": false,
-            "rera": "PR1260002501597",
-            "image_url": "images/properties/k-raheja-vistas.jpg",
-            "sort_order": 17,
-            "created_at": "2026-11-12T07:00:00.000Z"
-        },
-        {
-            "id": "prop-mahindra-revenza",
-            "title": "REVENZA",
-            "developer": "MAHINDRA",
-            "configurations": [
-                "2 BHK",
-                "3 BHK",
-                "4 BHK"
-            ],
-            "carpet_area": "2BHK (688-855) SQ.FT, 3BHK (995-1206) SQ.FT, 4BHK (1615-1650) SQ.FT",
-            "price_lakhs": 104,
-            "price_onwards": true,
-            "price_label": "2BHK - 1.04 CR ONWARDS, 3BHK - 1.34 CR ONWARDS, 4BHK - 2.19 CR ONWARDS",
-            "location": "Hinjawadi Phase 2",
-            "city": "Pune",
-            "status": "available",
-            "featured": false,
-            "rera": "PR1261012602102, PM1261012602103",
-            "image_url": "images/properties/mahindra-revenza.jpeg",
-            "sort_order": 18,
-            "created_at": "2026-11-12T06:50:00.000Z"
-        },
-        {
-            "id": "prop-pride-park-titan",
-            "title": "PARK TITAN",
-            "developer": "PRIDE",
-            "configurations": [
-                "2 BHK",
-                "3 BHK"
-            ],
-            "carpet_area": "2BHK (726, 789) SQ.FT, 3BHK (988, 1212) SQ.FT",
-            "price_lakhs": 89,
-            "price_onwards": true,
-            "price_label": "2BHK - 89L ONWARDS, 3BHK - 1.17 CR - 1.60 CR",
-            "location": "Hinjawadi Phase 1",
-            "city": "Pune",
-            "status": "available",
-            "featured": false,
-            "rera": "PH4/PH5: P52100055911 / P52100080502",
-            "image_url": "images/properties/pride-park-titan.webp",
-            "sort_order": 19,
-            "created_at": "2026-11-12T06:40:00.000Z"
-        },
-        {
-            "id": "prop-shapoorji-joyville-vyomra",
-            "title": "JOY VILLE VYOMRA",
-            "developer": "SHAPOORJI",
-            "configurations": [
-                "2 BHK",
-                "3 BHK"
-            ],
-            "carpet_area": "2BHK (685, 840) SQ.FT, 3BHK (1050, 1190) SQ.FT, 3BHK DUPLEX (1470) SQ.FT",
-            "price_lakhs": 104,
-            "price_onwards": true,
-            "price_label": "2BHK - 1.04 CR ONWARDS, 3BHK - 1.56 CR ONWARDS",
-            "location": "Hinjawadi Phase 2",
-            "city": "Pune",
-            "status": "available",
-            "featured": false,
-            "rera": "PR1260002600999",
-            "image_url": "images/properties/shapoorji-joyville-vyomra.jpeg",
-            "sort_order": 20,
-            "created_at": "2026-11-12T06:30:00.000Z"
-        }
-    ];
-
-    function demoRead() {
+    async function api(path, { method = 'GET', body, headers = {} } = {}) {
+        const isJSON = body !== undefined && !(body instanceof Blob);
+        let res;
         try {
-            const raw = localStorage.getItem(DEMO_KEY);
-            if (raw) return JSON.parse(raw).map(normalise);
-        } catch (err) { /* fall through to seed */ }
-        const seeded = DEMO_SEED.map((p, i) => normalise({
-            ...p, id: `demo-${i + 1}`, created_at: new Date(Date.now() - i * 864e5).toISOString()
-        }));
-        demoWrite(seeded);
-        return seeded;
-    }
-
-    // Set once someone actually edits listings in the demo dashboard
-    const DEMO_EDITED = 'prabal_demo_edited';
-    function markDemoEdited() {
-        try { localStorage.setItem(DEMO_EDITED, '1'); } catch (err) { /* ignore */ }
-    }
-    function demoEdited() {
-        try { return localStorage.getItem(DEMO_EDITED) === '1'; } catch (err) { return false; }
-    }
-
-    function demoWrite(list) {
-        try {
-            localStorage.setItem(DEMO_KEY, JSON.stringify(list));
+            res = await fetch(path, {
+                method,
+                credentials: 'same-origin',
+                cache: 'no-store',
+                headers: { Accept: 'application/json', ...(isJSON ? { 'Content-Type': 'application/json' } : {}), ...headers },
+                body: isJSON ? JSON.stringify(body) : body
+            });
         } catch (err) {
-            throw new Error('Browser storage is full. In demo mode photos are stored locally — try a smaller photo or connect Supabase.');
+            throw new Error('Could not reach the server. Check your internet connection and try again.');
         }
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            const error = new Error(data.error || `Request failed (${res.status})`);
+            error.status = res.status;
+            throw error;
+        }
+        return data;
     }
 
-    // Helper to communicate with local backend file storage (/data/properties.json via server.js)
-    async function fetchLocalApi(endpoint, options = {}) {
-        try {
-            const res = await fetch(endpoint, { ...options, cache: 'no-cache' });
-            if (res.ok) {
-                return await res.json();
-            }
-        } catch (err) {
-            // Server API not running (fallback to demo/localStorage)
-        }
-        return null;
-    }
-
-    function clearLocalCache() {
-        try {
-            localStorage.removeItem(DEMO_KEY);
-            localStorage.removeItem(DEMO_EDITED);
-            return true;
-        } catch (e) {
-            return false;
-        }
-    }
-
-    // ---- public read (no library) -----------------------------------------
+    // ---- public read -------------------------------------------------------
 
     async function listPublic() {
-        if (!LIVE) {
-            const apiData = await fetchLocalApi('/api/properties');
-            if (Array.isArray(apiData) && apiData.length > 0) {
-                return sortListings(apiData.map(normalise));
-            }
-            const staticData = await fetchLocalApi('/data/properties.json');
-            if (Array.isArray(staticData) && staticData.length > 0) {
-                return sortListings(staticData.map(normalise));
-            }
-            return sortListings(demoRead());
-        }
-        const url = `${SUPABASE_URL}/rest/v1/${TABLE}?select=*&order=created_at.desc`;
-        const res = await fetch(url, {
-            headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
-        });
+        try {
+            const list = await api('/api/properties');
+            if (Array.isArray(list)) return sortListings(list.map(normalise));
+        } catch (err) { /* fall back to the static snapshot */ }
+        const res = await fetch('/data/properties.json');
         if (!res.ok) throw new Error(`Could not load properties (${res.status})`);
         return sortListings((await res.json()).map(normalise));
     }
 
     // ---- admin (dashboard) -------------------------------------------------
 
-    let client = null;
-
-    function loadScript(src) {
-        return new Promise((resolve, reject) => {
-            const s = document.createElement('script');
-            s.src = src;
-            s.onload = resolve;
-            s.onerror = () => reject(new Error('Could not load Supabase client'));
-            document.head.appendChild(s);
-        });
-    }
-
-    async function getClient() {
-        if (!LIVE) return null;
-        if (client) return client;
-        if (!window.supabase) await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js');
-        client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        return client;
-    }
-
     const admin = {
-        async session() {
-            if (!LIVE) return sessionStorage.getItem('prabal_demo_session') ? { user: { email: 'demo@prabalhousing.com' } } : null;
-            const sb = await getClient();
-            const { data } = await sb.auth.getSession();
-            return data.session;
-        },
+        // { user: {email} | null, needsSetup: bool }
+        status: () => api('/api/auth/status'),
 
         async signIn(email, password) {
-            if (!LIVE) {
-                sessionStorage.setItem('prabal_demo_session', '1');
-                return { user: { email: email || 'demo@prabalhousing.com' } };
-            }
-            const sb = await getClient();
-            const { data, error } = await sb.auth.signInWithPassword({ email, password });
-            if (error) throw new Error(error.message === 'Invalid login credentials' ? 'Wrong email or password.' : error.message);
-            return data.session;
+            return api('/api/auth/login', { method: 'POST', body: { email, password } });
+        },
+
+        async setup(setupKey, email, password) {
+            return api('/api/auth/setup', { method: 'POST', body: { setupKey, email, password } });
         },
 
         async signOut() {
-            if (!LIVE) return sessionStorage.removeItem('prabal_demo_session');
-            const sb = await getClient();
-            await sb.auth.signOut();
+            await api('/api/auth/logout', { method: 'POST', body: {} }).catch(() => {});
         },
 
+        changePassword: (current, next) => api('/api/auth/password', { method: 'POST', body: { current, next } }),
+
         async list() {
-            if (!LIVE) {
-                const apiData = await fetchLocalApi('/api/properties');
-                if (Array.isArray(apiData) && apiData.length > 0) {
-                    return sortListings(apiData.map(normalise));
-                }
-                return sortListings(demoRead());
-            }
-            const sb = await getClient();
-            const { data, error } = await sb.from(TABLE).select('*').order('created_at', { ascending: false });
-            if (error) throw new Error(error.message);
-            return sortListings(data.map(normalise));
+            return sortListings((await api('/api/properties')).map(normalise));
         },
 
         async save(record) {
@@ -666,113 +145,37 @@ const PrabalStore = (() => {
             if (!p.title) throw new Error('Please add the project name.');
             if (!p.location) throw new Error('Please add the location.');
             if (!p.configurations.length) throw new Error('Pick at least one configuration (e.g. 2 BHK).');
-
-            if (!LIVE) {
-                // 1. Save directly to backend data/properties.json via local API
-                const apiRes = await fetchLocalApi('/api/properties', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(p)
-                });
-
-                if (apiRes && apiRes.property) {
-                    // Wipe stale localStorage cache so file is always source of truth
-                    clearLocalCache();
-                    markDemoEdited();
-                    return normalise(apiRes.property);
-                }
-
-                // 2. Fallback to localStorage if server API isn't reachable
-                const list = demoRead();
-                const i = list.findIndex(x => x.id === p.id);
-                if (i >= 0) list[i] = { ...list[i], ...p };
-                else list.unshift({ ...p, id: `demo-${Date.now()}`, created_at: new Date().toISOString() });
-                demoWrite(list);
-                markDemoEdited();
-                return p;
-            }
-
-            const sb = await getClient();
-            const { id, created_at, ...fields } = p;
-            const query = id
-                ? sb.from(TABLE).update(fields).eq('id', id).select().single()
-                : sb.from(TABLE).insert(fields).select().single();
-            const { data, error } = await query;
-            if (error) throw new Error(friendlyDbError(error));
-            return normalise(data);
+            return normalise(await api('/api/admin/properties', { method: 'POST', body: p }));
         },
 
         async setStatus(id, status) {
-            if (!LIVE) {
-                const currentList = await admin.list();
-                const p = currentList.find(x => x.id === id);
-                if (p) {
-                    p.status = status;
-                    await admin.save(p);
-                    return;
-                }
-                const list = demoRead();
-                const item = list.find(x => x.id === id);
-                if (item) item.status = status;
-                demoWrite(list);
-                markDemoEdited();
-                return;
-            }
-            const sb = await getClient();
-            const { error } = await sb.from(TABLE).update({ status }).eq('id', id);
-            if (error) throw new Error(friendlyDbError(error));
+            await api(`/api/admin/properties/${encodeURIComponent(id)}`, { method: 'PATCH', body: { status } });
         },
 
         async remove(property) {
-            if (!LIVE) {
-                // Delete from backend data/properties.json
-                const apiRes = await fetchLocalApi(`/api/properties/${encodeURIComponent(property.id)}`, {
-                    method: 'DELETE'
-                });
-                if (apiRes) {
-                    clearLocalCache();
-                    markDemoEdited();
-                    return;
-                }
-                demoWrite(demoRead().filter(x => x.id !== property.id));
-                markDemoEdited();
-                return;
-            }
-            const sb = await getClient();
-            const { error } = await sb.from(TABLE).delete().eq('id', property.id);
-            if (error) throw new Error(friendlyDbError(error));
-            if (property.image_path) await sb.storage.from(BUCKET).remove([property.image_path]);
+            await api(`/api/admin/properties/${encodeURIComponent(property.id)}`, { method: 'DELETE' });
         },
 
         // Resize + convert to WebP in the browser before upload: a 6 MB phone
         // photo becomes ~150 KB, which keeps the public site fast.
         async uploadPhoto(file) {
-            const blob = await compressImage(file, LIVE ? 1600 : 1000, LIVE ? 0.82 : 0.7);
-            if (!LIVE) {
-                return { url: await blobToDataURL(blob), path: '' };
-            }
-            const sb = await getClient();
-            const path = `listings/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.webp`;
-            const { error } = await sb.storage.from(BUCKET).upload(path, blob, { contentType: 'image/webp', cacheControl: '31536000' });
-            if (error) throw new Error(friendlyDbError(error));
-            const { data } = sb.storage.from(BUCKET).getPublicUrl(path);
-            return { url: data.publicUrl, path };
+            const blob = await compressImage(file, 1600, 0.82);
+            return api('/api/admin/upload', { method: 'POST', body: blob, headers: { 'Content-Type': blob.type || 'image/webp' } });
         },
 
         async removePhoto(path) {
-            if (!LIVE || !path) return;
-            const sb = await getClient();
-            await sb.storage.from(BUCKET).remove([path]);
-        }
-    };
+            if (!path) return;
+            await api(`/api/admin/media/${path}`, { method: 'DELETE' }).catch(() => {});
+        },
 
-    function friendlyDbError(error) {
-        const msg = error.message || String(error);
-        if (/row-level security|permission denied|not authorized|Unauthorized/i.test(msg)) {
-            return 'Your account is not set up as an admin yet. See DASHBOARD_SETUP.md, step 4.';
-        }
-        return msg;
-    }
+        enquiries: (type = '') => api(`/api/admin/enquiries${type ? `?type=${encodeURIComponent(type)}` : ''}`),
+        deleteEnquiry: id => api(`/api/admin/enquiries/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+        enquiryFileURL: id => `/api/admin/enquiries/${encodeURIComponent(id)}/file`,
+
+        team: () => api('/api/admin/team'),
+        addMember: (email, password) => api('/api/admin/team', { method: 'POST', body: { email, password } }),
+        removeMember: id => api(`/api/admin/team/${encodeURIComponent(id)}`, { method: 'DELETE' })
+    };
 
     function compressImage(file, maxSide, quality) {
         return new Promise((resolve, reject) => {
@@ -793,15 +196,8 @@ const PrabalStore = (() => {
         });
     }
 
-    function blobToDataURL(blob) {
-        return new Promise(resolve => {
-            const r = new FileReader();
-            r.onload = () => resolve(r.result);
-            r.readAsDataURL(blob);
-        });
-    }
 
-    return { LIVE, demoEdited, clearLocalCache, STATUS, CONFIG_OPTIONS, escapeHTML, safeImageURL, formatPrice, listPublic, admin };
+    return { STATUS, CONFIG_OPTIONS, escapeHTML, safeImageURL, formatPrice, listPublic, admin };
 })();
 
 window.PrabalStore = PrabalStore;
