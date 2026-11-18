@@ -109,7 +109,10 @@
                 done.querySelector('p').textContent = text;
                 form.replaceWith(done);
                 done.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                try { if (window.va) window.va('event', { name: 'form_submit', data: { type } }); } catch (err) { /* ignore */ }
+                try {
+                    if (window.va) window.va('event', { name: 'form_submit', data: { type } });
+                    if (window.fbq) window.fbq('track', type === 'career' ? 'SubmitApplication' : 'Lead');
+                } catch (err) { /* ignore */ }
             } catch (err) {
                 // 4xx = something the visitor can fix; anything else = our problem, offer WhatsApp
                 const fixable = err.status >= 400 && err.status < 500 && err.status !== 404;

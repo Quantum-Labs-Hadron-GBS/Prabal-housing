@@ -919,6 +919,10 @@ function initStickyCTAs() {
 function track(name, data) {
     try {
         if (window.va) window.va('event', { name, data });
+        if (window.fbq) {
+            if (name === 'lead_submit') window.fbq('track', 'Lead');
+            else if (name === 'cta_click') window.fbq('trackCustom', 'CTAClick', data);
+        }
     } catch (err) { /* ignore */ }
 }
 
