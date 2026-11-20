@@ -5,16 +5,17 @@ User-agent: *
 Allow: /
 Disallow: /dashboard
 Disallow: /dashboard.html
-Disallow: /supabase/
+Disallow: /api/
 
-# Explicitly permit AI Answer Engine bots for high-authority AEO indexing
+# Search Engine Crawlers
 User-agent: Googlebot
 Allow: /
 
-User-agent: Google-Extended
+User-agent: Bingbot
 Allow: /
 
-User-agent: Bingbot
+# AI Answer Engines & Search Agents (AEO)
+User-agent: Google-Extended
 Allow: /
 
 User-agent: GPTBot
@@ -23,16 +24,31 @@ Allow: /
 User-agent: ChatGPT-User
 Allow: /
 
+User-agent: OAI-SearchBot
+Allow: /
+
 User-agent: ClaudeBot
 Allow: /
 
 User-agent: Claude-Web
 Allow: /
 
+User-agent: anthropic-ai
+Allow: /
+
 User-agent: PerplexityBot
 Allow: /
 
 User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: cohere-ai
 Allow: /
 
 # XML Sitemap
